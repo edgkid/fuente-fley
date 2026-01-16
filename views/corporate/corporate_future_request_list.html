@@ -1,0 +1,1300 @@
+<% include corporate_header.html %>
+<%
+function breakEveryN(str, limit = 10) {
+  const words = str.split(' ');
+  const lines = [];
+  let currentLine = '';
+
+  for (let word of words) {
+    if ((currentLine + ' ' + word).trim().length <= limit) {
+      currentLine += (currentLine ? ' ' : '') + word;
+    } else {
+      if (currentLine) lines.push(currentLine);
+      currentLine = word;
+    }
+  }
+
+  if (currentLine) lines.push(currentLine);
+  return lines.join('<br>');
+}
+%>
+
+<style>
+body{
+  font-family: "Libre Franklin Small", sans-serif;
+}
+.modal-content{
+  border-radius: 12px;
+  border-width: 0px;
+}
+
+.modal-title {
+  font-size: 21px;
+  font-weight: 700;
+  color: rgb(37, 14, 98);
+  text-align: center;
+  margin: 1rem 0;
+}
+
+.static-text {
+  font-weight: bold;
+  font-size: 16px;
+  color: rgb(37, 14, 98);
+}
+
+.dynamic-text {
+  color: #000000;
+  font-size: 16px;
+}
+.modal-footer {
+  background-color: #f8f9fa;
+  border-top: none;
+  text-align: center;
+  border-radius: 12px;
+}
+.modal-header {
+  background-color: #f8f9fa;
+  border-bottom: none;
+  border-radius: 12px;
+}
+
+.p_style{
+  font-size: 15px;
+  text-align: center;
+}
+
+.h_style{
+  color: rgb(63 186 228);
+  text-align: center;
+}
+
+.modal-footer .btn, .modal-footer .btn:hover {
+  background: rgb(37, 14, 98);
+  color: #f8f9fa;
+  border-radius: 16px;
+}
+
+.icon_class {
+    font-size: 37px;
+    color:  rgb(37 14 98);
+}
+
+.card-img-top {
+  max-width: 100%;
+  max-height: 100%;
+  object-fit: contain;
+  display: flex;
+  margin: auto;
+}
+
+.image-container {
+  position: relative;
+}
+
+.download-wrapper {
+  position: absolute;
+  top: 10px;
+  right: 30px;
+  z-index: 1;
+  background-color: rgb(211 200 224);
+  padding: 10px;
+  border-radius: 50%;
+}
+
+.plate-img-container{
+  position: relative;
+  display: inline-block;
+}
+
+.plate-img-container .download-wrapper{
+  top: 12px; 
+  right: 6px;
+}
+
+#show_plate_modal .modal-body {
+  padding: unset;
+}
+
+#show_plate_modal .modal-body {
+  padding: unset;
+}
+
+.img-thumbnail{
+  border:none;
+  padding: 11px 4px;
+}
+
+.card-title {
+  font-size: 1.5rem;
+  font-weight: 700;
+  margin-bottom: 1rem;
+  color: rgb(37, 14, 98);
+}
+
+
+th{
+  z-index: 1;
+}
+
+.vertical-timeline {
+  position: relative;
+  margin-left: 10px;
+  padding-left: 20px;
+  border-left: 2px solid #2c2c72;
+  width: 150px;
+  height: auto;
+}
+
+.status-label {
+  padding-bottom: 6px;
+  font-size: 13px;
+  line-height: 1;
+  max-width: 140px;
+  word-wrap: break-word;
+  white-space: normal;
+  transform: translateY(0);
+  color: gray;
+}
+
+.label-completed {
+  color: #2c2c72;
+}
+
+.label-active {
+  color: #00BBB4;
+  font-weight: bold;
+}
+
+.label-upcoming {
+  color: #656C78;
+}
+
+.label-cancelled {
+  color: red;
+  font-weight: bold;
+  top: 10px !important;
+}
+
+.dot.cancelled-dot-top,
+.dot.cancelled-dot-bottom {
+  background-color: red;
+}
+
+.dot {
+  position: absolute;
+  left: -6px;
+  width: 10px;
+  height: 10px;
+  background-color: #2c2c72;
+  border-radius: 50%;
+}
+
+.dot-highlight {
+  left: -26px;
+  background-color: #00BBB4;
+}
+.dot.top {
+  top: 0;
+}
+
+.dot.bottom {
+  bottom: 0;
+}
+
+.label-highlight {
+  color: #00BBB4;
+}
+.label {
+  display: inline;
+  padding: 0.4em .6em .4em;
+  font-size: 88%;
+}
+
+.trip-action {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  cursor: pointer;
+  padding-top: 4px;
+  border-radius: 6px;
+  margin-bottom: 6px;
+  transition: background 0.2s;
+}
+
+.trip-action i {
+  font-size: 20px;
+}
+
+.trip-action span {
+  font-size: 12x;
+  color: #656C78;
+}
+.chat_icon_col {
+  display: flex;
+  flex-direction: column;
+  align-items: center; 
+  justify-content: center; 
+}
+
+.chat_icon_col img {
+  width: 47px;
+  height: 40px;
+  margin: 0; 
+  transition: transform 0.3s;
+}
+
+.chat_icon_col img:hover {
+  transform: scale(1.1);
+  cursor: pointer;
+}
+
+.chat_icon_col i {
+  margin-top: 8px; 
+}
+tr{
+  background-color: #F0F4F9;
+}
+</style>     
+                <!-- PAGE CONTENT WRAPPER -->
+   <div class="page-content-wrap">
+       <% if(typeof message != 'undefined'){ %>
+       <div class="alert alert-success" role="alert">
+           <button type="button" class="close" data-dismiss="alert"><span aria-hidden="true">&times;</span><span class="sr-only"><%= __('button_close') %></span></button>
+           <p align="center"> <strong><%= __(message) %></strong></p>
+       </div>
+       <% } %>   
+       <div class="alert alert-success" role="alert" id="request_error" style="display:none">
+           <button type="button" id="close" class="close"><span aria-hidden="true">&times;</span><span class="sr-only"><%= __('button_close') %></span></button>
+           <p align="center" id="request_message"> <strong></strong></p>
+       </div>
+      <div class="col-md-12">                           
+      <div class="panel panel-default">                                
+        <div class="panel-body">
+          <form class="form-horizontal" role="form" method="post" action="/corporate_future_request">
+          <input type="hidden" name="page" id="page" value="0" />   
+            <div class="form-group">     
+
+              <div class="col-md-4">
+                <div style="text-align: center;">
+                  <label><%= __('title_sort') %></label>   
+                </div>
+                <div class="col-md-6">
+                  <div class="input-group">
+                    <span class="input-group-addon"><span class="glyphicon glyphicon-sort"></span></span>
+                    <select class="form-control select" data-none-selected-text="<%= __('title_nothing_selected') %>" placeholder="Select to Sort" name="sort_item">
+                      <% if(sort_field == "user_detail.first_name") { %>
+                        <option value='unique_id'><%= __('title_id') %></option>
+                        <option value='user_detail.first_name' selected="selected"><%= __('title_user_name') %></option>
+                      <% } else { %>
+                        <option value='unique_id' selected="selected"><%= __('title_id') %>
+                        <option value='user_detail.first_name'><%= __('title_user_name') %></option>
+                      <% } %>
+                    </select>
+                  </div>
+                </div>
+                <div class="col-md-6">
+                  <div class="input-group">
+                    <span class="input-group-addon"><span class="glyphicon glyphicon-sort"></span></span>
+                    <select class="form-control select" data-none-selected-text="<%= __('title_nothing_selected') %>" placeholder="Select to Sort" name="sort_item">
+                      <% if(sort_order == "1") { %>
+                      <option value="1" selected><%= __('sort_asc') %></option>
+                      <option value="-1"><%= __('sort_desc') %></option>
+                      <% } else{ %>
+                      <option value="1" ><%= __('sort_asc') %></option>
+                      <option value="-1" selected><%= __('sort_desc') %></option>
+                      <% } %>
+                    </select>
+                  </div>
+                </div>
+              </div>
+              <div class="col-md-4">
+                <div style="text-align: center;">
+                  <label><%= __('title_search') %></label>   
+                </div>
+                <div class="col-md-6">
+                  <div class="input-group">
+                    <span class="input-group-addon"><span class="glyphicon glyphicon-sort"></span></span>
+                    <select class="form-control select" data-none-selected-text="<%= __('title_nothing_selected') %>" placeholder="Select to Search" name="search_item">
+                      <option value='unique_id' <%= (search_item == "unique_id") ? 'selected' : '' %>><%= __('title_id') %></option>
+                      <option value='user_detail.first_name' <%= (search_item == "user_detail.first_name") ? 'selected' : '' %>><%= __('title_user_name') %></option>
+                    </select>
+                    </div> 
+                </div>
+                <div class="col-md-6">
+                  <div class="panel panel-default">
+                    <div class="panel-body panel-body-search">
+                      <div class="input-group">
+                        <span class="input-group-addon"><span class="fa fa-search"></span></span>
+                        <input type="text" class="form-control" value="<%= search_value %>" onkeypress="return alphaNumSpace(event);"name="search_value" placeholder="<%= __('title_search') %>"/>
+                      </div>                                                                
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div class="col-md-4">
+                <div style="text-align: center;">
+                  <label><%= __('title_date_filter') %></label>   
+                </div>
+                <div class="col-md-12">
+
+                  <div class="btn-group">
+                    <div class="input-group">
+                      <input type="text" class="form-control datepicker" value="<%= filter_start_date %>" placeholder="<%= __('title_start_date') %>" name="start_date" id="start_date" readonly/>
+                      <span class="input-group-addon add-on">-</span>
+                      <input type="text" class="form-control datepicker"  value="<%= filter_end_date %>" placeholder="<%= __('title_start_date') %>" name="end_date" id="end_date" readonly/>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+            </div>
+            <div class="col-md-8">
+              <div class="col-md-12">
+                <ul class="pagination" >
+                  
+
+                    <% include paginate_lookup.html %>
+
+                    
+                </ul> 
+              </div> 
+            </div> 
+        
+            <div  class="form-group col-md-4" >
+              <div class="col-md-6">
+                <button type="submit" id="apply_filter" class="btn btn-primary" style="height: 35px; width: 100%;  "><span><%= __('button_apply') %></span></button>
+              </div>
+            
+              <div class="col-md-6">
+                    
+                   <button class="btn btn-danger pull-right" type="button" style="height: 35px; width: 100%;" onClick ="export_excel()"><i class="fa fa-download"></i><%= __('button_export_excel') %></button>     
+              </div>
+            </div>    
+          </form>
+
+
+        </div>
+      </div>
+    </div>
+  </div> 
+        
+      <!-- END TIMELINE FILTER -->                
+                
+                    <div class="row">
+                        <div class="col-md-12">
+
+                            <!-- START SIMPLE DATATABLE -->
+                            <div class="panel panel-default">                                
+                                <div class="table-responsive" id="customers" style="padding-bottom: 175px;">
+                                        <table class="table">
+                                            <thead>
+                                                <tr>
+                                                  <th><%- breakEveryN(__('title_id')) %></th>
+                                                  <th><%- breakEveryN(__('title_created_date')) %></th>
+                                                  <th><%- breakEveryN(__('title_loading_date')) %></th>
+                                                  <th style="width: 10%;"><%- breakEveryN(__('title_user')) %></th>
+                                                  <th><%- breakEveryN(__('title_assigned_unit')) %></th>
+                                                  <th style="width: 15%;"><%- breakEveryN(__('title_route')) %></th>
+                                                  <th><%- breakEveryN(__('title_shipping_details')) %></th>
+                                                  <th><%- breakEveryN(__('title_status')) %></th>
+                                                  <th><%- breakEveryN(__('title_payment_details')) %></th>
+                                                  <th style="text-align: center;"><%- breakEveryN(__('title_chat')) %></th>
+                                                  <th style="width: 10%;"><%= __('button_action') %></th>
+                                                </tr>
+                                            </thead>
+                                            
+                                            <tbody>
+                                              <% detail.forEach(function(data){ %>
+                                                 <tr class="selectedRow" id="main-row<%= data._id %>">
+                                                  <td><%= data.unique_id %></td>
+                                                  <td><%= moment(data.created_at).tz(timezone_for_display_date).format("DD MMM 'YY") %></br><%= moment(data.created_at).tz(timezone_for_display_date).format("hh:mm a") %></td>
+                                                  <td><%= moment(data.server_start_time_for_schedule || data.created_at).tz(timezone_for_display_date).format("DD MMM 'YY") %>
+                                                  </br><%= moment(data.server_start_time_for_schedule || data.created_at).tz(timezone_for_display_date).format("hh:mm a") %></td>
+                                                  <td><%= data.user_detail.first_name %> <%= data.user_detail.last_name %></td>
+                                                  <td>
+                                                    <a href="javascript:void(0);"
+                                                    onclick="show_truck_front_lateral_images('<%= data._id %>')" 
+                                                    style="color: #00BBB4;">
+                                                    <%= data?.type_detail?.typename %>
+                                                  </a>   
+                                                                                 
+                                                  <br><%= data?.model_details?.model_name %>
+                                                  <br>
+                                                  <span style="color: #25215F"><%= __('title_provider') %>:</span>
+                                                  <% if (data.provider_detail.length > 0) { %>
+                                                    <a href="javascript:void(0);" 
+                                                      onclick="show_provider_cedula('<%= data._id %>', '<%= data.provider_detail[0].country_phone_code %> <%= data.provider_detail[0].phone %>')" 
+                                                      style="color: #00BBB4;">
+                                                      <%= data.provider_detail[0].first_name %> <%= data.provider_detail[0].last_name %>
+                                                    </a>
+                                                  <% } %>
+
+                                                  <br>
+                                                  <span style="color: #25215F"><%= __('title_plate_no') %>:</span>
+                                                  <% if (data?.assigned_vehicle_details?.vehicle_plate_no) { %>
+                                                    <a href="javascript:void(0);" onclick="show_plate_details('<%= data._id %>')" 
+                                                      style="color: #00BBB4;">
+                                                      <%= data.assigned_vehicle_details.vehicle_plate_no %>
+                                                    </a>
+                                                  <% } %>
+                                                  <br> <span style="color: #25215F"><%= __('title_helpers') %>:</span>  <%= data?.pickup_details[0]?.user_details?.no_of_helpers %></td>
+                                                  
+                                                  <td><span style="color: #25215F"><%= __('title_origin') %>:</span> <%= data.source_address %> 
+                                                  <br> <span style="color: #25215F"><%= __('title_destination') %>:</span> <%=  data.initial_destination_address ?  data.initial_destination_address : data.destination_address%> %>
+                                                  <br> <span style="color: #25215F"><%= __('title_cities') %>:</span> <%= data?.destination_addresses?.length %>
+                                                  <br>   
+                                                    <a href="#" id="show_trip_details_btn<%=data._id%>" style="display:block; color: #00BBB4;">
+                                                      <%= __('button_shipping_details') %>
+                                                    </a>
+                                                  </form></td>
+                                                  <td>
+                                                  <span style="color: #25215F"><%= __('title_cities') %>:</span><%= data?.destination_addresses?.length %> 
+                                                  <br> <span style="color: #25215F"><%= __('unit_km') %>:</span> <%=  data?.estimated_distance %>
+                                                  <br> <span style="color: #25215F"><%= __('title_night_shifts') %>:</span> <%= data?.night_shift %>
+                                                  <br> <span style="color: #25215F"><%= __('title_ferry_ticket') %>:</span><% if(data.boat_ticket > 0) { %> <%= __('title_yes') %>
+                                                        <% } else { %>  <%= __('title_no')%> <%}%>
+                                                  <br><form id="mapForm_<%= data._id %>" method="post" action="/corporate_trip_map">
+                                                    <input type="hidden" name="id" value="<%= data._id %>" />
+                                                    <input type="hidden" name="u_name" value="<%= data.user_detail.first_name %> <%= data.user_detail.last_name %>" />
+                                                    <% if (data.provider_detail.length > 0) { %>
+                                                      <input type="hidden" id="pr_name<%= data._id %>" name="pr_name" value="<%= data.provider_detail[0].first_name %> <%= data.provider_detail[0].last_name %>" />
+                                                    <% } %>
+                                                    <a href="#" onclick="document.getElementById('mapForm_<%= data._id %>').submit(); return false;" style="display:block; color: #00BBB4;">
+                                                      <%= __('button_view_map') %>
+                                                    </a>
+                                                  </form>
+                                                  </td>
+                                                  <% const providerSteps = [
+                                                    { key: 'waiting', label: __('title_trip_status_waiting') },
+                                                    { key: 'accepted_request', label: __('title_accepted_request') },
+                                                    { key: 'waiting_to_start', label: __('title_trip_status_waiting_to_start_journey') },
+                                                    { key: 2, label: __('title_trip_status_coming') },
+                                                    { key: 4, label: __('title_trip_status_arrived') },
+                                                    { key: 6, label: __('title_trip_status_trip_started') },
+                                                    { key: 7, label: __('title_trip_status_arrived_at_destination') },
+                                                    { key: 9, label: __('title_trip_status_completed') }
+                                                  ];
+
+                                                  if (data?.model_type === MODEL_TRUCK_TYPE.CABEZAL) {
+                                                    providerSteps.splice(3, 0,
+                                                      { key: 'waiting_unloading', label: __('title_trip_status_waiting_for_unloading') },
+                                                      { key: 'waiting_driver', label: __('title_trip_status_waiting_for_driver_assignment') },
+                                                      { key: 'pending_pickup', label: __('title_trip_status_pending_pickup') },
+                                                      { key: 'returning_pickup', label: __('title_trip_status_returning_pickup') }
+                                                    );
+                                                  }
+
+                                                  let activeKey = null;
+                                                  if (data?.drop_trip_status == 1 && !data.assigned_provider_id && !data.unload_notification_sent) {
+                                                    activeKey = 'waiting_unloading';
+                                                  } else if (data?.drop_trip_status == 1 && !data.assigned_provider_id && data.unload_notification_sent) {
+                                                    activeKey = 'waiting_driver';
+                                                  } else if (data?.drop_trip_status == 1 && data.assigned_provider_id) {
+                                                    activeKey = 'pending_pickup';
+                                                  } else if (data?.drop_trip_status <= 2 && data.assigned_provider_id && data.is_provider_status != 9) {
+                                                    activeKey = 'returning_pickup';
+                                                  } else if (data.is_provider_status == 1 || data.is_provider_status == 0) {
+                                                    if (data.is_provider_accepted == 1) {
+                                                      activeKey = 'waiting_to_start';
+                                                    } else {
+                                                      activeKey = data.assigned_provider_id ? 'accepted_request' : 'waiting';
+                                                    }
+                                                  } else {
+                                                    activeKey = data.is_provider_status;
+                                                  }
+
+                                                  const activeIndex = providerSteps.findIndex(step => step.key === activeKey);
+                                                  %>
+
+                                                  <td>
+                                                    <% if (data?.is_trip_cancelled == 1) { %>
+                                                      <div class="vertical-timeline" style="min-height: 40px; border-left: 2px solid red;">
+                                                        <div class="dot cancelled-dot-top" style="top: 0;"></div>
+                                                        <div class="status-label label-cancelled" style="top: 0;"><%= __('title_cancelled') %></div>
+                                                        <div class="dot cancelled-dot-bottom" style="bottom: 0;"></div>
+                                                      </div>
+                                                      <% } else { %>
+                                                        <div class="vertical-timeline" >
+                                                      <div class="dot top"></div>
+                                                      <% providerSteps.forEach((step, index) => {
+                                                        let className = index < activeIndex ? 'label-highlight' : (index === activeIndex ? 'label-active' : 'label-upcoming');
+                                                        let statusDotClass = index === activeIndex && activeIndex > 0 && activeIndex < providerSteps.length - 1 ? 'dot dot-highlight' : "";
+
+                                                      %>
+                                                        <div class="status-label <%= className %>" style="top: calc(<%= index %> * 30px)"><div class="<%= statusDotClass %>"> </div> <%= step.label %></div>
+                                                      <% }); %>                    
+                                                      <div class="dot bottom"></div>
+                                                    </div>
+                                                    <% } %>
+                                                  </td>
+                                                  <td>
+                                                    $<%= (data.fixed_price - data.promo_payment).toFixed(2) %>
+                                                    <br>
+                                                    <span class="label" style="background-color: <%= data.paid_client == 1 ? '#F16F63' : '#00BBB4' %>">
+                                                      <%= data.paid_client == 1 ? __('title_paid') : __('title_pending') %>
+                                                    </span>
+                                                  </td>
+                                                  <td class="chat_icon_col">                  
+                                                    <button class="btn btn-link p-0 m-0" style="background: none; border: none;"
+                                                            onclick="event.stopPropagation(); openChatModal('<%= data._id %>')">
+                                                      <img id="chat_icon<%= data._id %>" src="chat_12x12.svg" alt="Chat">
+                                                    </button>
+                                                    <button class="btn btn-link p-0 m-0" style="background: none; border: none;"
+                                                            onclick='event.stopPropagation(); open_unassign_reasons_modal("<%= data._id %>", <%- JSON.stringify(data.partner_unassign_data) %>,  <%- JSON.stringify(data.change_driver_reason) %>)'>
+                                                      <img src="mensaje_12x12.svg" alt="Message">
+                                                    </button>
+                                                  </td>
+                                                     <td><% if(data.is_provider_accepted == 0 && data.trip_approved == 0){ %>     
+                                                      <div class="trip-action corporate_btn_hide" onclick="document.forms['corporate_trip_approve<%=data._id%>'].submit()">
+                                                        <i class="fa fa-file-text-o text-primary"></i>
+                                                        <span style="text-align: left;"><%= __('button_waiting_for_approval') %></span>
+                                                      </div>
+                                                      <form name="corporate_trip_approve<%=data._id%>" method="post" action="/corporate_trip_approve" style="display:none;">
+                                                        <input type="hidden" name="id" value="<%= data._id %>">
+                                                      </form>                                               
+                                                    <% } %>
+                                                    <div class="trip-action" style="display: flex; align-items: center; gap: 6px; cursor: pointer;" onclick="document.getElementById('mapForm_<%= data._id %>').submit();">
+                                                      <img src="/FLETY_MAPA.svg" alt="map icon" style="width: 20px; height: 20px; transform: scale(0.9);" />
+                                                      <span><%= __('titel_view_on_map') %></span>
+                                                    </div>
+                                                    <form id="mapForm_<%= data._id %>" method="post" action="/corporate_trip_map" style="display: none;">
+                                                      <input type="hidden" name="id" value="<%= data._id %>" />
+                                                      <input type="hidden" name="u_name" value="<%= data.user_detail.first_name %> <%= data.user_detail.last_name %>" />
+                                                      <% if (data.provider_detail.length > 0) { %>
+                                                        <input type="hidden" name="pr_name" value="<%= data.provider_detail[0].first_name %> <%= data.provider_detail[0].last_name %>" />
+                                                      <% } %>
+                                                    </form>
+                                                                      
+                                                    <div class="trip-action" onclick="document.getElementById('show_trip_details_btn<%=data._id%>').click()">
+                                                      <img src="/FLETY_DETALLESDEVIAJE.svg" alt="Shipping Details" style="width: 24px; height: 24px; transform: scale(0.9);" />
+                                                      <span><%= __('button_shipping_details') %></span>
+                                                    </div>
+                                                    
+                                                    <div class="trip-action" onclick="document.forms['corporate_create_trip<%=data._id%>'].submit()">
+                                                      <i class="fa fa-file-text-o text-primary"></i>
+                                                      <span><%= __('button_repeat_order') %></span>
+                                                    </div>
+                                                    <form name="corporate_create_trip<%=data._id%>" method="post" action="/corporate_create_trip" style="display:none;">
+                                                      <input type="hidden" name="id" value="<%= data._id %>">
+                                                    </form>                                               
+
+                                                    <div class="trip-action" onclick="show_upload_doc_modal('<%= data._id %>')">
+                                                      <i class="fa fa-sticky-note text-primary"></i>
+                                                      <span><%= __('button_upload_doc') %></span>
+                                                    </div>  
+
+                                                    <% if(data.corporate_doc && data.corporate_doc.length > 0){ %>
+                                                      <div class="trip-action" onclick="document.getElementById('show_trip_docs<%=data._id%>').click()">
+                                                        <i class="fa fa-info-circle text-primary"></i>
+                                                        <span><%= __('button_show_trip_document') %></span>
+                                                      </div>
+                                                    <% } %>   
+                                                    <% if(data.is_trip_completed == 0 && data.is_trip_cancelled == 0){ %>
+                                                      <div class="trip-action"  style="display: flex; align-items: center; gap: 6px; cursor: pointer;">
+                                                        <img src="/FLETY_LINKDESEGUIMIENTO.svg" alt="Tracking Link" style="width: 20px; height: 20px; height: 24px; transform: scale(0.9);" />
+                                                        <span onclick="copy_content('<%= data._id %>')" ><%= __('title_share_tracking_link') %></span>
+                                                      </div>
+                                                    <% } %>
+                                                    <div class="trip-action" onclick="open_corporate_notes_modal('<%= data._id %>', '<%= JSON.stringify(data.corporate_notes ? data.corporate_notes : []) %>')">
+                                                      <img src="/FLETY_NOTAS.svg" alt="Notes" style="width: 20px; height: 20px; transform: scale(0.9);" />
+                                                      <span><%= __('button_add_note') %></span>
+                                                    </div>  
+                                                    <% if (corporate?.allow_edit_trip) { %>
+                                                      <div class="trip-action">
+                                                        <a href="/corporate_edit_trip?id=<%=data.unique_id%>&history=0">
+                                                          <img src="/FLETY_EDITARVIAJE.svg" alt="Edit trip" style="width: 20px; height: 20px; transform: scale(0.9);" />
+                                                          <span><%= __('button_edit') %></span>
+                                                        </a>
+                                                      </div>
+                                                    <% } %>
+
+                                                    <% if (data.is_provider_status < 6 && data.is_trip_cancelled==0) { %>
+                                                      <div class="trip-action" style="display: flex; align-items: center; gap: 6px; cursor: pointer;" onclick="cancel('<%= data.user_detail._id %>','<%= data.user_detail.token %>','<%= data._id %>')">
+                                                        <i class="fa fa-times-circle-o" style="color: #F16F63; font-size: 24px; transform: scale(0.9);"></i>
+                                                        <span><%= __('title_cancel_trip') %></span>
+                                                      </div>
+                                                    <% } %>
+                                                  </td>                                              
+                                                </tr>
+                                                <div class="modal animated fadeIn" data-backdrop="static" data-keyboard="false" id="trip_details_modal<%=data._id%>" tabindex="-1" role="dialog" aria-labelledby="trip_details_modal<%=data._id%>" aria-hidden="true">
+                                                  <div class="modal-dialog modal-lg">
+                                                    <div class="modal-content">
+                                                      <div class="modal-header">
+                                                        <button type="button" id="trip_details_modal_close" class="close modal_close<%=data._id%>" data-dismiss="modal" ><span aria-hidden="true">&times;</span><span class="sr-only"><%= config_json.button_close %></span></button>
+                                                        <h3 class="h_style"><b><%= __("title_trip_fare_details") %></b></h3>                                                      
+                                                      </div>
+                                                      <div class="modal-body">
+                                                        <p class="p_style" style="font-weight: 600; text-align: center; color: rgb(0 191 179);"><%= __('title_pickup_address') %></p>
+                                                        <p class="p_style" ><b><%= __("title_origin") %></b>: <span id="trip_origin<%=data._id%>"></span></p>
+                                                        <div id="stop_details_data<%=data._id%>" style="display: none;">
+                                                        </div>              
+                                                        <p class="p_style" style="font-weight: 600; text-align: center; color: rgb(0 191 179);"><%= __('title_destination_address') %></p>
+                                    
+                                                        <p class="p_style"><b><%= __("title_destination") %></b>: <span id="trip_destination<%=data._id%>"></span></p>
+                                                        
+                                                        <p class="p_style" style="font-weight: 600; text-align: center; color: rgb(0 191 179);"><b><%= __('travel_info_modal') %></b></p>
+                                                        <p class="p_style"><b><%= __("title_loading_date") %></b>: <span id="trip_start_date<%=data._id%>"></span></p>
+                                                        <p class="p_style"><b><%= __("title_loading_time") %></b>: <span id="trip_start_time<%=data._id%>"></span></p>
+                                                        <p class="p_style"><b><%= __('title_weight_of_load') %></b>: <span id="trip_weight_load<%=data._id%>"></span></p>
+                                                        <p class="p_style"><b><%= __('title_volume_of_load') %></b>: <span id="trip_volume_load<%=data._id%>"></span></p>
+                                                        <p class="p_style"><b><%= __("title_type_of_services") %></b>: <span id="trip_selected_service<%=data._id%>"></span></p>
+                                                        <p class="p_style"><b><%= __("title_truck_model") %></b>: <span id="trip_selected_type<%=data._id%>"></span></p>
+                                                        <p class="p_style"><b><%= __("title_capacity") %></b>: <span id="trip_selected_capacity<%=data._id%>"></span></p>
+                                                        <p class="p_style"><b><%= __("title_count_night_shift") %></b>: <span id="count_night_shift<%=data._id%>"></span></p>
+                                                        <p class="p_style"><b><%= __("title_ferry_ticket") %></b>: <span id="ferry_ticket<%=data._id%>"></span></p>
+                                                        <p class="p_style"><b><%= __("title_truck_type") %></b>: <span id="trip_vehicle_model<%=data._id%>"></span></p>
+                                                        <p class="p_style"><b><%= __("flety_pay") %></b>: <span id="trip_total<%=data._id%>"></span></p>
+                                                        <p class="p_style"><b><%= __('title_weight_of_load') %></b>: <span id="pickup_weight_of_load<%=data._id%>"></span></p>
+                                                        <p class="p_style"><b><%= __("title_number_of_helpers_for_load") %></b>: <span id="helpers_load<%=data._id%>"></span></p>
+                                                        <p class="p_style"><b><%= __("title_number_of_helpers_for_download") %></b>: <span id="helpers_download<%=data._id%>"></span></p>
+                                                        <p class="p_style trip_type_procedure<%=data._id%>"><b><%= __("title_select_type_of_procedure") %></b>: <span id="trip_type_procedure<%=data._id%>"></span></p>
+                                                        <p class="p_style trip_transit_service_type<%=data._id%>"><b><%= __("title_need_internal_transit_service") %></b>: <span id="trip_transit_service_type<%=data._id%>"></span></p>
+                                                        <p class="p_style trip_transit_number<%=data._id%>"><b><%= __("title_number_of_services_for_you") %></b>: <span id="trip_transit_number<%=data._id%>"></span></p>
+                                    
+                                                        <h3 class="h_style"><b><%= __("title_pickup_details") %></b></h3>                                                      
+                                                        <p class="p_style"><b><%= __('title_company_name') %></b>: <span id="pickup_company_name<%=data._id%>"></span></p>
+                                                        <p class="p_style"><b><%= __('title_name') %></b>: <span id="pickup_name<%=data._id%>"></span></p>
+                                                        <p class="p_style"><b><%= __('title_phone') %></b>: <span id="pickup_phone<%=data._id%>"></span></p>
+                                    
+                                                        <p class="p_style"><b><%= __('title_description') %></b>: <span id="pickup_description<%=data._id%>"></span></p>
+                                                        <h3 class="h_style"><b><%= __('title_delivery_details') %></b></h3>                                                    
+                                                        <p class="p_style"><b><%= __('title_company_name') %></b>: <span id="delivery_company_name<%=data._id%>"></span></p>
+                                                        <p class="p_style"><b><%= __('title_name_of_delivery_receiver') %></b>: <span id="delivery_name<%=data._id%>"></span></p>
+                                                        <p class="p_style"><b><%= __('title_phone') %></b>: <span id="delivery_phone<%=data._id%>"></span></p>
+                                                        <p class="p_style"><b><%= __('title_description') %></b>: <span id="delivery_description<%=data._id%>"></span></p>
+                                                        <div id="trip_load_images<%=data._id%>" style="display: none;">
+                                                        </div>
+                                                    </div>
+                                                  </div>
+                                                </div>
+                                              </div>
+                                                                        
+                                                <% }); %>
+                                            </tbody>
+                                        </table>
+                                    </div>
+                            </div>
+                            <!-- END SIMPLE DATATABLE -->
+
+                        </div>
+                    </div>                                
+                    <% include colorbar.html %>
+                    <% include web_advertise.html %>
+
+                </div>
+                <!-- PAGE CONTENT WRAPPER -->                                
+            </div>    
+            <!-- END PAGE CONTENT -->
+        </div>
+        <!-- END PAGE CONTAINER -->  
+        <div class="modal fade " id="show_cedula_modal" tabindex="-1" role="dialog" aria-labelledby="show_cedula_modal_label" aria-hidden="true">
+          <div class="modal-dialog modal-dialog-centered" style="width: 364px;" >
+            <div class="modal-content">
+              <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only"><%= __('button_close') %></span></button>
+                <h4 class="modal-title" id="show_cedula_modal_label" style="color: rgb(37 14 98); text-align: center;"><%= __('title_provider_details') %></h4>
+              </div>
+              <div class="modal-body" style="text-align: center;">
+                <p><span class="static-text"><%= __('title_cedula') %>: </span><span class="dynamic-text" id="provider_cedula"> </span></p>
+                <p><span class="static-text"><%= __('title_phone') %>: </span><span class="dynamic-text" id="provider_phone" > </span></p>
+                <img src="" class="img-thumbnail" id="provider_cedula_image" style="max-width: 333px;" />
+                <div class="download-wrapper" id="provider_cedula_image_div" style="top: 90px; right: 22px;padding: 6px;">
+                  <a href="" id="provider_cedula_image_a">
+                  <i class="fa fa-download icon_class" style="font-size: 25px;" ></i>
+                  </a>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="modal fade " id="show_plate_modal" tabindex="-1" role="dialog" aria-labelledby="show_plate_modal_label" aria-hidden="true">
+          <div class="modal-dialog modal-dialog-centered" style="width: 364px;" >
+            <div class="modal-content">
+              <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only"><%= __('button_close') %></span></button>
+                <h4 class="modal-title" id="show_plate_modal_label" style="color: rgb(37 14 98); text-align: center;"><%= __('title_plate_details') %></h4>
+              </div>
+              <div class="modal-body" style="text-align: center;">
+                <h5 class="card-title provider_vehicle_plate_data" style="padding-top: 20px; margin-bottom: 0px;"><span style="font-weight: 600;"><%= __('title_gandalo_image_futo') %></span></h5>
+                <h5 class="card-title provider_vehicle_plate_data" style="padding-top: 5px; margin-bottom: 5px;"><span style="font-weight: 600;" id="provider_vehicle_plate"></span></h5>
+                <div  id="provider_plate_image_div"></div>
+                <hr class="provider_vehicle_plate_data_2">
+                <h5 class="card-title provider_vehicle_plate_data_2" style="padding-top: 5px; margin-bottom: 0px;"><span style="font-weight: 600;"><%= __('title_batea_or_furgon') %></span></h5>
+                <h5 class="card-title provider_vehicle_plate_data_2" style="padding-top: 5px; margin-bottom: 5px;"><%= __('title_plate_no') %>: <span style="font-weight: 600;" id="provider_vehicle_plate_2"></span></h5>
+                <div id="provider_plate_image_div_2"></div>
+              </div>
+            </div>
+          </div>
+        </div>
+            
+        <div class="modal fade " id="show_truck_front_lateral_modal" tabindex="-1" role="dialog" aria-labelledby="show_truck_front_lateral_label" aria-hidden="true">
+          <div class="modal-dialog modal-dialog-centered" style="width: 364px;" >
+            <div class="modal-content">
+              <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only"><%= __('button_close') %></span></button>
+                <h4 class="modal-title" id="show_truck_front_lateral_label" style="color: rgb(37 14 98); text-align: center;"><%= __('title_truck_picture') %></h4>
+              </div>
+              <div class="modal-body" style="text-align: center;">
+                <div class="plate-img-container" id="truck_front_image_div">
+                  <img src="" class="img-thumbnail" id="truck_front_image" style="max-width: 328px;" />
+                  <div class="download-wrapper">
+                    <a href="" id="truck_front_image_a">
+                      <i class="fa fa-download icon_class" style="font-size: 25px;"></i>
+                    </a>
+                  </div>
+                </div>
+                <hr class="truck_lateral_data_2">
+                <div class="plate-img-container" id="truck_lateral_image_div_2">
+                  <img src="" class="img-thumbnail" id="truck_lateral_image_2" style="max-width: 328px;" />
+                  <div class="download-wrapper">
+                    <a href="" id="truck_lateral_image_a_2">
+                      <i class="fa fa-download icon_class" style="font-size: 25px;"></i>
+                    </a>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        
+        <div class="modal fade" id="cancellationReasonModal" tabindex="-1" role="dialog" aria-labelledby="cancellationReasonModalLabel" aria-hidden="true">
+          <div class="modal-dialog" role="document">
+            <div class="modal-content">
+              <form id="cancellationReasonForm" enctype="multipart/form-data" method="post">
+        
+              <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                  <span aria-hidden="true">&times;</span>
+                </button>
+                <h4 class="modal-title" id="cancellationReasonModalLabel"><%= __('title_cancel_trip') %></h4>
+              </div>
+              <div class="modal-body">
+              <div class="form-group">
+                <label class="col-md-2 col-xs-5 control-label"><%= __('title_cancellation_reason') %>:</label>
+                  <div class="col-md-10 col-xs-7">
+                      <textarea class="form-control" name="cancel_reason" id="cancellation_reason" cols="50" rows="4" required></textarea>
+                  </div>
+                </div>                                   
+                <input type="hidden" name="trip_id" id="cancellation_trip_id" />
+                <input type="hidden" name="user_id" id="cancellation_user_id" />
+                <input type="hidden" name="token" id="cancellation_user_token" />
+                <input type="hidden" name="user_type" value="<%= constant_json.CORPORATE_UNIQUE_NUMBER %>" />
+              </div>
+              <div class="modal-footer">
+                <button type="submit" class="btn btn-primary" id="submitReason"><%= __('button_submit') %></button>
+              </div>
+              </form>
+            </div>
+          </div>
+        </div>
+        
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.18.1/moment.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/moment-timezone/0.5.17/moment-timezone-with-data.js"></script>
+
+        <script type="text/javascript">
+  let countries = <%-JSON.stringify(countries)%>
+
+  $(document).ready(function() {
+
+    var trip_id_array = new Array();
+      var interval;
+       $('#start_date').datepicker({
+         format: 'yyyy-mm-dd',
+        <% if(filter_end_date){ %>
+          endDate: new Date("<%= filter_end_date %>")
+        <% }else{ %>
+        endDate: new Date(Date.now())
+        <% } %>   
+
+       }).on("input change", function (e) { 
+        var end_date = $('#start_date').datepicker('getDate');
+        end_date.setDate(end_date.getDate() + 1);
+        $('#end_date').datepicker('setStartDate', end_date);
+      });
+
+       $('#end_date').datepicker({
+         format: 'yyyy-mm-dd',
+     endDate: new Date(Date.now()),
+     <% if(filter_start_date){ %>
+      startDate: new Date("<%= filter_start_date %>")
+     <% } %>
+
+       }).on("input change", function (e) { 
+        var start_date = $('#end_date').datepicker('getDate');
+        start_date.setDate(start_date.getDate() - 1);
+        $('#start_date').datepicker('setEndDate', start_date);
+      });
+
+      <% detail.forEach(function(data){ %>
+        $('#show_trip_details_btn<%=data._id%>').click(function(){
+          let trip_details = <%-JSON.stringify(data)%>
+          trip_id_array.push('<%= data._id %>')
+          $('#trip_origin<%=data._id%>').text('<%= data.source_address%>') 
+          $('#trip_destination<%=data._id%>').text('<%= data.initial_destination_address%>') 
+
+          $('#trip_destination_stops<%=data._id%>').text((!'<%= data.destination_stops%>' || '<%= data.destination_stops%>' == "")  ? 0 : '<%= data.destination_stops%>') 
+          
+          if(
+            '<%= data.pickup_details %>' && 
+            '<%= data?.pickup_details[0]?.user_details?.no_of_helpers != "" %>' &&
+            '<%= data?.pickup_details[0]?.user_details?.no_of_helpers != "0" %>'
+          ) {
+            $('#helpers_load<%=data._id%>').show();
+            $('#helpers_load<%=data._id%>').text("<%= data?.pickup_details[0]?.user_details?.number_of_helpers_load %>"); 
+            $('#helpers_download<%=data._id%>').show();
+            $('#helpers_download<%=data._id%>').text("<%= data?.pickup_details[0]?.user_details?.number_of_helpers_download %>"); 
+          } else {
+            $('#helpers_load<%=data._id%>').hide();
+            $('#helpers_download<%=data._id%>').hide();
+          }
+
+          let country_id = trip_details.country_id
+          let trip_country = countries.find(country => country._id === country_id);
+          if(trip_country.countryname == "Panama"){
+            let procedure = trip_details.selected_procedure || ""
+            procedure = procedure == "<%=PROCEDURE_TYPE.GENERAL_MERCHANDISE%>" ? "<%= __('title_general_mechandise')%>" : procedure == "<%=PROCEDURE_TYPE.FISCAL_TI_MERCHANDISE%>" ? "<%= __('title_fiscal_ti_merchandise')%>" : procedure == "<%=PROCEDURE_TYPE.LIQUIDAR_MERCHANDISE%>" ? "<%= __('title_merchandise_liquidar')%>" : ""
+            let transit_service = trip_details.selected_transit_service || ""
+            transit_service = transit_service == "<%=BOOLEAN_TYPE.YES%>" ? "<%= __('title_yes')%>" : transit_service == "<%=BOOLEAN_TYPE.NO%>" ? "<%= __('title_no')%>" : ""
+            $('#trip_type_procedure<%=data._id%>').text(procedure) 
+            $('#trip_transit_service_type<%=data._id%>').text(transit_service) 
+            $('#trip_transit_number<%=data._id%>').text(trip_details.selected_transit_type_number || "") 
+            $('.trip_type_procedure<%=data._id%>').show()
+            $('.trip_transit_service_type<%=data._id%>').show()
+            $('.trip_transit_number<%=data._id%>').show()
+          }else{
+            $('.trip_type_procedure<%=data._id%>').hide()
+            $('.trip_transit_service_type<%=data._id%>').hide()
+            $('.trip_transit_number<%=data._id%>').hide()
+          }
+          if('<%= data.server_start_time_for_schedule%>'){
+            $('#trip_start_date<%=data._id%>').text(moment('<%= data.server_start_time_for_schedule%>').tz('<%=timezone_for_display_date %>').format("DD MMM 'YY")) 
+            $('#trip_start_time<%=data._id%>').text(moment('<%= data.server_start_time_for_schedule%>').tz('<%=timezone_for_display_date %>').format("hh:mm a")) 
+          }else{
+            $('#trip_start_date<%=data._id%>').text(moment('<%= data.created_at%>').tz('<%=timezone_for_display_date %>').format("DD MMM 'YY")) 
+            $('#trip_start_time<%=data._id%>').text(moment('<%= data.created_at%>').tz('<%=timezone_for_display_date %>').format("hh:mm a")) 
+          }
+          // if(trip_details.destination_addresses.length > 0){
+          //   $('#stop_details_data<%=data._id%>').show()
+          //   $('#stop_details_data<%=data._id%>').empty()
+          //   trip_details.destination_addresses.forEach((element, i) => {
+          //       let stop_address = ""
+          //       let stop = element.stops_inside ? element.stops_inside.length : element.inside_stops
+          //       stop_address = '<p class="h_style" style="text-align: center; color: rgb(0 191 179); font-size: 17px; font-weight: 600;"><b><%= __("title_details_modal") %> '+(Number(i)+1)+'</b></p>'+
+          // '<p class="p_style" >'+element.address+'</p>';
+          //       $('#stop_details_data<%=data._id%>').append(stop_address);
+          //       if(element.stops_inside){
+          //         element.stops_inside.forEach((stop, i) => {
+          //           stop_address = '<p class="p_style"><b><%= __('title_stop') %> '+(Number(i)+1)+' </b>: '+stop.address+'</p>';
+          //           $('#stop_details_data<%=data._id%>').append(stop_address);
+          //         })
+          //       }
+          //     })
+          // }else{
+          //   $('#stop_details_data<%=data._id%>').empty()
+          //   $('#stop_details_data<%=data._id%>').hide()
+          // }
+          if (trip_details.destination_addresses.length > 0) {
+            $('#stop_details_data<%=data._id%>').show();
+            $('#stop_details_data<%=data._id%>').empty();
+            trip_details.destination_addresses.forEach((element, i) => {
+                let stop_address = `
+                    <p class="h_style" style="text-align: center; color: rgb(0 191 179); font-size: 17px; font-weight: 600;">
+                        <b><%= __("title_details_modal") %> ${(Number(i) + 1)}</b>
+                    </p>
+                    <p class="p_style">${element.address} <br>`;
+                if (element.stop_username && element.stop_username.trim() !== '') {
+                    stop_address += `<b><%= __("title_user_stop") %></b> ${element.stop_username} <br>`;
+                }
+                if (element.stop_user_phone && element.stop_user_phone.length > 0) {
+                    stop_address += `<b><%= __("title_phone_stop") %></b> ${element.stop_user_phone.join(', ')} <br>`;
+                }
+                stop_address += '</p>';
+                $('#stop_details_data<%=data._id%>').append(stop_address);
+                if (element.stops_inside) {
+                    element.stops_inside.forEach((stop, j) => {
+                        stop_address = `
+                            <p class="p_style">
+                                <b><%= __('title_stop') %> ${(Number(j) + 1)}</b>: ${stop.address}
+                            </p>`;
+                        $('#stop_details_data<%=data._id%>').append(stop_address);
+                    });
+                }
+            });
+          }else{
+            $('#stop_details_data<%=data._id%>').empty()
+            $('#stop_details_data<%=data._id%>').hide()
+          }
+
+          let service_details = trip_details.service_details
+          if(service_details){
+            $('#trip_selected_service<%=data._id%>').text(service_details.service_name) 
+          }
+          if(trip_details.pickup_details[0].weight_of_load){
+            $('#trip_weight_load<%=data._id%>').text(trip_details.pickup_details[0].weight_of_load + " Kg") 
+          }
+          $('#trip_volume_load<%=data._id%>').text(trip_details?.pickup_details[0]?.volume_of_load ? trip_details?.pickup_details[0]?.volume_of_load + " M3" : "") 
+          $('#pickup_company_name<%=data._id%>').text("")
+          $('#pickup_name<%=data._id%>').text("")
+          $('#pickup_phone<%=data._id%>').text("")
+          $('#pickup_weight_of_load<%=data._id%>').text("")
+          $('#pickup_description<%=data._id%>').text("")
+          if(trip_details.pickup_details.length){
+            const pickup = trip_details.pickup_details[0]
+            const user = pickup.user_details
+            $('#pickup_company_name<%=data._id%>').text(user.company_name)
+            $('#pickup_name<%=data._id%>').text(user.name)
+            $('#pickup_phone<%=data._id%>').text( user.phone)
+            $('#pickup_weight_of_load<%=data._id%>').text(pickup.weight_of_load)
+            $('#pickup_description<%=data._id%>').text(pickup.note)
+          }
+
+          $('#delivery_company_name<%=data._id%>').text("")
+          $('#delivery_name<%=data._id%>').text("")
+          $('#delivery_phone<%=data._id%>').text("")
+          $('#delivery_description<%=data._id%>').text("")
+          if(trip_details.delivery_details.length){
+            const delivery = trip_details.delivery_details[0]
+            const user = delivery.user_details
+            $('#delivery_company_name<%=data._id%>').text(user.company_name)
+            $('#delivery_name<%=data._id%>').text(user.name)
+            $('#delivery_phone<%=data._id%>').text( user.phone)
+            $('#delivery_description<%=data._id%>').text(delivery.note)
+          }
+
+          
+          let model_details = trip_details.model_details
+          if(model_details){
+            $('#trip_vehicle_model<%=data._id%>').text(model_details.model_name) 
+          }
+          let capacity_details = trip_details.capacity_details
+          if(capacity_details){
+            let unit = capacity_details?.unit
+            unit = unit == 0 ? 'Kilos' : unit == 1 ? 'Litre' : unit == 2 ? 'm3' : ""
+            let capacity_name = capacity_details?.capacity_name ? capacity_details?.capacity_name : capacity_details?.value
+            $('#trip_selected_capacity<%=data._id%>').text(capacity_name + " " + unit ) 
+          }
+
+          $('#trip_selected_type<%=data._id%>').text('<%= data?.type_detail?.typename%>') 
+          $('#trip_total<%=data._id%>').text('$'+ ("<%=data.fixed_price %>" - "<%= data.promo_payment %>").toFixed(2) ) 
+          
+          $('#count_night_shift<%=data._id%>').text('<%= data.night_shift%>') 
+          let message = '<%= __('title_yes') %>';
+          if(Number('<%= data.boat_ticket %>') == 0) {
+            message = '<%= __('title_no') %>';
+          }
+          $('#ferry_ticket<%=data._id%>').text(message) 
+
+          $('#trip_details_modal<%=data._id%>').modal('show');
+          
+          $('#trip_load_images<%=data._id%>').hide()
+          $('#trip_load_images<%=data._id%>').empty()
+          if(trip_details.image_url.length){
+            const image_base_url = "<%= setting_detail.image_base_url %>"
+            trip_details.image_url.forEach((image, index) => {
+              if(image !== ""){
+                const fileExtension = image.split('.').pop().toLowerCase();
+                if(fileExtension == "pdf"){
+                  $('#trip_load_images<%=data._id%>').append(
+                    '<div class="row"><div class="col-md-12"><div class="card mb-3" style="text-align: center;">' +
+                    '<div id="pdf-status" class="pdf-uploaded">' +
+                      '<i class="fa fa fa-file-pdf-o icon_class" style="font-size: 190px;display: block;"></i>'+
+                      '<span class="pdf-uploaded-text">PDF File!</span>'+
+                    '</div>'+
+                    '<div class="download-wrapper">' +
+                    '<form method="get" target="_blank" action="' +
+                    image_base_url +
+                    image +
+                    '">' +
+                    '<a href="' +
+                    image_base_url +
+                    image +
+                    '" download>' +
+                    '<i class="fa fa-download icon_class"></i>' +
+                    '</a>' +
+                    '</form>' +
+                    '</div>' +
+                    '</div>' +
+                    '<div class="card-body"><h5 class="card-title">Doc '+(index + 1)+'</h5></div></div></div></div>'
+                  );
+                }else{
+                  $('#trip_load_images<%=data._id%>').append(
+                    '<div class="row"><div class="col-md-12"><div class="card mb-3">' +
+                    '<div class="image-container1">' +
+                    '<img src=' +
+                    image_base_url +
+                    image +
+                    ' class="card-img-top img-fluid image-container">' +
+                    '<div class="download-wrapper">' +
+                    '<form method="get" target="_blank" action="' +
+                    image_base_url +
+                    image +
+                    '">' +
+                    '<a href="' +
+                    image_base_url +
+                    image +
+                    '" download>' +
+                    '<i class="fa fa-download icon_class"></i>' +
+                    '</a>' +
+                    '</form>' +
+                    '</div>' +
+                    '</div>' +
+                    '<div class="card-body"><h5 class="card-title">Doc '+(index + 1)+'</h5></div></div></div></div>'
+                  );
+                }
+              }
+            })
+    
+            $('#trip_load_images<%=data._id%>').show()
+          }
+        })
+
+        <% }) %>
+
+ });
+
+  function show_plate_details(id) {
+    $.ajax({
+      type: 'POST', 
+      url: '/corporate_get_provider_documents', 
+      data: {
+        trip_id: id,
+        type: '<%= DOCUMENT_FOR.VEHICLE_PLATE %>'
+      },
+      datatype: "json",
+       success: function(response) {
+        if (response.success) {
+          const docs = response.doc || [];
+          const docs2 = response.doc2 || [];
+
+          $('#provider_plate_image_div').empty();
+        if (docs.length > 0) {
+          docs.forEach(doc => {
+            if (doc.document_picture) {
+              const fileUrl = '<%= setting_detail.image_base_url %>' + doc.document_picture;
+              const block = createFileBlock(fileUrl);
+              $('#provider_plate_image_div').append(block);
+            }
+          });
+          $('#provider_vehicle_plate').text(response.trip.assigned_vehicle_details?.vehicle_plate_no || "");
+          $('#provider_plate_image_div').show();
+          $('.provider_vehicle_plate_data').show();
+        } else {
+          $('#provider_vehicle_plate').text("");
+          $('#provider_plate_image_div').hide();
+          $('.provider_vehicle_plate_data').hide();
+        }
+
+        $('#provider_plate_image_div_2').empty();
+        if (docs2.length > 0) {
+          docs2.forEach(doc => {
+            if (doc.document_picture) {
+              const fileUrl = '<%= setting_detail.image_base_url %>' + doc.document_picture;
+              const block = createFileBlock(fileUrl);
+              $('#provider_plate_image_div_2').append(block);
+            }
+          });
+          $('#provider_vehicle_plate_2').text(response.trip.assigned_vehicle_details_2?.vehicle_plate_no || "");
+          $('#provider_plate_image_div_2').show();
+          $('.provider_vehicle_plate_data_2').show();
+        } else {
+          $('#provider_vehicle_plate_2').text("");
+          $('#provider_plate_image_div_2').hide();
+          $('.provider_vehicle_plate_data_2').hide();
+        }
+
+
+          $("#show_plate_modal").modal('show');
+        }
+      }
+
+    });
+  }
+
+    function createFileBlock(fileUrl) {
+      const isPDF = fileUrl.toLowerCase().endsWith('.pdf');
+      const encodedURL = encodeURIComponent(fileUrl);
+
+      if (isPDF) {
+        return `
+          <div class="plate-img-container">
+            <div class="doc-content">
+              <iframe src="https://docs.google.com/viewer?url=${encodedURL}&embedded=true" width="100%" height="500px" style="border: none;"></iframe>
+            </div>
+            <div class="download-wrapper">
+              <a href="${fileUrl}" download>
+                <i class="fa fa-download icon_class"></i>
+              </a>
+            </div>
+          </div>
+        `;
+      } else {
+
+        return `
+          <div class="plate-img-container" style="margin-bottom: 10px;">
+            <img src="${fileUrl}" class="img-thumbnail" style="max-width: 328px;" />
+            <div class="download-wrapper">
+              <a href="${fileUrl}" download>
+                <i class="fa fa-download icon_class" style="font-size: 25px;"></i>
+              </a>
+            </div>
+          </div>
+        `;
+      }
+}
+
+ function show_provider_cedula(id, phone) {
+  console.log({id})
+  console.log({phone})
+    $.ajax({
+      type: 'POST', // define the type of HTTP verb we want to use (POST for our form)
+      url: '/corporate_get_provider_documents', /// the url where we want to POST
+      data: {
+        trip_id: id,
+        type: '<%= DOCUMENT_FOR.PROVIDER_CEDULA %>'
+      }, 
+      datatype: "json",
+      success: function(response) {
+        let cedula = ""
+        let image = ''
+        if (response.success) {
+          let docs = response.doc
+          cedula = docs[0]?.unique_code
+          image = docs[0]?.document_picture != "" ? '<%= setting_detail.image_base_url %>' + docs[0].document_picture : '' 
+        }
+        $("#provider_cedula").text(cedula);
+        $("#provider_phone").text(phone);
+        if(image == ''){
+          $('#provider_cedula_image').attr('src', "");
+          $('#provider_cedula_image_a').attr('href', "");
+          $('#download_cedula_form').attr('action', "");
+          $('#provider_cedula_image').hide();
+          $('#provider_cedula_image_div').hide();
+
+        }else{
+          $('#provider_cedula_image').attr('src', image);
+          $('#provider_cedula_image_a').attr('href', image);
+          $('#download_cedula_form').attr('action', image);
+          $('#provider_cedula_image').show();
+          $('#provider_cedula_image_div').show();
+        }
+          $("#show_cedula_modal").modal('show');
+      }
+    });
+  }
+
+  function show_truck_front_lateral_images(id) {
+    $.ajax({
+      type: 'POST', 
+      url: '/corporate_get_provider_documents', 
+      data: {
+        trip_id: id,
+        type: '<%= DOCUMENT_FOR.VEHICLE_FRONT_IMAGE %>'
+      },
+      datatype: "json",
+      success: function(response) {
+        let image = ''
+        let image2 = ''
+        if (response.success) {
+          const docs = response?.doc || [];
+          const docs2 = response?.doc2 || [];
+
+          image = docs[0]?.document_picture != "" ? '<%= setting_detail.image_base_url %>' + docs[0]?.document_picture : '' 
+          image2 = docs2[0] ? docs2[0]?.document_picture != "" ? '<%= setting_detail.image_base_url %>' + docs2[0]?.document_picture : '' : ''
+        }
+        if(image == ''){
+          $('#truck_front_image').attr('src', "");
+          $('#truck_front_image_a').attr('href', "");
+          $('#truck_front_image').hide();
+          $('#truck_front_image_a').hide();
+          $('#truck_front_image_div').hide();
+          $('.truck_lateral_data_2').hide();
+        }else{
+          $('#truck_front_image').attr('src', image);
+          $('#truck_front_image_a').attr('href', image);
+          $('#truck_front_image').show();
+          $('#truck_front_image_a').show();
+          $('#truck_front_image_div').show();
+          $('.truck_lateral_data_2').show();
+        }
+
+        if(image2 == ''){
+          $('#truck_lateral_image_2').attr('src', "");
+          $('#truck_lateral_image_a_2').attr('href', "");
+          $('#truck_lateral_image_2').hide();
+          $('#truck_lateral_image_a_2').hide();
+          $('#truck_lateral_image_div_2').hide();
+          $('.truck_lateral_data_2').hide();
+        }else{
+          $('#truck_lateral_image_2').attr('src', image2);
+          $('#truck_lateral_image_a_2').attr('href', image2);
+          $('#truck_lateral_image_2').show();
+          $('#truck_lateral_image_a_2').show();
+          $('#truck_lateral_image_div_2').show();
+        }
+
+        $("#show_truck_front_lateral_modal").modal('show');
+      }
+    });
+  }
+
+  function cancel(userid, token, id) {
+    if (!window.confirm("<%= __('confirm_delete_trip_message')%>")) {
+      return false;
+    }
+    $("#cancellationReasonForm").trigger("reset");
+    $('#cancellation_user_id').val(userid); 
+    $('#cancellation_user_token').val(token); 
+    $('#cancellation_trip_id').val(id); 
+    $('#cancellationReasonModal').modal('show');
+  }
+
+  $("#cancellationReasonForm").validate({
+    rules: {
+      cancel_reason: "required",
+    }
+  });
+  
+  let $form = $('#cancellationReasonForm');
+  $form.submit(function(event) {
+    event.preventDefault();
+    let reason = $('#cancellation_reason').val()
+
+    if(reason != ""){
+      let id = $('#cancellation_trip_id').val()
+      $('#cancellationReasonForm input[type="submit"]').attr('disabled','disabled');         
+      $.ajax({
+        type: 'POST',
+        url: '/canceltrip',
+        data: $('#cancellationReasonForm').serialize(),
+        dataType: "json",
+        success: function(res) {
+          if (res.success) {  
+            $('#cancellationReasonModal').modal('hide');
+            $('#request_error').show();   
+            $('#r'+id).hide();
+            $('#request_message').text("Request Cancelled Successfully");
+            setTimeout(function() {
+              $('#request_error').hide();
+            }, 3000);
+          }
+        }
+      });
+    }
+  });
+  
+
+   function export_excel(){
+            $.ajax({
+                      type: 'POST',
+                      url: '/corporate_genetare_future_request_excel',
+                      data: $('.form-horizontal').serialize(),
+                      dataType: "json",
+                      success: function (res) {
+                          window.open(res)
+                      }
+            });
+}
+  
+</script>  
+<% include footer_list.html %>

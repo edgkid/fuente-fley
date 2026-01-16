@@ -1,0 +1,140 @@
+<% include header.html %>
+<link href="css/fSelect.css"
+rel="stylesheet" type="text/css" />
+<script src="js/fSelect.js"
+type="text/javascript"></script>    
+
+<div class="alert alert-success" role="alert" id="promo_error" style="display:none">
+  <button type="button" id="close" class="close"><span aria-hidden="true">&times;</span><span class="sr-only"><%= __('button_close') %></span></button>
+  <p align="center" id="message"> <strong></strong></p>
+</div>
+
+
+<!-- PAGE CONTENT WRAPPER -->
+<div class="row">
+<div class="page-content-wrap">
+  <div class="col-md-6 col-sm-8 col-xs-12">
+    <form class="form-horizontal" method="post" id="add_form" action="/add_inbox_notification" enctype="multipart/form-data">
+      <div class="panel panel-default">
+        <div class="panel-body form-group-separated">
+          <div class="form-group">
+            <div class="col-md-9 col-xs-7">
+            <label class="col-md-3 col-xs-5 control-label"><%= __('title') %></label>
+            <div class="col-md-9 col-xs-7">
+              <input type="text" class="form-control" id="title" name="title" />
+            </div>
+          </div>
+          </div>
+          <div class="form-group">
+            <div class="col-md-9 col-xs-7">
+            <label class="col-md-3 col-xs-5 control-label"><%= __('title_message') %></label>
+            <div class="col-md-9 col-xs-7">
+              <input type="text" class="form-control" id="message" name="message" />
+            </div>
+          </div>
+          </div>                    
+          <div class="form-group">
+            <div class="col-md-9 col-xs-7">
+              <label class="col-md-3 col-xs-5 control-label"><%= __('title_type') %></label>
+              <div class="col-md-9">
+                <select class="form-control select" data-none-selected-text="<%= __('title_nothing_selected') %>" id="type" placeholder="Select User Type" name="type">
+                  <option selected disabled hidden style='display: none'><%= __('title_select_user') %></option>
+                  <option value='4'><%= __('title_partner') %></option>
+                  <option value='5'><%= __('title_corporate') %></option>
+                </select>
+              </div>
+            </div>
+          </div>
+          <div class="form-group">
+            <div class="col-md-9 col-xs-7">
+              <label class="col-md-3 col-xs-5 control-label"><%= __('title_country') %></label>
+              <div class="col-md-9">
+                <select class="form-control select" data-none-selected-text="<%= __('title_nothing_selected') %>" data-live-search="true" name="country_id" id="country_id">
+                  <option selected disabled hidden style='display: none'><%= __('title_select_country') %></option>
+                  <% country.forEach(function(country_data) { %>
+                    <option value="<%= country_data._id %>"><%= country_data.countryname %></option>
+                  <% }); %>
+                </select>
+              </div>
+            </div>
+          </div>
+          <div class="form-group">
+            <div class="col-md-12 col-xs-12">
+              <button class="btn btn-primary btn-rounded pull-right" type="submit" id="save" name="save" value="save">
+                <%= __('button_send') %>
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </form>
+  </div>
+</div>
+</div>
+<% include colorbar.html %>
+
+<script type="text/javascript">
+  $(document).ready(function() {
+    $('#type_service_list').fSelect({
+        placeholder: '<%= __("title_select_service")%>',
+        numDisplayed: 3,
+        overflowText: '{n} selected',
+        searchText: '<%= __("title_search_text")%>',
+        showSearch: true
+    });
+
+    $('#start_date').datepicker({
+      format: 'yyyy-mm-dd',
+      startDate: new Date(Date.now())
+
+    }).on("input change", function(e) {
+      var end_date = $('#start_date').datepicker('getDate');
+      end_date.setDate(end_date.getDate() + 1);
+      $('#code_expiry').datepicker('setStartDate', end_date);
+    });
+
+    $('#code_expiry').datepicker({
+      format: 'yyyy-mm-dd'
+
+    }).on("input change", function(e) {
+      var start_date = $('#code_expiry').datepicker('getDate');
+      start_date.setDate(start_date.getDate() - 1);
+      $('#start_date').datepicker('setEndDate', start_date);
+    });
+
+    $("#add_form").validate({
+      ignore: [],
+      rules: {
+        title: "required",
+        message: "required",
+        type: "required",
+        country_id: "required"
+      },
+      submitHandler: function(form) {
+        form.submit();
+      }
+    });
+
+    var _URL = window.URL || window.webkitURL;
+    $("#model_image").change(function(e) {
+      validateImage($("#model_image"), $("#profile_image_dimention_model_image"), this.files[0].type)
+      var file, img;
+
+      if ((file = this.files[0])) {
+        img = new Image();
+
+        var reader = new FileReader();
+
+        reader.onload = function(e) {
+          $('#model_image_sel_img').attr('src', e.target.result);
+        }
+
+        reader.readAsDataURL(model_image.files[0]);
+        img.src = _URL.createObjectURL(file);
+
+      }
+    })
+
+  });
+</script>
+<% include footer_form.html %>

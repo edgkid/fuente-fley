@@ -1,0 +1,139 @@
+
+<div class="form-group">
+    <label class="col-md-12 col-xs-12 control-label main_heading"><%= __('title_basic_settings') %></label>
+  </div>
+
+  <div class="form-group">
+    <label class="col-md-3 col-xs-5 control-label"><%= __('title_bussiness_in_city') %></label>
+
+    <div class="col-md-9 col-xs-7">
+      <div class="col-md-9">
+        <label class="switch">
+          <input type="checkbox" class="switch" value="1" name="isBusiness" checked />
+          <span></span>
+        </label>
+      </div>
+
+    </div>
+  </div>
+
+  <div class="form-group">
+    <label class="col-md-3 col-xs-5 control-label"><%= __('title_country') %></label>
+
+    <div class="col-md-9 col-xs-7">
+      <div class="col-md-9">
+        <select class="form-control select" data-none-selected-text="<%= __('title_nothing_selected') %>" data-live-search="true" name="countryid" id="countryid">
+          <option selected disabled hidden style='display: none'><%= __('title_select_country')%></option>
+          <% country_data.forEach(function(data) { %>
+
+          <option value="<%= data.id %>"><%= data.countryname %></option>
+          <% }); %>
+        </select>
+      </div>
+
+    </div>
+  </div>
+  <input type="hidden" class="form-control" name="full_cityname" id="full_cityname" />
+
+
+  <div class="form-group">
+    <label class="col-md-3 col-xs-5 control-label"><%= __('title_city') %></label>
+    <div class="col-md-9 col-xs-7">
+      <div class="col-md-9">
+
+        <input type="text" class="form-control" name="cityname" onkeyup="test()" id="cityname" />
+        <div id="citycheck"></div>
+      </div>
+
+    </div>
+  </div>
+
+  <div class="form-group">
+    <label class="col-md-3 col-xs-5 control-label"><%= __('title_timezone') %></label>
+
+    <div class="col-md-9 col-xs-7">
+      <div class="col-md-9">
+        <select class="form-control select" data-none-selected-text="<%= __('title_nothing_selected') %>" data-live-search="true" name="timezone" id="timezone">
+        </select>
+      </div>
+
+    </div>
+  </div>
+
+  <div class="form-group">
+    <label class="col-md-3 col-xs-5 control-label"><%= __('title_distance_unit') %></label>
+
+    <div class="col-md-9 col-xs-7">
+      <div class="col-md-9">
+        <select class="form-control select" data-none-selected-text="<%= __('title_nothing_selected') %>" name="unit">
+          <option value="1"><%= __('unit_km') %></option>
+          <option value="0"><%= __('unit_mile') %></option>
+        </select>
+      </div>
+
+    </div>
+  </div>
+
+  <div class="form-group">
+    <label class="col-md-3 col-xs-5 control-label"><%= __('title_is_use_city_boundary') %></label>
+
+    <div class="col-md-9 col-xs-7">
+      <div class="col-md-9">
+        <select class="form-control select" data-none-selected-text="<%= __('title_nothing_selected') %>" id="is_use_city_boundary" name="is_use_city_boundary">
+          <option value="true"><%= __('title_on') %></option>
+          <option value="false" selected><%= __('title_off') %></option>
+        </select>
+      </div>
+
+    </div>
+  </div>
+
+  <div class="form-group" id="title_city_radius">
+    <label class="col-md-3 col-xs-5 control-label"><%= __('title_city_radius') %></label>
+
+    <div class="col-md-9 col-xs-7">
+      <div class="col-md-9">
+        <div class="input-group">
+          <input type="text" class="form-control" name="cityRadius" id="cityRadius" onkeypress="return isNumberKey(event,false);" maxlength="3" />
+          <span class="input-group-btn">
+            <button class="btn btn-default" type="button" data-toggle="tooltip" data-placement="left" title="" data-original-title="<%= __('tooltip_city_radius') %>">?</button>
+          </span>
+        </div>
+
+      </div>
+
+    </div>
+  </div>
+  <div style="display: none;">
+    <div class="form-group" id="title_city_latitude">
+      <label class="col-md-3 col-xs-5 control-label"><%= __('title_city_latitude') %></label>
+
+      <div class="col-md-9 col-xs-7">
+        <div class="col-md-9">
+          <div class="input-group">
+            <input type="text" class="form-control" id="latitude" name="latitude" onkeypress="return isNumberKey(event);" />
+            <span class="input-group-btn">
+              <button class="btn btn-default" type="button" data-toggle="tooltip" data-placement="left" title="" data-original-title="<%= __('tooltip_city_latitude') %>">?</button>
+            </span>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+
+    <div class="form-group" id="title_city_longitude">
+      <label class="col-md-3 col-xs-5 control-label"><%= __('title_city_longitude') %></label>
+
+      <div class="col-md-9 col-xs-7">
+        <div class="col-md-9">
+          <div class="input-group">
+            <input type="text" class="form-control" id="longitude" name="longitude" onkeypress="return isNumberKey(event);" />
+            <span class="input-group-btn">
+              <button class="btn btn-default" type="button" data-toggle="tooltip" data-placement="left" title="" data-original-title="<%= __('tooltip_city_longitude') %>">?</button>
+            </span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>

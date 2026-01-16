@@ -1,0 +1,608 @@
+
+<% include header.html %>
+<link href="css/fSelect.css"
+rel="stylesheet" type="text/css" />
+<script src="js/fSelect.js"
+type="text/javascript"></script>               
+
+    <!-- PAGE CONTENT WRAPPER -->
+    <style type="text/css">
+       .page-content-wrap {
+            background: #f0f0f0;
+        }
+        .table {
+            display: flex;
+            flex-direction: row;
+            align-items: center;
+            justify-content: flex-start;
+            margin-bottom: 10px;
+            padding-left: 10px;
+            padding-right: 10px;
+        }
+        .cell {
+            width: calc((100%) / 7);
+            aspect-ratio: 223/151;
+            background-color: #fff;
+            color: #444A55;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-right: 40px;
+            font-size: 28px;
+            font-weight: 900;
+            border-radius: 16px;
+            margin-top: 15px;
+            flex-direction: column;
+            font-family: "LibreFranklinBlack", sans-serif;
+            box-shadow: 1px 1px 6px rgba(0, 0, 0, 0.3);;
+        }
+        .amount .cell{
+            font-weight: normal;
+            font-size: 24px;
+            font-family: "LibreFranklinMedium", sans-serif;
+        }
+        .heading {
+            width: 257px;
+            text-align: center;
+            margin-right: 20px;
+            color: white;
+            font-weight: 900;
+            font-size: 20px;
+        }
+
+        .hz{
+            color: #27245E;
+            text-transform: uppercase;
+            font-family: 'FiraSansHeavy', sans-serif;
+            margin-right: 40px;
+            width: calc(100% / 7);
+            letter-spacing: 1px;
+        }
+
+        .vt{
+            font-family: "LibreFranklinBlack", sans-serif;
+            font-size: 24px;
+            line-height: 1.3;
+        }
+
+        .panel-refresh-layer{
+            background: transparent;
+        }
+
+        ul.panel-controls > li > a {            
+            color: #fff;
+            border: 2px solid #dfdfdf !important;
+        }
+        
+        .fa-expand{
+            color: #fff;
+        }
+        #total_trucks_chart text tspan,
+        #total_trucks_per_city text tspan {
+            fill: rgb(41, 41, 41) !important;
+        }
+
+        #total_trucks_chart #total_trucks_per_city{
+            height: 300px
+        }
+
+        #total_trucks_chart svg path {
+            stroke-width: 0px;
+            stroke: none;
+        }
+
+        .km_class span{
+            font-weight: normal;
+            font-size: 22px;
+            line-height: 0.9;
+            font-weight: normal;
+            font-family: "LibreFranklinMedium", sans-serif;
+        }        
+
+        .colorbar {
+            position: fixed;
+            bottom: 0;
+        }
+        
+        .table_span{
+            font-weight: normal;
+            font-family: "LibreFranklinMedium", sans-serif;
+        }
+
+        .chart_span{
+            font-weight: normal;
+            font-family: "LibreFranklinBlack", sans-serif;
+        }
+
+        .modebar-container{
+            display: none;
+        }
+
+        .slicetext text{
+            font-weight: 900;
+            /* fill: white !important; */
+            font-size: 14px !important;
+            font-family: "Libre Fraklin Black", sans-serif !important;
+        }
+
+        .plot-container{
+            justify-content: center;
+        }
+
+        .donut [class^='col-md-4'] {
+            padding-top: 56px !important;
+        }
+        .donut_title {
+            font-size: 26px; 
+            font-weight: normal; 
+            color: #27245E; 
+            font-family: "LibreFranklinMedium", sans-serif;
+        }
+
+        @media screen and (max-width: 991px) and (min-width: 768px) {
+            .cell {
+                font-size: 17px;
+                margin-top: 5px;
+                margin-right: 18px;
+            }
+
+            .hz{
+                margin-right: 18px;
+            }
+
+            .hz_1{
+                width: 141px !important;
+            }
+
+
+            .vt {
+                font-size: 13px !important;
+                width: 141px;
+            }
+
+            .heading {
+                font-size: 12.1px;
+            }
+
+            .donut_title {
+                font-size: 15px !important;
+            }
+
+            .donut [class^='col-md-4'] {
+                padding-top: 0px !important;
+            }
+
+            .plot-container {
+                justify-content: center;
+                display: flex;
+            }
+
+            .donut .panel-heading{
+                padding: 39px 10px 0px 10px !important;
+            }
+
+            .svg-container{
+                margin: -41px 0px 0px 60px !important;
+            }
+
+        }
+
+        @media screen and (max-width: 1024px) and (min-width: 992px) {
+            .cell {
+                font-size: 17px;
+                margin-top: 5px;
+                margin-right: 18px;
+            }
+
+            .km_class span {
+                font-weight: normal;
+                font-size: 13px;
+            }
+            .amount .cell {
+                font-size: 15px !important;
+            }
+
+            .hz{
+                margin-right: 18px;
+            }
+
+            .hz_1{
+                width: 163px !important;
+            }
+
+            .vt {
+                font-size: 13px !important;
+                width: 163px;
+            }
+
+            .heading {
+                font-size: 12.1px;
+            }
+
+            .donut_title {
+                font-size: 15px !important;
+            }
+
+            .donut [class^='col-md-4'] {
+                padding-top: 0px !important;
+            }
+
+            .plot-container {
+                justify-content: center;
+                display: flex;
+            }
+
+            .donut .panel-heading{
+                padding: 39px 10px 0px 10px !important;
+            }
+
+            .svg-container{
+                margin: -41px 0px 0px 60px !important;
+            }
+
+            .donut [class^='col-md'] {
+                padding-top: 0px !important;
+                width: 100%;
+            }
+
+        }
+
+        @media screen and (max-width: 1440px) and (min-width: 1025px) {
+            .cell {
+                font-size: 24px;
+                margin-top: 10px;
+                margin-right: 30px;
+            }
+
+            .hz{
+                margin-right: 30px;
+            }
+
+            .hz_1{
+                width: 227px !important;
+                margin-right: 11px !important;
+            }
+
+            .vt {
+                font-size: 18px !important;
+                width: 227px;
+                margin-right: 11px;
+            }
+
+            .heading {
+                font-size: 17.1px;
+            }
+
+            .donut_title {
+                font-size: 19px !important;
+            }
+
+            .plot-container {
+                justify-content: center;
+                display: flex;
+            }
+
+            .donut [class^='col-md'] {
+                padding-top: 0px !important;
+                width: 100%;
+            }
+
+            .svg-container{
+                height: 314px !important;
+                margin-top: -26px !important;
+            }
+
+            .donut .trucks_heading {
+                padding: 41px 10px 0px 10px !important;
+            }
+
+            .donut .trucks_city_heading {
+                padding: 19px 10px 0px 10px !important;
+            }
+
+            .donut_title {
+                font-size: 20px !important;
+            }
+        }
+
+        @media screen and (max-width: 1600px) and (min-width: 1441px) {
+            .cell {
+                font-size: 25px;
+                margin-top: 10px;
+                margin-right: 30px;
+            }
+
+            .hz{
+                margin-right: 30px;
+            }
+
+            .vt {
+                font-size: 19px !important;
+                width: 257px;
+            }
+
+            .heading {
+                font-size: 17.1px;
+            }
+
+            .donut_title {
+                font-size: 19px !important;
+            }
+
+            .donut .col-md-2 {
+                width: 12.666667% !important;
+            }
+        }
+
+        @media only screen and (max-width: 1920px) and (min-width: 1601px) {
+            .cell {
+                font-size: 28px;
+                width: calc((100%) / 8);
+            }
+
+            .hz{
+                width: calc((100%) / 8);
+            }
+            .hz_1{
+                width: 360px !important;
+            }
+
+            .vt {
+                font-size: 24px !important;
+                width: 360px;
+            }
+        }
+
+    </style>
+    <script type="text/javascript" src="js/settings.js"></script>
+    <script type="text/javascript" src="js/plugins.js"></script> 
+    <script type="text/javascript" src="js/plugins/owl/owl.carousel.min.js"></script>
+    <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
+
+    <div class="page-content-wrap">
+        <div class="super_admin_validate" style="margin-bottom: 3%;">
+            <form method="post" action="/fleet_data">
+                <div style="float: right;" class="col-md-3 col-xs-7">
+                    <button type="submit" id="apply_filter" class="btn btn-primary" style="height: 35px; width: 100%;"><span>Apply</span></button>
+                </div>
+                <div style="float: right;" class="col-md-3 col-xs-7">
+                    <select id="selected_country" multiple="multiple" name="selected_country[]">
+                        <optgroup id="append" label='Country List'>
+                            <% detail?.all_countries?.forEach(function(country){ %>
+                                <% if(detail?.selected_countries?.indexOf(country._id.toString()) !== -1){ %>
+                                    <option value="<%= country._id %>" selected><%= country.countryname %></option>
+                                <% } else { %>
+                                    <option value="<%= country._id %>"><%= country.countryname %></option>
+                                <% } %>
+                            <% }) %>
+                        </optgroup>
+                    </select>
+                </div>
+            </form>
+        </div>
+        <div class="row">           
+            <div class="row">
+                <div class="table" style="margin-top: 27px;">
+                    <div class="heading hz hz_1" style="width: 257px; margin-right: 20px;">TIPO DE VIAJES</div>
+                    <div class="heading hz">HOY</div>
+                    <div class="heading hz">ESTE MES</div>
+                    <div class="heading hz">MES ANTERIOR</div>
+                    <div class="heading hz">TOTAL AÑO</div>
+                    <div class="heading hz">TOTAL HISTÓRICO</div>
+                </div>
+                    
+                <div class="table">
+                    <div class="heading vt" style="color:#73C9C5">Camiones<br><span class="table_span">Trucks</span></div>
+                    <div class="cell"><%= detail.trucks?.today.toLocaleString('es-ES', { minimumFractionDigits: 0, maximumFractionDigits: 0 }) %></div>
+                    <div class="cell"><%= detail.trucks?.current_month.toLocaleString('es-ES', { minimumFractionDigits: 0, maximumFractionDigits: 0 }) %></div>
+                    <div class="cell"><%= detail.trucks?.previous_month.toLocaleString('es-ES', { minimumFractionDigits: 0, maximumFractionDigits: 0 }) %></div>
+                    <div class="cell"><%= detail.trucks?.current_year.toLocaleString('es-ES', { minimumFractionDigits: 0, maximumFractionDigits: 0 }) %></div>
+                    <div class="cell"><%= detail.trucks?.total.toLocaleString('es-ES', { minimumFractionDigits: 0, maximumFractionDigits: 0 }) %></div>
+                </div>
+                
+                <div class="table">
+                    <div class="heading vt" style="color:#F16F63">Conductores<br><span class="table_span">Aprobados</span></div>
+                    <div class="cell"><%= detail.providers?.today.toLocaleString('es-ES', { minimumFractionDigits: 0, maximumFractionDigits: 0 }) %></div>
+                    <div class="cell"><%= detail.providers?.current_month.toLocaleString('es-ES', { minimumFractionDigits: 0, maximumFractionDigits: 0 }) %></div>
+                    <div class="cell"><%= detail.providers?.previous_month.toLocaleString('es-ES', { minimumFractionDigits: 0, maximumFractionDigits: 0 }) %></div>
+                    <div class="cell"><%= detail.providers?.current_year.toLocaleString('es-ES', { minimumFractionDigits: 0, maximumFractionDigits: 0 }) %></div>
+                    <div class="cell"><%= detail.providers?.total.toLocaleString('es-ES', { minimumFractionDigits: 0, maximumFractionDigits: 0 }) %></div>
+                </div>
+            </div>    
+            <div class="row">
+                <div class="row donut">
+                    <div class="col-md-2">
+                        <div class="panel-heading trucks_heading" style="background: transparent; border-color: transparent; padding: 70px 10px 0px 10px;" >
+                            <div class="panel-title-box" style="float: none; font-size: 26px; text-align: center;">
+                                <h3 class="donut_title">Tipo de <br><span class="chart_span">Camiones</span></span></h3>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="panel panel-default" style="background: transparent; border-color: transparent; -webkit-box-shadow: 0px 1px 1px 0px transparent;">
+                            <div class="panel-body padding-0">
+                                <div class="chart-holder" id="total_trucks_chart" ></div>
+                            </div>
+                        </div>
+
+                    </div> 
+                    <div class="col-md-2">
+                        <div class="panel-heading trucks_city_heading" style="background: transparent; border-color: transparent; padding: 70px 10px 0px 10px;" >
+                            <div class="panel-title-box" style="float: none; font-size: 26px; text-align: center;">
+                                <h3 class="donut_title" >Total <br><span class="chart_span">Ciudades</span></span></h3>
+                            </div>
+                        </div>
+                    </div>   
+                    <div class="col-md-4">
+                        <div class="panel panel-default" style="background: transparent; border-color: transparent; -webkit-box-shadow: 0px 1px 1px 0px transparent;">
+                            <div class="panel-body padding-0">
+                                <div class="chart-holder" id="total_trucks_per_city" ></div>
+                            </div>
+                        </div>
+                    </div>    
+                </div>
+            </div>
+            <img src="/web_images/colorbar.svg" alt="" class="colorbar">
+        </div>
+
+
+<script>
+    $(document).ready(function() {
+
+        $(".panel-fullscreen").click(function(){
+            var span_class = $("#"+this.id + ' ' + "span").attr("class");
+
+            if(span_class == 'fa fa-expand')
+            {
+                $(".chart-holder").height(200);
+            }
+            
+        });
+
+        total_trucks_chart();
+        
+        function total_trucks_chart()
+        {
+            const selected_country = $("#selected_country option:selected").map(function() {
+                return $(this).val();
+            }).get();
+            $.ajax({
+                type: 'POST',
+                url: '/total_trucks_chart',
+                data: {selected_country} ,
+                dataType: "json",
+                success:function(response){
+                    if(response != false)
+                    {
+                        const data = []
+                        const colors = ['#494A8F', '#27245E', '#171143', '#73C9C5', '#05B9B2', '#008E89', '#CC5650' , '#F16F63', '#F59996', '#FCC068', '#F89E1B', '#DD8426']
+                        const truckDetail = response.truckTypeCounts
+                        const truckCityDetail = response.truckTypeCityCounts
+                        const values = []
+                        const labels = []
+                        truckDetail.forEach((truck, index) => {
+                            if((truck.percentage).toFixed(2) != 0) {
+                                values.push((truck.percentage).toFixed(2)) 
+                                labels.push(truck.typename)
+                                data.push({label: truck.typename, value:(truck.percentage).toFixed(2)})
+                            }
+                        })
+
+                        const data1 = [{
+                            values: values,
+                            labels: labels,
+                            domain: {column: 0},
+                            name: '',
+                            hoverinfo: 'label+percent+name',
+                            hole: .4,
+                            type: 'pie',
+                            marker: {
+                                colors: colors
+                            },
+
+                        }];
+
+                        const layout = {
+                            annotations: [
+                                {
+                                    font: {
+                                        size: 20
+                                    },
+                                    showarrow: false,
+                                    text: '',
+                                    x: 0.17,
+                                    y: 0.5
+                                }
+                            ],
+                            margin: {
+                                t: 0,
+                                b: 0,
+                                l: 0,
+                                r: 0 
+                            },
+                            height: 350,
+                            width: 550,
+                            showlegend: true,
+                            grid: {rows: 1, columns: 2},
+                            paper_bgcolor: 'rgba(0,0,0,0)', 
+                            plot_bgcolor: 'rgba(0,0,0,0)',   
+                            legend: {
+                                x: 0.53,
+                                y: 0.5
+                            },
+                        };
+                        Plotly.newPlot('total_trucks_chart', data1, layout);
+
+
+                        const cityValues = []
+                        const cityLabels = []
+                        truckCityDetail.forEach((truck, index) => {
+                            if((truck.percentage).toFixed(2) != 0) {
+                                cityValues.push((truck.percentage).toFixed(2)) 
+                                cityLabels.push(truck.city)
+                            }
+                        })
+
+                        const cityData = [{
+                            values: cityValues,
+                            labels: cityLabels,
+                            domain: {column: 0},
+                            name: '',
+                            hoverinfo: 'label+percent+name',
+                            hole: .4,
+                            type: 'pie',
+                            marker: {
+                                colors: colors
+                            },
+
+                        }];
+
+                        const Citylayout = {
+                            annotations: [
+                                {
+                                    font: {
+                                        size: 20
+                                    },
+                                    showarrow: false,
+                                    text: '',
+                                    x: 0.17,
+                                    y: 0.5
+                                }
+                            ],
+                            margin: {
+                                t: 0,
+                                b: 0,
+                                l: 30,
+                                r: 0 
+                            },
+                            height: 350,
+                            width: 600,
+                            showlegend: true,
+                            grid: {rows: 1, columns: 2},
+                            paper_bgcolor: 'rgba(0,0,0,0)', 
+                            plot_bgcolor: 'rgba(0,0,0,0)',   
+                            legend: {
+                                x: 0.53,
+                                y: 0.5
+                            },
+                        };
+                        Plotly.newPlot('total_trucks_per_city', cityData, Citylayout);
+                    }
+                }
+            });
+        }
+
+    })
+</script>
+
+<script type="text/javascript">
+    $(document).ready(function() {       
+        $('#selected_country').fSelect({
+            placeholder: '<%= __('title_select_country')%>',
+            numDisplayed: 3,
+            overflowText: '{n} selected',
+            searchText: 'Search',
+            showSearch: true
+        });
+    });
+</script>       

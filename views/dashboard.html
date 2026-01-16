@@ -1,0 +1,357 @@
+
+<% include header.html %>
+    <!-- PAGE CONTENT WRAPPER -->
+    <style type="text/css">
+        .table {
+            display: flex;
+            flex-direction: row;
+            align-items: center;
+            justify-content: flex-start;
+            margin-bottom: 10px;
+            padding-left: 10px;
+            padding-right: 10px;
+        }
+        .cell {
+            width: 223px;
+            height: 151px;
+            background-color: #ffffff;
+            color: #444A55;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-right: 40px;
+            font-size: 28px;
+            font-weight: 900;
+            border-radius: 16px;
+            margin-top: 15px;
+            flex-direction: column;
+            font-family: "Libre Fraklin Black", sans-serif;
+            box-shadow: 0px 0px 7px rgba(0, 0, 0, 0.2);
+        }
+        .amount .cell{
+            font-weight: normal;
+            font-size: 24px;
+        }
+        .heading {
+            width: 257px;
+            text-align: center;
+            margin-right: 20px;
+            color: white;
+            font-weight: 900;
+            font-size: 20px;
+        }
+
+        .hz{
+            color: #27245E;
+            text-transform: uppercase;
+            font-family: "Fira Sans Heavy", sans-serif;
+            margin-right: 40px;
+            width: 223px;
+        }
+
+        .vt{
+            font-family: "Libre Franklin Medium", sans-serif;
+            font-size: 24px;
+            line-height: 1.3;
+        }
+
+        .panel-refresh-layer{
+            background: transparent;
+        }
+
+        #registartion_chart svg text {
+            font-size: 20px !important;
+            fill: #5d5d5d;
+        }
+        #registartion_chart svg path {
+            stroke-width: 0.8px;
+        }
+        /* #registartion_chart svg rect {
+            width: 28.5516px;
+        } */
+        ul.panel-controls > li > a {            
+            color: #fff;
+            border: 2px solid #dfdfdf !important;
+        }
+        
+        .fa-expand{
+            color: #fff;
+        }
+        #total_trucks_chart text tspan,
+        #total_trucks_per_city text tspan {
+            fill: rgb(41, 41, 41) !important;
+        }
+
+        #total_trucks_chart #total_trucks_per_city{
+            height: 300px
+        }
+
+        #total_trucks_chart svg path {
+            stroke-width: 0px;
+            stroke: none;
+        }
+
+        .km_class span{
+            font-weight: normal;
+            font-size: 22px;
+            line-height: 0.9;
+        }        
+
+        .modebar-container{
+            display: none;
+        }
+
+        .slicetext text{
+            font-weight: 900;
+            fill: white !important;
+            font-size: 14px !important;
+            font-family: "Libre Fraklin Black", sans-serif !important;
+        }
+
+    </style>
+    <script type="text/javascript" src="js/settings.js"></script>
+    <script type="text/javascript" src="js/plugins.js"></script> 
+    <script type="text/javascript" src="js/plugins/owl/owl.carousel.min.js"></script>
+    <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
+
+    <div class="page-content-wrap">
+        <div class="row">
+            <div class="table" style="margin-top: 27px;">
+                <div class="heading hz" style="width: 257px; margin-right: 20px;">TIPO DE VIAJES</div>
+                <div class="heading hz">Hoy</div>
+                <div class="heading hz">Este mes</div>
+                <div class="heading hz">MES ANTERIOR</div>
+                <div class="heading hz">TOTAL AÑO</div>
+                <div class="heading hz">Total Company</div>
+            </div>
+            
+            <div class="table">
+                <div class="heading vt" style="color:#73C9C5">Viajes<br><span style="font-weight: normal;">Realizados</span></div>
+                <div class="cell"><%= detail.trips.today +  detail.trip_histories.today %></div>
+                <div class="cell"><%= detail.trips.current_month +  detail.trip_histories.current_month%></div>
+                <div class="cell"><%= detail.trips.previous_month +  detail.trip_histories.previous_month%></div>
+                <div class="cell"><%= detail.trips.current_year +  detail.trip_histories.current_year%></div>
+                <div class="cell"><%= detail.trips.total +  detail.trip_histories.total%></div>
+            </div>
+        
+            <div class="table amount">
+                <div class="heading vt" style="color:#F16F63">$$$<br><span style="font-weight: normal;">Facturado</span></div>
+                <div class="cell">$<%= detail.trips.amount_today + detail.trip_histories.amount_today %></div>
+                <div class="cell">$<%= detail.trips.amount_current_month + detail.trip_histories.amount_current_month %></div>
+                <div class="cell">$<%= detail.trips.amount_previous_month + detail.trip_histories.amount_previous_month %></div>
+                <div class="cell">$<%= detail.trips.amount_current_year + detail.trip_histories.amount_current_year %></div>
+                <div class="cell">$<%= detail.trips.amount_total + detail.trip_histories.amount_total %></div>
+            </div>
+
+            <div class="table km_class">
+                <div class="heading vt" style="color:#494A8F">KM<br><span style="font-weight: normal;">Recorridos</span></div>
+                <div class="cell"><%= (detail.trips.distance_today + detail.trip_histories.distance_today).toFixed(0) %><br><span>km</span></div>
+                <div class="cell"><%= (detail.trips.distance_current_month + detail.trip_histories.distance_current_month).toFixed(0) %><br><span>km</span></div>
+                <div class="cell"><%= (detail.trips.distance_previous_month + detail.trip_histories.distance_previous_month).toFixed(0) %><br><span>km</span></div>
+                <div class="cell"><%= (detail.trips.distance_current_year + detail.trip_histories.distance_current_year).toFixed(0) %><br><span>km</span></div>
+                <div class="cell"><%= (detail.trips.distance_total + detail.trip_histories.distance_total).toFixed(0) %><br><span>km</span></div>
+            </div>
+
+            <div class="row">
+                <div class="col-md-12">
+
+
+                </div>
+            </div>
+            <div class="row">
+                
+                <div class="table">
+                    <div class="heading vt" style="color:#73C9C5">Camiones<br><span style="font-weight: normal;">Trucks</span></div>
+                    <div class="cell"><%= detail.trucks.today %></div>
+                    <div class="cell"><%= detail.trucks.current_month %></div>
+                    <div class="cell"><%= detail.trucks.previous_month %></div>
+                    <div class="cell"><%= detail.trucks.current_year %></div>
+                    <div class="cell"><%= detail.trucks.total %></div>
+                </div>
+                
+                <div class="table">
+                    <div class="heading vt" style="color:#F16F63">Conductores<br><span style="font-weight: normal;">Aprovados</span></div>
+                    <div class="cell"><%= detail.providers.today %></div>
+                    <div class="cell"><%= detail.providers.current_month %></div>
+                    <div class="cell"><%= detail.providers.previous_month %></div>
+                    <div class="cell"><%= detail.providers.current_year %></div>
+                    <div class="cell"><%= detail.providers.total %></div>
+                </div>
+            </div>    
+            <div class="row">
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="panel panel-default" style="background: transparent; border-color: transparent; -webkit-box-shadow: 0px 1px 1px 0px transparent;">
+                            <div class="panel-heading" style="background: transparent; border-color: transparent; padding: 70px 10px 0px 10px;" >
+                                <div class="panel-title-box" style="float: none; font-size: 26px; text-align: center;">
+                                    <h3 style="font-size: 26px; color: #27245E; font-family: Libre Franklin Medium, sans-serif;">Total Trucks</h3>
+                                </div>
+                                <ul class="panel-controls" style="margin-top: 2px;">
+                                    <li><a id="fullscreen_payment_chart" class="panel-fullscreen"><span class="fa fa-expand"></span></a></li>
+                                </ul>
+                            </div>
+                            <div class="panel-body padding-0">
+                                <div class="chart-holder" id="total_trucks_chart" ></div>
+                            </div>
+                        </div>
+
+                    </div>    
+                    <div class="col-md-6">
+                        <div class="panel panel-default" style="background: transparent; border-color: transparent; -webkit-box-shadow: 0px 1px 1px 0px transparent;">
+                            <div class="panel-heading" style="background: transparent; border-color: transparent; padding: 70px 10px 0px 10px;" >
+                                <div class="panel-title-box" style="float: none; font-size: 26px; text-align: center;">
+                                    <h3 style="font-size: 26px; color: #27245E; font-family: Libre Franklin Medium, sans-serif;">Total Trucks</h3>
+                                </div>
+                                <ul class="panel-controls" style="margin-top: 2px;">
+                                    <li><a id="fullscreen_payment_chart" class="panel-fullscreen"><span class="fa fa-expand"></span></a></li>
+                                </ul>
+                            </div>
+                            <div class="panel-body padding-0">
+                                <div class="chart-holder" id="total_trucks_per_city" ></div>
+                            </div>
+                        </div>
+                    </div>    
+            </div>
+        </div>
+    </div>
+
+<script type="text/javascript" src="js/plugins/morris/raphael-min.js"></script>
+<script type="text/javascript" src="js/plugins/morris/morris.min.js"></script>
+
+<script>
+    $(document).ready(function() {
+        $('#refresh_version_chart').trigger('click');  
+
+        $(".panel-fullscreen").click(function(){
+            var span_class = $("#"+this.id + ' ' + "span").attr("class");
+
+            if(span_class == 'fa fa-expand')
+            {
+                $(".chart-holder").height(200);
+            }
+            
+        });
+        registartion_chart()
+        total_trucks_chart();
+        
+
+        function total_trucks_chart()
+        {
+            $.ajax({
+                type: 'POST',
+                url: '/total_trucks_chart',
+                data: '' ,
+                dataType: "json",
+                success:function(response){
+                    if(response != false)
+                    {
+                        const data = []
+                        const colors = ['#494A8F', '#27245E', '#171143', '#73C9C5', '#05B9B2', '#008E89', '#CC5650' , '#F16F63', '#F59996', '#FCC068', '#F89E1B', '#DD8426']
+                        const truckDetail = response.truckTypeCounts
+                        truckDetail.forEach((truck, index) => {
+                            if((truck.percentage).toFixed(2) != 0) { 
+                                data.push({label: truck.typename, value:(truck.percentage).toFixed(2)})
+                            }
+                        })
+                        Morris.Donut({
+                            element: 'total_trucks_chart',
+                            data: data,
+                            colors: colors,
+                            resize: true,
+                            formatter: function (y, data) { return y+'%' },
+                        });   
+                        const values = []
+                        const labels = []
+                        truckDetail.forEach((truck, index) => {
+                            if((truck.percentage).toFixed(2) != 0) {
+                                values.push((truck.percentage).toFixed(2)) 
+                                labels.push(truck.typename)
+                                data.push({label: truck.typename, value:(truck.percentage).toFixed(2)})
+                            }
+                        })
+
+                        const data1 = [{
+                            values: values,
+                            labels: labels,
+                            domain: {column: 0},
+                            name: '',
+                            hoverinfo: 'label+percent+name',
+                            hole: .4,
+                            type: 'pie',
+                            marker: {
+                                colors: colors
+                            },
+
+                        }];
+
+                        const layout = {
+                            annotations: [
+                                {
+                                    font: {
+                                        size: 20
+                                    },
+                                    showarrow: false,
+                                    text: '',
+                                    x: 0.17,
+                                    y: 0.5
+                                }
+                            ],
+                            margin: {
+                                t: 0,
+                                b: 0,
+                                l: 0,
+                                r: 0 
+                            },
+                            height: 350,
+                            width: 800,
+                            showlegend: true,
+                            grid: {rows: 1, columns: 2},
+                            paper_bgcolor: 'rgba(0,0,0,0)', 
+                            plot_bgcolor: 'rgba(0,0,0,0)',   
+                            legend: {
+                                x: 0.7,
+                                y: 0.5
+                            },
+                        };
+                        Plotly.newPlot('total_trucks_per_city', data1, layout);
+                    }
+                }
+            });
+        }
+
+        function registartion_chart()
+        {
+            $.ajax({
+                type: 'POST',
+                url: '/monthly_registration_chart',
+                data: {'test': 'test' } ,
+                dataType: "json",
+                success:function(response){
+                    $("#registartion_chart").empty();
+                    var data = new Array;
+                    for(var i in response)
+                    {
+                        data[i] = {
+                            y: response[i].month_name,a: response[i].android_user, b: response[i].ios_user, c: response[i].android_provider, d:response[i].ios_provider
+                        };
+                    }
+
+                    Morris.Bar({    
+                        element: 'registartion_chart',
+                        data: data,
+                        xkey: 'y',
+                        ykeys: ['a', 'b', 'c','d'],
+                        labels: ['<%= __("title_android_user") %>', '<%= __("title_ios_user") %>', '<%= __("title_android_provider") %>', '<%= __("title_ios_provider") %>'],
+                        barColors: ['#3366CC', '#DC3912', '#FF9900', '#109618'],
+                        hideHover: true,
+                        resize: true,
+                        gridLineColor: '#FFF',
+                        barSize: 30,
+                        barGap: 10,
+                        
+                    });
+                }
+            });
+        }
+    })
+</script>

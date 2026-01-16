@@ -1,0 +1,26 @@
+<script>
+function timeAgo(createdAt) {
+    const currentTime = new Date();
+    const createdTime = new Date(createdAt);
+    const diffInMilliseconds = currentTime - createdTime;
+
+    const timeUnits = {
+        year: 31536000000,
+        month: 2592000000,
+        week: 604800000,
+        day: 86400000,
+        hour: 3600000,
+        min: 60000, 
+        sec: 1000
+    };
+
+    for (const [unit, value] of Object.entries(timeUnits)) {
+        const elapsed = Math.floor(diffInMilliseconds / value);
+        if (elapsed > 0) {
+            return elapsed === 1 ? `1 ${unit} ago` : `${elapsed} ${unit} ago`;
+        }
+    }
+
+    return "just now";
+}
+</script>

@@ -1,0 +1,295 @@
+<% include header.html %>
+
+<style>
+  .modal-body {
+    max-height: 70vh; 
+    overflow-y: auto;
+  }
+  .modal-content{
+    border-radius: 12px;
+    border-width: 1px;
+  }
+  .modal-title {
+    font-size: 21px;
+    font-weight: 700;
+    color: rgb(37, 14, 98);
+    text-align: center;
+    margin: 1rem 0;
+  }
+  .modal-header {
+    background-color: #f8f9fa;
+    border-bottom: none;
+    border-radius: 12px;
+  }
+  .modal-footer .btn, .modal-footer .btn:hover {
+    background: rgb(37, 14, 98);
+    color: #f8f9fa;
+    border-radius: 16px;
+  }
+  .modal-footer {
+    background-color: #f8f9fa;
+    border-top: none;
+    text-align: center;
+    border-radius: 12px;
+  }
+  .status-pending { color: #f39c12; }
+  .status-approved { color: #27ae60; }
+  .status-rejected { color: #e74c3c; }
+</style>
+
+<div id="content">
+  <div class="page-content-wrap">
+    <% if(typeof message != 'undefined'){ %>
+    <div class="alert alert-success" role="alert">
+      <button type="button" class="close" data-dismiss="alert"><span aria-hidden="true">&times;</span><span class="sr-only">Cerrar</span></button>
+      <p align="center"><strong><%= message %></strong></p>
+    </div>
+    <% } %>
+    
+    <div class="alert alert-success" role="alert" id="status_message" style="display:none">
+      <button type="button" class="close" data-dismiss="alert"><span aria-hidden="true">&times;</span><span class="sr-only">Cerrar</span></button>
+      <p align="center" id="message_text"><strong></strong></p>
+    </div>
+  </div>
+
+  <div class="col-md-12">
+    <div class="panel panel-default">
+      <div class="panel-body">
+        <form class="form-horizontal" role="form" method="get" action="/corporate_requests">
+          <div class="form-group">
+            <div class="col-md-4">
+              <div style="text-align: center;">
+                <label>Filtrar por Estado</label>
+              </div>
+              <div class="col-md-12">
+                <select class="form-control select" name="status">
+                  <option value="">Todos los Estados</option>
+                  <option value="pending" <%= status === 'pending' ? 'selected' : '' %>>Pendiente</option>
+                  <option value="approved" <%= status === 'approved' ? 'selected' : '' %>>Aprobado</option>
+                  <option value="rejected" <%= status === 'rejected' ? 'selected' : '' %>>Rechazado</option>
+                </select>
+              </div>
+            </div>
+            
+            <div class="col-md-4">
+              <div style="text-align: center;">
+                <label>Buscar</label>
+              </div>
+              <div class="col-md-12">
+                <div class="input-group">
+                  <span class="input-group-addon"><span class="fa fa-search"></span></span>
+                  <input type="text" class="form-control" value="<%= search || '' %>" name="search" placeholder="Buscar por nombre o email"/>
+                </div>
+              </div>
+            </div>
+
+            <div class="col-md-4">
+              <div style="text-align: center;">
+                <label>&nbsp;</label>
+              </div>
+              <div class="col-md-6">
+                <button type="submit" class="btn btn-primary" style="height: 35px; width: 100%;">Aplicar Filtros</button>
+              </div>
+              <div class="col-md-6">
+                <button class="btn btn-danger" type="button" style="height: 35px; width: 100%;" onclick="export_excel()">
+                  <i class="fa fa-download"></i> Exportar Excel
+                </button>
+              </div>
+            </div>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <div class="row">
+    <div class="col-md-12">
+      <div class="panel panel-default">
+        <div class="table-responsive" style="padding-bottom: 175px;">
+          <table class="table text-center" id="requests_table">
+            <thead>
+              <tr>
+                <th>Nombre</th>
+                <th>Email</th>
+                <th>Teléfono</th>
+                <th>País</th>
+                <th>Ciudad</th>
+                <th>Dirección</th>
+                <th>Estado</th>
+                <th>Fecha Registro</th>
+                <th>Documentos</th>
+                <th>Acciones</th>
+              </tr>
+            </thead>
+            <tbody>
+              <% if(requests && requests.docs && requests.docs.length > 0) { %>
+                <% requests.docs.forEach(function(request){ %>
+                  <tr>
+                    <td><%= request.name %></td>
+                    <td><%= request.email %></td>
+                    <td><%= request.countryCode %><%= request.phone %></td>
+                    <td><%= request.country %></td>
+                    <td><%= request.city %></td>
+                    <td><%= request.address %></td>
+                    <td>
+                      <span class="status-<%= request.status %>">
+                        <%= request.status === 'pending' ? 'Pendiente' : 
+                            request.status === 'approved' ? 'Aprobado' : 'Rechazado' %>
+                      </span>
+                    </td>
+                    <td><%= moment(request.created_at).format("DD MMM 'YY HH:mm") %></td>
+                    <td>
+                      <% if(request.logo) { %>
+                        <button type="button" class="btn btn-info btn-sm" onclick="viewDocument('<%= request._id %>', 'logo')">
+                          <i class="fa fa-image"></i> Logo
+                        </button>
+                      <% } %>
+                      <% if(request.document) { %>
+                        <button type="button" class="btn btn-info btn-sm" onclick="viewDocument('<%= request._id %>', 'document')">
+                          <i class="fa fa-file"></i> Doc
+                        </button>
+                      <% } %>
+                    </td>
+                    <td>
+                      <div class="btn-group">
+                        <a href="#" data-toggle="dropdown" class="btn btn-primary dropdown-toggle">
+                          Acciones <span class="caret"></span>
+                        </a>
+                        <ul class="dropdown-menu" style="right: 0 !important; left: unset;" role="menu">
+                          <% if(request.status === 'pending') { %>
+                            <li>
+                              <button type="button" class="btn btn-default" style="width:100%;" 
+                                      onclick="updateStatus('<%= request._id %>', 'approved')">
+                                Aprobar
+                              </button>
+                            </li>
+                            <li>
+                              <button type="button" class="btn btn-default" style="width:100%;" 
+                                      onclick="updateStatus('<%= request._id %>', 'rejected')">
+                                Rechazar
+                              </button>
+                            </li>
+                          <% } %>
+
+                        </ul>
+                      </div>
+                    </td>
+                  </tr>
+                <% }); %>
+              <% } else { %>
+                <tr>
+                  <td colspan="10" class="text-center">No hay solicitudes corporativas</td>
+                </tr>
+              <% } %>
+            </tbody>
+          </table>
+        </div>
+        
+        <!-- Paginación -->
+        <% if(requests && requests.totalPages > 1) { %>
+        <div class="text-center">
+          <ul class="pagination">
+            <% if(requests.hasPrevPage) { %>
+              <li><a href="?page=<%= requests.prevPage %>&status=<%= status || '' %>&search=<%= search || '' %>">&laquo;</a></li>
+            <% } %>
+            
+            <% for(let i = 1; i <= requests.totalPages; i++) { %>
+              <li class="<%= i === requests.page ? 'active' : '' %>">
+                <a href="?page=<%= i %>&status=<%= status || '' %>&search=<%= search || '' %>"><%= i %></a>
+              </li>
+            <% } %>
+            
+            <% if(requests.hasNextPage) { %>
+              <li><a href="?page=<%= requests.nextPage %>&status=<%= status || '' %>&search=<%= search || '' %>">&raquo;</a></li>
+            <% } %>
+          </ul>
+        </div>
+        <% } %>
+      </div>
+    </div>
+  </div>
+  
+  <% include colorbar.html %>
+</div>
+
+<!-- Modal para ver documentos -->
+<div class="modal fade" id="documentModal" tabindex="-1" role="dialog">
+  <div class="modal-dialog modal-lg">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal">&times;</button>
+        <h4 class="modal-title" id="documentModalTitle">Documento</h4>
+      </div>
+      <div class="modal-body">
+        <img id="documentImage" style="width: 100%; max-height: 500px;" />
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-default" data-dismiss="modal">Cerrar</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+function updateStatus(requestId, status) {
+  if (confirm('¿Está seguro de cambiar el estado de esta solicitud?')) {
+    $.ajax({
+      type: 'PUT',
+      url: '/api/corporate-requests/' + requestId + '/status',
+      data: { status: status },
+      dataType: 'json',
+      success: function(res) {
+        if (res.success) {
+          $('#status_message').show();
+          $('#message_text').html(res.message);
+          setTimeout(function() {
+            location.reload();
+          }, 2000);
+        } else {
+          alert('Error: ' + res.message);
+        }
+      },
+      error: function() {
+        alert('Error al actualizar el estado');
+      }
+    });
+  }
+}
+
+function viewDocument(requestId, type) {
+  $.ajax({
+    type: 'GET',
+    url: '/api/corporate-requests/' + requestId + '/document/' + type,
+    success: function(res) {
+      if (res.success) {
+        $('#documentModalTitle').text(type === 'logo' ? 'Logo' : 'Documento');
+        $('#documentImage').attr('src', 'data:image/png;base64,' + res.data);
+        $('#documentModal').modal('show');
+      } else {
+        alert('Error al cargar el documento');
+      }
+    },
+    error: function() {
+      alert('Error al cargar el documento');
+    }
+  });
+}
+
+
+
+function export_excel() {
+  $.ajax({
+    type: 'GET',
+    url: '/api/corporate-requests/export?' + $('.form-horizontal').serialize(),
+    dataType: 'json',
+    success: function(url) {
+      window.open(url);
+    },
+    error: function() {
+      alert('Error al generar el archivo Excel');
+    }
+  });
+}
+</script>
+
+<% include footer_list.html %>

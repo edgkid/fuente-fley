@@ -1,0 +1,241 @@
+<% include corporate_header.html %>
+
+<style>
+  .modal-body {
+  max-height: 70vh; 
+  overflow-y: auto;
+}
+
+.modal-content{
+  border-radius: 12px;
+  border-width: 1px;
+}
+.modal-title {
+  font-size: 21px;
+  font-weight: 700;
+  color: rgb(37, 14, 98);
+  text-align: center;
+  margin: 1rem 0;
+}
+.modal-header {
+  background-color: #f8f9fa;
+  border-bottom: none;
+  border-radius: 12px;
+}
+.modal-footer .btn, .modal-footer .btn:hover {
+  background: rgb(37, 14, 98);
+  color: #f8f9fa;
+  border-radius: 16px;
+}
+.modal-footer {
+  background-color: #f8f9fa;
+  border-top: none;
+  text-align: center;
+  border-radius: 12px;
+}
+
+</style>
+
+<!-- PAGE CONTENT WRAPPER -->
+<div id="content" >
+  <div class="page-content-wrap">
+    <% if(typeof message != 'undefined'){ %>
+    <div class="alert alert-success" role="alert">
+      <button type="button" class="close" data-dismiss="alert"><span aria-hidden="true">&times;</span><span class="sr-only"><%= __('button_close') %></span></button>
+      <p align="center"> <strong><%= __(message) %></strong></p>
+    </div>
+    <% } %> 
+    <div class="alert alert-success" role="alert" id="promo_error" style="display:none">
+      <button type="button" id="close" class="close" data-dismiss="alert"><span aria-hidden="true">&times;</span><span class="sr-only"><%= __('button_close') %></span></button>
+      <p align="center" id="message"> <strong></strong></p>
+    </div>
+  </div>
+
+    <div class="col-md-12">                           
+      <div class="panel panel-default">                                
+        <div class="panel-body">
+          <form class="form-horizontal" role="form" method="post" action="/sub_corporate_users">  
+            <input type="hidden" name="page" id="page" value="0" />
+            <div class="form-group">     
+
+              <div class="col-md-4">
+                <div style="text-align: center;">
+                  <label><%= __('title_sort') %></label>   
+                </div>
+                <div class="col-md-6">
+                  <div class="input-group">
+                    <span class="input-group-addon"><span class="glyphicon glyphicon-sort"></span></span>
+                    <select class="form-control select" data-none-selected-text="<%= __('title_nothing_selected') %>" placeholder="Select to Sort" name="sort_item">
+                      <% if(sort_field == "unique_id") { %>
+                      <option value='unique_id' selected><%= __('title_id') %></option>
+                      <option value='name'><%= __('title_name') %></option>
+                      <option value='email'><%= __('title_email') %></option>
+                      <% } else if(sort_field == "name") { %>
+                      <option value='unique_id'><%= __('title_id') %></option>
+                      <option value='name' selected><%= __('title_name') %></option>
+                      <option value='email'><%= __('title_email') %></option>
+                      <% } else{ %>
+                      <option value='unique_id'><%= __('title_id') %></option>
+                      <option value='name' ><%= __('title_name') %></option>
+                      <option value='email' selected><%= __('title_email') %></option>
+                      <% } %>
+                    </select>
+                  </div>
+                </div>
+                <div class="col-md-6">
+                  <div class="input-group">
+                    <span class="input-group-addon"><span class="glyphicon glyphicon-sort"></span></span>
+                    <select class="form-control select" data-none-selected-text="<%= __('title_nothing_selected') %>" placeholder="Select to Sort" name="sort_item">
+                      <% if(sort_order == "1") { %>
+                      <option value="1" selected><%= __('sort_asc') %></option>
+                      <option value="-1"><%= __('sort_desc') %></option>
+                      <% } else{ %>
+                      <option value="1" ><%= __('sort_asc') %></option>
+                      <option value="-1" selected><%= __('sort_desc') %></option>
+                      <% } %>
+                    </select>
+                  </div>
+                </div>
+              </div>
+              <div class="col-md-4">
+                <div style="text-align: center;">
+                  <label><%= __('title_search') %></label>   
+                </div>
+                <div class="col-md-6">
+                  <div class="input-group">
+                    <span class="input-group-addon"><span class="glyphicon glyphicon-sort"></span></span>
+                    <select class="form-control select" data-none-selected-text="<%= __('title_nothing_selected') %>" id="sel" placeholder="Select to Sort" name="search_item">
+                      <% if(search_item == "name") { %>
+                        <option value='name' selected><%= __('title_name') %></option>
+                        <option value='email'><%= __('title_email') %></option>
+                      <% } else if(search_item == "email") { %>
+                        <option value='name'><%= __('title_name') %></option>
+                        <option value='email' selected><%= __('title_email') %></option>
+                      <% } else{ %>
+                        <option value='name'><%= __('title_name') %></option>
+                        <option value='email'><%= __('title_email') %></option>
+                      <% } %>
+                    </select>
+                  </div> 
+                </div>
+                <div class="col-md-6">
+                  <div class="panel panel-default">
+                    <div class="panel-body panel-body-search">
+                      <div class="input-group">
+                        <span class="input-group-addon"><span class="fa fa-search"></span></span>
+                        <input type="text" class="form-control" value="<%= search_value %>" onkeypress="return alphaNumSpace(event);"name="search_value" placeholder="<%= __('title_search') %>"/>
+                      </div>                                                                
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div  class="form-group col-md-4" >
+                
+                <div class="col-md-6">
+                  <div style="text-align: center;">
+                    <label style="visibility: hidden;"><%= __('title_search') %></label>   
+                  </div>
+  
+                  <button type="submit" id="apply_filter" class="btn btn-primary" style="height: 35px; width: 100%;  "><span><%= __('button_apply') %></span></button>
+                </div>
+              </div>    
+  
+            </div>
+            <div class="col-md-6">
+              <div class="col-md-12">
+
+              <ul class="pagination" >
+            <% include paginate.html %>
+
+        </ul>                  
+              </div>
+            </div>
+
+          </form>
+        </div>
+      </div>
+    </div>
+
+  <div class="row">
+    <div class="col-md-12">
+      <div class="panel panel-default">                                        
+        <div class="table-responsive" style="padding-bottom: 175px;">
+          <table class="table text-center" id="customers2">               
+            <thead>
+              <tr>
+              <th><%= __('title_id') %></th>
+                <th><%= __('title_name') %></th>
+                <th><%= __('title_email') %></th>
+                <th><%= __('title_user') %></th>
+                <th><%= __('title_phone') %></th>
+                <th><%= __('title_registered_date') %></th>
+                <th><%= __('title_profile') %></th>
+                <th><%= __('button_action') %></th>
+              </tr>
+            </thead>
+
+            <tbody>
+              <% detail.forEach(function(data){ %>
+                <tr class="demo" >
+                  <td><%= data.unique_id %></td>
+                  <td ><%= data.name %></td>
+                  <td><%= data.email %> </td>
+                  <td><% if(data?.user_details?.length > 0){ %>
+                    <%= data.user_details[0].first_name + " " + data.user_details[0].last_name %> %>
+                    <% } %></td>
+                  <td><%=  data.country_phone_code + data.phone %></td>
+                  <td width=150 ><%= moment(data.created_at).tz(timezone_for_display_date).format("DD MMM 'YY") %></td>
+                  <td>
+                    <% if(data.is_approved == 1 ) { %>
+                      <a href="<%= data.picture ? setting_detail.image_base_url + data.picture : 'javascript:;' %>" ><span class="btn btn-success btn-condensed"><i class="glyphicon glyphicon-user"></i></span></a>
+
+                    <% }else{ %>
+                      <a href="<%= data.picture ? setting_detail.image_base_url + data.picture : 'javascript:;' %>" ><span class="btn btn-danger btn-condensed"><i class="glyphicon glyphicon-user"></i></span></a>
+                    <% } %>
+                </td>
+                  <td>
+                   <div class="btn-group">
+                    <a href="#" data-toggle="dropdown" class="btn btn-primary dropdown-toggle"><%= __('button_action') %> <span class="caret"></span></a>
+                    <ul class="dropdown-menu" style="right: 0 !important; left: unset;" role="menu">
+                      <li>
+                        <form method="post" action="/sub_corporate_detail">
+                            <input type="hidden" name="id" value="<%= data._id %>" />
+                            <button type="submit" class="btn btn-default" style="width:100%;"><%= __('title_edit_detail') %></button>
+                        </form>
+                      </li>
+                  </ul>
+                    </div>
+                  </td>
+                </tr>
+              <% }); %> 
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>                                                    
+  </div>    
+  <% include colorbar.html %>
+                           
+</div>    
+
+
+
+
+
+<script type="text/javascript" src="js/dist/vfs_fonts.js"></script>
+<script type="text/javascript">
+
+
+</script>
+
+<script type="text/javascript">
+  $(document).ready(function() {
+
+   
+ });
+ 
+</script>  
+
+</div>
+
+<% include footer_list.html %> 

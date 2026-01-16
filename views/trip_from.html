@@ -1,0 +1,27 @@
+<% switch (data.created_by) {
+  case constant_json.CREATED_BY_USER_APP : %>
+<span class="label label-primary"><%= __('title_user') %></span>
+<% break; %>
+
+<% case constant_json.CREATED_BY_PROVIDER_APP : %>
+<span class="label label-primary"><%= __('title_provider') %></span>
+<% break; %>
+
+<% case constant_json.CREATED_BY_USER_PANEL : %>
+<span class="label label-primary"><%= __('title_user') %></span>
+<% break; %>
+
+<% case constant_json.CREATED_BY_HOTEL_PANEL : %>
+<span class="label label-primary"><%= __('title_hotel') %></span>
+<% break; %>
+
+<% case constant_json.CREATED_BY_DISPATCHER_PANEL : %>
+<span class="label label-primary"><%= __('title_dispatcher') %></span>
+<% break; %>
+
+<% case constant_json.CREATED_BY_CORPORATE_PANEL : %>
+<span class="label label-primary"><%= __('title_corporate') %></span>
+<% break; %>
+
+<% default : %>
+<% } %>

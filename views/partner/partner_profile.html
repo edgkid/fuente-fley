@@ -1,0 +1,60 @@
+<% include corporate_header.html %>
+<link
+    rel="stylesheet"
+    href="dispatcher_new_design/css/font-awesome.min.css"
+    type="text/css"
+/>
+<link
+    rel="stylesheet"
+    href="dispatcher_new_design/css/style.css"
+    type="text/css"
+/>
+
+<style>
+  html, body {
+    margin: 0;
+    padding: 0;
+    height: 100%;
+    width: 100%;
+    font-family: 'Open Sans', sans-serif;
+    background-color: #fff;
+  }
+
+  #dynamic-iframe {
+    height: 100vh;
+    border: none;
+    display: block;
+    transition: all 0.3s ease-in-out;
+  }
+</style>
+
+<body class="gray_bg">
+  <iframe
+    id="dynamic-iframe"
+    src="<%= new_profile %>"
+    title="partner Profile Flety"
+  ></iframe>
+
+  <script>
+    function adjustIframeToSidebar() {
+      const sidebar = document.getElementById('x-navigation');
+      const iframe = document.getElementById('dynamic-iframe');
+
+      if (!sidebar || !iframe) return;
+
+      const sidebarWidth = sidebar.offsetWidth;
+
+      iframe.style.marginLeft = `${sidebarWidth}px`;
+      iframe.style.width = `calc(100% - ${sidebarWidth}px)`;
+    }
+
+    window.addEventListener('load', adjustIframeToSidebar);
+    window.addEventListener('resize', adjustIframeToSidebar);
+    const observer = new MutationObserver(adjustIframeToSidebar);
+    const target = document.getElementById('x-navigation');
+    if (target) {
+      observer.observe(target, { attributes: true, attributeFilter: ['class', 'style'] });
+    }
+  </script>
+</body>
+<% include footer_form.html %>

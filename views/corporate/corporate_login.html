@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html lang="en" class="body-full-height">
+    <head>        
+        <!-- META SECTION -->
+        <title>
+        <%= setting_detail.corporate_panel_name %>
+    </title>
+        <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+        <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+        <meta name="viewport" content="width=device-width, initial-scale=1" />        
+        <link rel="icon" href="web_images/favicons/FLETY_ICONOCLIENTES.png" type="image/x-icon" />
+        <!-- END META SECTION -->
+        
+        <!-- CSS INCLUDE -->        
+        <link rel="stylesheet" type="text/css" id="theme" href="css/theme-default.css"/>
+        <!-- EOF CSS INCLUDE -->  
+        
+        <style>
+            .d-md-flex{
+                display: flex;
+            }
+            .side-container{
+                position: absolute;width: fit-content;right: 0;padding: 40px;height: 100%;overflow: auto;
+            }
+            .desktop-image{
+                max-width: 100%;object-fit: fill;object-position: left;display: block;
+            }
+            .mobile-image{
+                display: none;
+            }
+            .login-container{
+                background-color: rgb(37 14 98);
+                background-image: unset;
+            }
+            .login-box .login-body {
+                background-color: rgb(37 14 98) !important;
+            }   
+            input {
+                background: rgb(8 15 38) !important;
+            }
+            .small-screen-title{
+                display: none;
+            }
+            .main-title{
+                color: #fff;
+                text-align: center;
+                font-weight: 300;
+            }
+
+            @media screen and (max-width:998px) {
+                .d-md-flex{
+                    display: block;
+                }
+                .side-container{
+                    width: 100%;
+                }
+                .desktop-image{
+                    display: none;
+                }
+                .mobile-image{
+                    max-width: 150%;
+                    display: block;
+                }
+                .login-container .login-box .login-body .form-control{
+                    border-radius: 8px;
+                }
+                .small-screen-title{
+                    display: block;
+                    color: #fff;
+                    text-align: center;
+                    margin-bottom: 25px;
+                }
+                .info-line{
+                    content: "";
+                    height: 2px;
+                    background-color: #3fbae4;
+                    width: 50%;
+                    margin: 0 auto 20px auto;
+                }
+            }
+        </style>
+        
+    </head>
+    <body>
+        <div class="d-md-flex" style="height: 100%;">
+            <img src="/corporate_images/corporate_login.jpg" alt="" class="desktop-image">
+            <img src="/corporate_images/corporate_login.jpg" alt="" class="mobile-image">
+            <div class="login-container side-container">
+                <% if(typeof message != 'undefined'){ %>
+                    <div class="alert alert-success" role="alert">
+                        <button type="button" class="close" data-dismiss="alert"><span aria-hidden="true">&times;</span><span class="sr-only"><%= __('button_close') %></span></button>
+                        <p align="center"> <strong><%= __(message) %></strong></p>
+                    </div>
+                <% } %> 
+    
+                <!-- <div style="text-align: center;">
+                        <img src="web_images/logo.png"  style="width: 250px;">
+                </div> -->
+    
+                <div class="login-box" >
+    
+                    <div class="login-body">
+                        <div class="small-screen-title h1">
+                            Portal Corporativo
+                        </div>
+                        <div class="info-line"></div>
+                        <div class="main-title h1">
+                            Bienvenido
+                        </div>
+                        <div class="login-title" style="text-align: center;"><%= __('title_corporate_login') %></div>
+                        <form action="/corporate_login" class="form-horizontal" id="loginForm" method="post">
+                            <div class="form-group">
+                                <div class="col-md-12">
+                                    <input type="text" class="form-control" placeholder="<%= __('title_email') %>" name="email" id="email" />
+                                </div>
+                            </div>
+    
+                            <div class="form-group" style="margin-bottom: 5px;">
+                                <div class="col-md-12">
+                                    <input type="password" class="form-control" placeholder="<%= __('title_password') %>" name="password" id="Password" />
+                                </div>
+                            </div>
+    
+                            <div class="form-group">
+                                <div class="col-md-12" style="margin-bottom: 25px;">
+                                    <a href="corporate_forgot_password" class="btn btn-link btn-block" style="text-align: right;"><%= __('question_forgot_password') %></a>
+                                </div>
+                                <div class="col-md-12" style="display: flex;justify-content: center;">
+                                    <button class="btn btn-info" style="border-radius: 20px;width: 50%;padding: 10px 15px;"><%= __('button_login') %></button>
+                                </div>
+                                <div class="col-md-12">
+                                    <a href="corporate_register" class="btn btn-link btn-block"><%= __('question_not_register') %></a>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                  
+                </div>
+            </div>
+        </div>
+    </body>
+</html>
+<script type="text/javascript" src="//ajax.googleapis.com/ajax/libs/jquery/2.0.0/jquery.min.js"></script>
+
+    <script type='text/javascript' src='js/plugins/icheck/icheck.min.js'></script>
+        <script type="text/javascript" src="js/plugins/mcustomscrollbar/jquery.mCustomScrollbar.min.js"></script>
+        <script type="text/javascript" src="js/actions.js"></script>
+
+<script>
+  $(document).ready(function() {
+    $(".form-horizontal").validate({
+      rules: {
+        email: {
+          required: true,
+          email_regex: /^([a-zA-Z0-9_.+-])+\@(([a-zA-Z0-9-])+\.)+([a-zA-Z0-9]{2,4})+$/,
+          minlength: 12,
+          maxlength: 64
+        },
+        password: {
+          required: true,
+          minlength: 6,
+          maxlength: 50
+        },
+      }
+    });
+  });
+</script>
+
+
+<% include login_footer.html %> 

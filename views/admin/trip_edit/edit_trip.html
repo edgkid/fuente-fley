@@ -1,0 +1,2166 @@
+<% include ../../header.html %>
+
+<script
+  type="text/javascript"
+  src="js/plugins/bootstrap/bootstrap-timepicker.min.js"
+></script>
+<script type="text/javascript" src="js/jquery.serializejson.js"></script>
+<script src="https://maps.googleapis.com/maps/api/js?key=<%=map_key%>&libraries=places"></script>
+<link rel="stylesheet" type="text/css" href="css/style.css">
+
+<link href="css/fSelect.css" rel="stylesheet" type="text/css" />
+<script src="js/fSelect.js" type="text/javascript"></script>               
+
+<style type="text/css" media="screen">
+/*              */
+.switchp {
+  position: relative;
+  display: inline-block;
+  width: 60px;
+  height: 34px;
+}
+
+/* Hide default HTML checkbox */
+.switchp input {
+  opacity: 0;
+  width: 0;
+  height: 0;
+}
+
+/* The slider */
+.sliderp {
+  position: absolute;
+  cursor: pointer;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: #ccc;
+  -webkit-transition: .4s;
+  transition: .4s;
+}
+
+.sliderp:before {
+  position: absolute;
+  content: "";
+  height: 26px;
+  width: 26px;
+  left: 4px;
+  bottom: 4px;
+  background-color: white;
+  -webkit-transition: .4s;
+  transition: .4s;
+}
+
+input:checked + .sliderp {
+  background-color: #2196F3;
+}
+
+input:focus + .sliderp {
+  box-shadow: 0 0 1px #2196F3;
+}
+
+input:checked + .sliderp:before {
+  -webkit-transform: translateX(26px);
+  -ms-transform: translateX(26px);
+  transform: translateX(26px);
+}
+
+/* Rounded sliders */
+.sliderp.roundp {
+  border-radius: 34px;
+}
+
+.sliderp.roundp:before {
+  border-radius: 50%;
+}
+/**/
+
+  body, input{
+    font-family: 'Open Sans', sans-serif !important;
+  }
+
+  .edit_input_rgt input[type="button"] {
+    width: auto;
+    padding: 0 48px;
+    background: #1a1d2e;
+    color: #fff;
+    font-family: "RobotoMedium";
+    margin: 20px 12px 0 0px;
+    border: none;
+    transition: all 0.5s ease 0s;
+  }
+  .edit_input_rgt input[type="button"]:hover {
+    background: #047f8f;
+    transition: all 0.5s ease 0s;
+  }
+  .picu_lft:last-child {
+    float: left;
+  }
+  .picu_lft {
+    margin-top: 1rem;
+    width: 100%;
+  }
+  .mt {
+    margin-top: 2rem;
+  }
+  
+  .map_cont_bg {
+    width: 100% !important;
+    float: left;
+    margin: 30px 0 0 0px;
+  }
+  
+  #legend {
+    box-sizing: border-box;
+    background: #fff;
+    padding: 5px;
+    margin: 10px;
+  }
+  
+  #legend h3 {
+    margin-top: 0;
+  }
+  
+  #legend img {
+    vertical-align: middle;
+    width: 25px;
+    height: 25px;
+  }
+  
+  .item-legend {
+    margin-bottom: 10px;
+  }
+  
+  .item-legend span {
+    margin-left: 5px;
+  }
+  
+  #pac-input {
+    margin-left: 0px !important;
+    background-color: #F9F9F9;
+    border: 1px solid #D5D5D5;
+    font-size: 12px;
+  }
+  
+  .c-pointer {
+    float: right;
+    color: rgb(22 0 77 / 88%);
+    cursor: pointer !important;
+    font-size: 14px;
+    font-weight: 600;
+  }
+  
+  .place_holder_stop::placeholder {
+    font-size: 12px;
+    font-weight: bold;
+    text-align: center;
+  }
+  
+  .right-span{
+    right: 16px !important;
+    left: unset !important;
+    color: #d91a22 !important;
+    background: transparent !important;
+    margin-left: 10px;
+    font-size: 13px;
+  }
+  
+  .int_stop_btn {
+    border-radius: 30px;
+    margin-left: 10px;
+    width: 32% !important;
+    padding: 0% 1% 0% 1% !important;
+    display: inline-block;
+    background: rgb(0 191 179);
+    font-size: 11px;
+    border: transparent;
+  }
+  .pac-container {
+    z-index: 10000; /* or any value higher than the modal's z-index */
+  }
+  
+  .modal-title{
+    font-size: 18px;
+    font-family: ClanPro;
+    font-weight: 500;
+  }
+  
+  .green_bg input {
+    padding-left: 10px;
+  }
+  
+  .red_bg input {
+    padding: 0px 50px;
+  }
+  
+  #add_stop_message , #add_internal_stop_message{
+    display: none;
+  }
+  
+  #languageId{
+    height: 20px;
+    background: #fff;
+    font-size: 13px;
+  }
+  input,select, textarea{width:100%; height:40px; border:1px solid #E0E0E0; padding:0 10px; outline:0; background:0 0; font-size:14px; font-weight:500; font-family:ClanPro; border-radius: 3px; color:#666}
+  
+  .green_bg,
+  .red_bg,
+  .darkgray_bg{position:relative;}
+  
+  .green_bg span,
+  .red_bg span{position: absolute; top: 0; left: 16px; width: 40px; height: 40px; display: block; border-top-left-radius: 3px; border-bottom-left-radius: 3px; color: #fff; line-height: 40px; text-align: center;}
+  
+  .green_bg span{background:#43A422; }
+  
+  .red_bg span{background:#d91a22;}
+  
+  .green_bg input,
+  .red_bg input{padding-left:50px}
+  
+  button{background:#43A422;height:40px;width:94px;color:#fff;letter-spacing: 0.5px;font-size:14px;}
+
+
+ /* the popup detail clients*/ 
+/* Modal background */
+.add-details-btn {
+    width: 30%;
+    padding: 10px 20px;
+    font-size: 14px;
+    font-weight: bold;
+    text-align: center;
+    color: #fff;
+    background: linear-gradient(90deg, #027c92, #250e62); /* Gradiente verde */
+    border: none;
+    border-radius: 5px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); /* Sombra ligera */
+    cursor: pointer;
+    transition: all 0.3s ease; /* Suavidad en hover */
+}
+
+.add-details-btn:hover {
+    background: linear-gradient(90deg, #027c92, #250e62); /* Color más claro en hover */
+    transform: translateY(-2px); /* Elevar botón en hover */
+    box-shadow: 0 6px 8px rgba(0, 0, 0, 0.2); /* Más sombra en hover */
+}
+
+.add-details-btn:active {
+    transform: translateY(1px); /* Simular presión */
+    box-shadow: 0 3px 5px rgba(0, 0, 0, 0.2); /* Sombra más pequeña en clic */
+}
+
+.detailsSubmit{
+  text-align: center; 
+  margin-bottom: 10px;
+}
+
+</style>
+
+<% if(typeof message != 'undefined'){ %>
+  <div
+  class="alert alert-success"
+  role="alert"
+  style="padding-top: 75px; margin-bottom: -135px"
+  >
+  <button type="button" class="close" data-dismiss="alert">
+    <span aria-hidden="true">&times;</span
+      ><span class="sr-only"><%= __('button_close') %></span>
+    </button>
+  <p align="center"><strong><%= __(message) %></strong></p>
+</div>
+<% } %>
+<div
+  class="alert alert-success"
+  role="alert"
+  id="request_error"
+  style="padding-top: 95px; margin-bottom: -135px; display: none"
+>
+  <button type="button" id="close" class="close">
+    <span aria-hidden="true">&times;</span
+    ><span class="sr-only"><%= __('button_close') %></span>
+  </button>
+  <p align="center" id="request_message"><strong></strong></p>
+</div>
+<div class="row">
+<div class="container-fluid mt">
+  <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12 box_selet_bg">
+    <div>
+      <form id="editForm" method="post">
+        <div id="dest_stops_location_div"></div>
+        <input
+          type="hidden"
+          name="trip_id"
+          id="trip_id"
+          value="<%= trip_id %>"
+        />
+        <input type="hidden" name="dest_stops_lat_lng_div" id="dest_stops_lat_lng_div"/>
+        <input
+          type="hidden"
+          name="user_type_id"
+          id="user_type_id"
+          value="<%= user_type_id %>"
+        />
+        <input
+          type="hidden"
+          name="server_date"
+          id="server_date"
+          value="<%= server_date %>"
+        />
+        <input type="hidden" id="lat" name="latitude" />
+        <input type="hidden" id="lng" name="longitude" />
+        <input type="hidden" id="src_lat_lng" name="src_lat_lng" />
+        <input type="hidden" id="lat" name="lat" />
+        <input type="hidden" id="lng" name="lng" />
+        <input type="hidden" id="dlat" name="dlat" />
+        <input type="hidden" id="dlng" name="dlng" />
+        <input type="hidden" id="estimated_distance" name="estimated_distance" />
+        <input type="hidden" id="pickup">
+        <input type="hidden" id="history" name="history" value="<%= history %>" />
+        <input type="hidden" name="estimated_time" id="estimated_time">
+
+        <div class="row">
+          <div class="panel panel-default">
+            <div class="panel-body">
+              <div class="row mt">
+                <div class="col-lg-6 col-md-6 col-sm-12 col-xs-12 mt">
+                  <label><%= __('title_select_type_of_truck') %></label>
+
+                  <div>
+                    <select
+                    id="type_service"
+                    name="type_service"
+                    class="form-control">
+                      <% JSON.parse(types).forEach(function(type) { 
+                        if(type.typename && type.typename != 'Test') {
+                         %>
+                            <option 
+                              <%= `${trip.type_id}` === `${type._id}` ? "selected" : "" %> 
+                              value="<%= type._id %>">
+                                <%= type.typename %>
+                            </option>
+                      <% } }) %>
+                  </select>
+                  </div>
+                  <lable id="message" style="color: red"></lable>
+                </div>
+
+                
+              <div class="row mt">
+                <div class="col-lg-6 col-md-6 col-sm-12 col-xs-12">
+                  <label><%= __('title_select_models') %></label>
+
+                  <div>
+                    <select
+                      id="model_id"
+                      name="model_id"
+                      class="form-control">
+                         
+                    </select>
+                  </div>
+                  <label id="message" style="color: red"></label>
+                </div>
+
+                <div class="col-lg-6 col-md-6 col-sm-12 col-xs-12">
+                  <label><%= __('title_select_capacity') %></label>
+
+                  <div>
+                    <select
+                    id="capacity"
+                    name="capacity"
+                    class="form-control">
+
+                    </select>
+                  <label id="message" style="color: red"></label>  
+                  </div>
+                </div>
+              </div>
+
+                <div class="col-lg-6 col-md-6 col-sm-12 col-xs-12 mt">
+                  <label><%= __('title_select_service') %></label>
+
+                  <div>
+                    <select
+                        id="service_id"
+                        name="service_id"
+                        class="form-control">
+
+                    </select>
+                      <lable id="message" style="color: red"></lable>
+                  </div>
+                </div>
+              </div>
+
+
+              <div class="row mt">
+                
+                <div class="col-lg-6 col-md-6 col-sm-6 col-xs-6">
+                  <label class="mt">
+                    <%= __('title_number_of_helpers_for_load') %>
+                  </label>
+
+                  <select
+                    id="helpers_num_load"
+                    name="helpers_num_load"
+                    class="form-control"
+                  >
+                    <option value=""><%= __('title_number_of_helpers_for_load') %></option>
+                    <%
+                      let number_of_helpers_load = trip.pickup_details[0].user_details?.number_of_helpers_load ?? 0
+                      for(let i = 1; i <= 10; i++) {
+                        let selected = "";
+                        if(number_of_helpers_load != undefined && number_of_helpers_load === i) {
+                          selected = "selected";
+                        }
+                    %>
+                      <option <%= selected %> value="<%= i %>"><%= i %></option> 
+                    <%
+                      }
+                    %>
+                  </select>
+                  <lable id="message" style="color: red"></lable>
+                </div>
+
+                <div class="col-lg-6 col-md-6 col-sm-6 col-xs-6">
+                  <label class="mt">
+                    <%= __('title_number_of_helpers_for_download') %>
+                  </label>
+
+                  <select
+                    id="helpers_num_download"
+                    name="helpers_num_download"
+                    class="form-control"
+                  >
+                    <option value=""><%= __('title_number_of_helpers_for_download') %></option>
+                    <%
+                    let number_of_helpers_download = trip.pickup_details[0].user_details?.number_of_helpers_download ?? 0
+                      for(let i = 1; i <= 10; i++) {
+                        let selected = "";
+                        if(number_of_helpers_download == i) {
+                          selected = "selected";
+                        }
+                    %>
+                      <option <%= selected %> value="<%= i %>"><%= i %></option> 
+                    <%
+                      }
+                    %>
+                  </select>
+                  <lable id="message" style="color: red"></lable>
+                </div>
+
+              </div>
+
+              <div class="row mt">
+                
+                <div class="col-lg-6 col-md-6 col-sm-6 col-xs-6">
+
+                  <label class="mt">
+                      <%= __('title_count_night_shift') %>
+                  </label>
+
+                  <select
+                    id="night_shift"
+                    name="night_shift"
+                    class="form-control"
+                  >
+                    <option disabled value="0"><%= __('title_count_night_shift') %></option>
+                    <%
+                      for(let i = 0; i <= 10; i++) {
+                        let selected = "";
+                        if(JSON.parse(tripData).night_shift == i) {
+                          selected = "selected";
+                        }
+                    %>
+                      <option <%= selected %> value="<%= i %>"><%= i %></option> 
+                    <%
+                      }
+                    %>
+                  </select>
+                  <lable id="message" style="color: red"></lable>
+                </div>
+              </div>
+
+              <div class="row mt">
+                <div class="col-lg-6 col-md-6 col-sm-12 col-xs-12">
+
+                  <label><%= __('title_pay_flety_per_trip') %></label>
+
+                  <input
+                    id="fixed_price"
+                    name="fixed_price"
+                    class="form-control"
+                    type="number"
+                    value="<%= trip.fixed_price %>"
+                    placeholder="<%= __('title_pay_flety_per_trip') %>"
+                  />
+                  <label id="src_message" class="error"></label>
+                </div>
+                <div class="col-lg-6 col-md-6 col-sm-12 col-xs-12">
+
+                  <label><%= __('title_pay_to_partner') %></label>
+
+                  <input
+                    id="provider_service_fees"
+                    name="provider_service_fees"
+                    class="form-control"
+                    type="number"
+                    value="<%= trip.provider_service_fees %>"
+                    placeholder="<%= __('title_pay_to_partner') %>"
+                  />
+                  <label id="src_message" class="error"></label>
+                </div>
+              </div>
+
+              <div class="row mt">
+                <div class="col-lg-6 col-md-6 col-sm-12 col-xs-12">
+
+                  <label><%= __('title_loading_date') %></label>
+
+                  <input
+                    id="loading_date"
+                    name="loading_date"
+                    class="form-control datepicker"
+                    type="text"
+                    value=""
+                    placeholder="<%= __('title_loading_date') %>"
+                  />
+                  <label id="src_message" class="error"></label>
+                </div>
+              </div>
+
+              <div class="row">
+                <div class="col-lg-6 col-md-6 col-sm-12 col-xs-12">
+
+                  <label><%= __('title_loading_time') %></label>
+
+                  <input
+                    id="loading_hour"
+                    name="loading_hour"
+                    class="form-control timepicker"
+                    type="text"
+                    value=""
+                    placeholder="<%= __('title_loading_time') %>"
+                  />
+                  <label id="src_message" class="error"></label>
+                </div>
+              </div>
+
+              <div class="row mt">
+                <div class="col-lg-6 col-md-6 col-sm-12 col-xs-12">
+                  
+                  <label><%= __('title_enter_pickup_address') %></label>
+
+                  <input
+                    id="pac-input"
+                    name="source_address"
+                    class="form-control"
+                    type="text"
+                    placeholder="<%= __('title_enter_pickup_address') %>"
+                  />
+                  <label id="src_message" class="error"></label>
+                </div>
+              </div>
+
+              <div class="row mt">
+                <div class="col-lg-6 col-md-8 col-sm-8 col-xs-10">
+                  <% if(setting_detail.is_allow_multiple_stop){%>
+                  <div class="picu_add_top" id="multiple_stops"></div>
+                  <div class="picu_add_top">
+                    <div class="picu_lft" style="margin: 12px">
+                      <label
+                        style="
+                          margin: 0px 0 15px 0px;
+                          text-align: end;
+                          cursor: pointer;
+                        "
+                        onclick="addStop()"
+                        ><%= __('title_add_stop') %></label
+                      >
+                      <label id="add_stop_message" class="error"
+                        ><%= __('validation_stop_limit') %></label
+                      >
+                    </div>
+                  </div>
+                  <% } %>
+                </div>
+              </div>
+
+              <div class="row">
+                <div class="col-lg-6 col-md-8 col-sm-8 col-xs-10">
+                  <label style="display: block;"><%= __('title_enter_dest_address') %></label>
+                  <input
+                    type="text"
+                    id="pac-input1"
+                    class="form-control" style="margin-bottom: 0; width: 60%;  display: inline-block;"
+                    name="destination_address"
+                    placeholder="<%= __('title_enter_dest_address') %>"
+                  />
+                  <input type="hidden" id="destination_stops" name="destination_stops[]" />
+
+                  <label id="dest_message" class="error"></label>
+                </div>
+              </div>
+
+              <!-- <div class="row">
+                <div class="col-sm-6">
+                          <span style="display: inline-block; width: fit-content">Optimizar ruta: </span >
+                          <label style="display: inline-block; vertical-align: -webkit-baseline-middle;" class="switchp">
+                            <input id="b_optimize" onclick="draw_b_opt()" type="checkbox">
+                            <span class="sliderp roundp"></span>
+                          </label>
+                        </div>
+              </div> -->
+
+              <div class="row mt">
+                <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+                  <div id="googleMap" style="width: 100%; height: 400px"></div>
+                  <div id="legend"><!--<h3><%= __("title_legend") %></h3>--></div>
+                </div>
+              </div>
+            </div>
+            <div class="panel-footer">
+              <div class="col-md-12 col-xs-12">
+                <button class="btn btn-primary btn-rounded pull-right" 
+                  onclick="check_optimization()"
+                  id="update" type="button" name="save" value="save">
+                  <%= __('button_save') %>
+                </button>
+              </div>  
+            </div>
+          </div>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+<div class="modal animated fadeIn" id="internal_stop_modal" tabindex="-1" role="dialog" aria-labelledby="smallModalHead" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered" >
+    <div class="modal-content" style="width: 524px; border-width: 3px;">
+      <div class="modal-header" data-dismiss="modal">
+        <button type="button" class="close" style="margin-right: -19px; margin-top: -5px;" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only"><%= __('button_close') %></span></button>
+        <h5 class="modal-title" style="color: rgb(37 14 98); text-align: center; font-size: 20px; margin-left: 82px;"><%= __('title_inside_stops') %></h5>
+      </div>
+      <div class="modal-body" style="overflow-y: auto; max-height: 60vh;">
+        <form id="internal_stops_form">
+          <input type="hidden" name="external_stop_id" id="external_stop_id">
+         <div id="internal_stops"></div>
+       </form>
+        <% if(setting_detail.is_allow_multiple_stop){%>
+          <div class=" text-right">
+            <label  class="c-pointer" onclick="addInternalStop()">+ <%= __('title_add_internal_stops') %></label>
+            hola
+            <label id="add_internal_stop_message" class="error"><%= __('validation_stop_limit_internal_stop') %></label>
+          </div>
+          <% } %>
+        </div>
+        <div class="error-message" style="display: none;" id="valid_add_msg">
+          <%= __('title_valid_address_city') %>
+        </div>
+      
+        <div class="modal-footer" style="text-align: center;">
+          <input type="button" id="confirm_int_stop" style="background: rgb(0 191 179); width: 23%; border-radius: 22px; color: white;
+          font-weight: 600;"  value="<%= __('button_confirm') %>">
+        </div>    
+    </div>
+  </div>
+</div>
+</div>
+
+<div class="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true" data-index="">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="exampleModalLabel"><%= __('title_modal_clients') %></h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <form id="modalForm">
+          <div class="form-group">
+            <label for="exampleInputEmail1"><%= __('title_full_name') %></label>
+            <input type="text"  class="form-control" id="pickup_user_name" name="pickup_user_name" >
+          </div>
+          <div class="form-group">
+            <label for="exampleInputPassword1"><%= __('title_phone1') %></label>
+            <input type="text" class="form-control" id="phone1" name="phone1" >
+          </div>
+
+          <div class="form-group">
+            <label for="exampleInputPassword1"><%= __('title_phone2') %></label>
+            <input type="text" class="form-control" id="phone2" name="phone2" >
+          </div>
+
+        </div>
+        <div class="detailsSubmit">
+          <button type="submit" class="btn btn-primary" id="submitBtn"><%= __('button_save') %></button>
+        </div>
+        </form>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-dismiss="modal"><%= __('button_close') %></button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<% include colorbar.html %>
+
+<link href="css/mdtimepicker.css" rel="stylesheet">
+
+<script type='text/javascript' src='js/mdtimepicker.js'></script>
+
+<script type="text/javascript">
+
+const services = <%- services %>;
+const tripInfo = <%- tripData %>;
+
+const models = <%- models %>;
+const types = <%- types %>;
+const capacities = <%- capacities %>;
+var destination_stops_g = []
+var destination_addresses_g = []
+var d_stop_lat_g = []
+var d_stop_lng_g = []
+var searchBoxes = [];
+let pickup_user_name_g = [];
+let phoneArray_g = [];
+let smsDelivered_g = []
+let stopsData = [];
+
+function getModels(type) {
+  $("#model_id").empty();
+  $("#service_id").empty();
+  models.forEach(function(model) {
+    if(type?.type_model_list) {
+      type?.type_model_list.forEach(function(typemodel) {
+        if(typemodel === model._id) {
+          $("#model_id").append(`<option ${ model._id === tripInfo?.model_details?._id ? "selected" : ""} value="${ model._id}"> ${model.model_name}</option>`);
+        }
+      });
+    }
+  });  
+}
+
+function getCapacitties(type) {
+  $("#capacity").empty();
+  capacities.forEach(function(capacity) {
+      type?.type_capacity_list?.forEach(function(typecapacity) {
+        if(typecapacity === capacity._id) {
+          $("#capacity").append(`<option ${ capacity._id === tripInfo?.capacity_details?._id ? "selected" : ""} value="${ capacity._id}"> ${capacity.value}</option>`);
+        }
+      });
+  });  
+}
+
+function getServices(model) {
+  $("#service_id").empty();
+  services.forEach(function(service) {
+    model?.type_service_list?.forEach(function(typeservice) {
+        if(typeservice === service._id) {
+          $("#service_id")
+          .append(`<option ${ service._id === tripInfo?.service_details?._id ? "selected" : ""} value="${ service._id}"> ${service.service_name}</option>`);
+        }
+      });
+  });  
+}
+
+$("#type_service").change(function() {
+  const service_id = $("#type_service").val();
+  const type_service = types.filter(e => e._id === service_id);
+  getModels(type_service[0]);
+  getCapacitties(type_service[0]);
+  const model_id = $("#model_id").val();
+  const model = models.filter(e => e._id === model_id);
+  getServices(model[0])
+});
+
+$("#model_id").change(function() {
+  const model_id = $("#model_id").val();
+  const model = models.filter(e => e._id === model_id);
+  getServices(model[0]);
+});
+  
+getModels(types.filter(e => e._id === tripInfo.type_id)[0])
+getCapacitties(types.filter(e => e._id === tripInfo.type_id)[0]);
+
+const model_id = $("#model_id").val();
+const model = models.filter(e => e._id === model_id);
+getServices(model[0]);
+
+$("#dest_lat_lng").val(tripInfo.destinationLocation);
+$("#dest_stops_lat_lng_div").val(tripInfo.destination_stops);
+$("#lat").val(tripInfo.sourceLocation[0]);
+$("#lng").val(tripInfo.sourceLocation[1]);
+$("#dlat").val(tripInfo.destinationLocation[0]);
+$("#dlng").val(tripInfo.destinationLocation[1]);
+$("#estimated_distance").val(Number(tripInfo.estimated_distance));
+
+
+if(tripInfo.optimize_field === true){
+  $('#b_optimize').prop('checked', true);
+}
+
+if(tripInfo.destination_addresses.length === 0){
+  $("#b_optimize").attr("disabled", true);
+  $('#b_optimize').prop('checked', false);
+}
+
+  //window.history.forward();
+  var stop_idx = 0;
+  var destination_addresses = [];
+  var destination_addresses_markers = [];
+  let internal_stops_markers = [];
+  var surge_time = [];
+  var selected_surge_time = [];
+  var rich_area_surge_multiplier = 0;
+  let i_stop_idx = 0;
+
+  var markers = [];
+  var iconBase = '/map_pin/icons/';
+  var pickup_markers;
+  var destination_marker;
+  var destination_markers;
+  var directionsDisplay = new google.maps.DirectionsRenderer();;
+  var directionsService = new google.maps.DirectionsService();
+  var map;
+
+  function initialize() {
+    var marker;
+    var mapProp = {
+      center:new google.maps.LatLng(tripInfo.sourceLocation[0], tripInfo.sourceLocation[1]),
+      zoom:18,
+      streetViewControl: false,
+      mapTypeId: google.maps.MapTypeId.ROADMAP
+    };
+    map=new google.maps.Map(document.getElementById("googleMap"),mapProp);
+
+    navigator.geolocation.getCurrentPosition(function(position) {
+
+      directionsDisplay = new google.maps.DirectionsRenderer();
+
+      const icons = {
+        exit: {
+          name: "<%= __('title_origin') %>",
+          icon: iconBase + "FLETY_ICONO_SALIDA.svg",
+        },
+        arrival: {
+          name: "<%= __('title_destination') %>",
+          icon: iconBase + "FLETY_ICONO_LLEGADA.svg",
+        },
+        external_stop: {
+          name: "<%= __('title_external_stop') %>",
+          icon: iconBase + "FLETY_ICONO_PARADA_EXTERNA.svg",
+        },
+      };
+
+      const legend = document.getElementById("legend");
+
+      for (const key in icons) {
+        const type = icons[key];
+        const name = type.name;
+        const icon = type.icon;
+        const div = document.createElement("div");
+        div.className = "item-legend";
+
+        div.innerHTML = `<img src="${icon}"><span>${name}</span>`;
+        legend.appendChild(div);
+      }
+
+      
+      directionsDisplay.setMap(map);
+      
+      map.controls[google.maps.ControlPosition.LEFT_BOTTOM].push(legend);
+      if(tripInfo.sourceLocation.length > 0){
+        
+        var initialLocation = new google.maps.LatLng(
+          tripInfo.sourceLocation[0], tripInfo.sourceLocation[1]
+        );
+
+        pickup_markers = new google.maps.Marker({
+            map: map,
+            icon: {
+              url:  iconBase + "FLETY_ICONO_SALIDA.svg",
+              scaledSize: new google.maps.Size(45, 45),
+            },
+            position: initialLocation,
+            draggable:true
+          });
+
+        geocoder(initialLocation);
+
+      //   google.maps.event.addListener(pickup_markers,'dragend', function(event) {
+      //     var geocoder = new google.maps.Geocoder();
+      //               var latlng = new google.maps.LatLng(event.latLng.lat() , event.latLng.lng());
+
+      //               geocoder.geocode({'latLng': latlng}, function(results, status) {
+      //                   if(status == google.maps.GeocoderStatus.OK) {
+      //                     var address = results[0].formatted_address;
+      //                     $('#pac-input').val(address)
+      //                     document.getElementById('lat').value = event.latLng.lat();
+      //                     document.getElementById('lng').value = event.latLng.lng();
+      //                     $('#dest_lat_lng').val(latlng)
+
+      //                     if(pickup_markers != undefined)
+      //                     {
+      //                         draw_path(map.getBounds());
+      //                     }
+      //                   }
+      //               });
+      //   });
+      }
+    if(tripInfo.destinationLocation.length > 0){
+  
+      let destinationLocation = new google.maps.LatLng(tripInfo.destinationLocation[0], tripInfo.destinationLocation[1]);
+
+      if(!destination_marker){
+            destination_marker = new google.maps.Marker({
+              map: map,
+              icon: {
+                url: iconBase + 'FLETY_ICONO_LLEGADA.svg',
+                scaledSize: new google.maps.Size(45, 45), // Adjust the size as per your requirement,
+              },
+              position: destinationLocation,
+              draggable:true
+            });
+
+            // google.maps.event.addListener(destination_marker,'dragend', function(event) {
+            //   destination_marker_drag(event)
+            // });
+          } else {
+            destination_marker.setPosition(place.geometry.location);
+          }
+
+    }else{
+      if(destination_marker){
+        destination_marker.setMap(null);
+      }
+    }
+      // if(pickup_markers && destination_marker){
+      //   draw_path()
+      // }
+
+      var location = document.getElementById('location');
+      map.controls[google.maps.ControlPosition.RIGHT_CENTER].push(location);
+
+      var input = document.getElementById('pac-input');
+      var searchBox = new google.maps.places.SearchBox(input);
+      var searchBox = new google.maps.places.Autocomplete(input, { componentRestrictions: { country: "<%= country.alpha2 %>" } });
+
+      map.addListener('bounds_changed', function() {
+        searchBox.setBounds(map.getBounds());
+      });
+
+      // Listen for the event fired when the user selects a prediction and retrieve
+      // more details for that place.
+      searchBox.addListener('place_changed', function() {
+        var place = searchBox.getPlace();
+
+        if (place.length == 0) {
+          return;
+        }
+
+        if(pickup_markers != undefined)
+          {
+            pickup_markers.setMap(null);
+          }
+
+        // Clear out the old markers.
+
+        // For each place, get the icon, name and location.
+        var bounds = new google.maps.LatLngBounds();
+
+          if (!place.geometry) {
+            console.log("Returned place contains no geometry");
+            return;
+          }
+
+          pickup_markers = new google.maps.Marker({
+            map: map,
+            icon: {
+              url:  iconBase + "FLETY_ICONO_SALIDA.svg",
+              scaledSize: new google.maps.Size(45, 45),
+            },
+            title: place.name,
+            position: place.geometry.location,
+            draggable:true
+          });
+
+
+
+          // google.maps.event.addListener(pickup_markers,'dragend', function(event) {
+
+          //   pickup_marker_drag(event)
+          // });
+          //new google.maps.LatLng(position.coords.latitude,position.coords.longitude);
+          geocoder(place.geometry.location);
+
+          if(destination_markers == undefined)
+          {
+            if (place.geometry.viewport) {
+              // Only geocodes have viewport.
+              bounds.union(place.geometry.viewport);
+            } else {
+              bounds.extend(place.geometry.location);
+            }
+          }
+
+        if(destination_marker != undefined && pickup_markers!= undefined)
+        {
+            draw_path(bounds);
+        }
+        else
+        {
+          map.fitBounds(bounds);
+        }
+
+      });
+
+      var input1 = document.getElementById('pac-input1');
+      var searchBox1 = new google.maps.places.Autocomplete(input1, { componentRestrictions: { country: "<%= country.alpha2 %>" } });
+        var bounds = new google.maps.LatLngBounds();
+
+
+      // Listen for the event fired when the user selects a prediction and retrieve
+      // more details for that place.
+      searchBox1.addListener('place_changed', function() {
+        var place = searchBox1.getPlace();
+        var bounds = new google.maps.LatLngBounds();
+        if (!place.geometry) {
+          console.log("Returned place contains no geometry");
+          return;
+        }
+        // Clear out the old markers.
+        if(destination_marker != undefined)
+        {
+          destination_marker.setMap(null);
+        }
+        // For each place, get the icon, name and location.
+        var bounds = new google.maps.LatLngBounds();
+
+        destination_marker = new google.maps.Marker({
+          map: map,
+          icon: {
+            url:  iconBase + "FLETY_ICONO_LLEGADA.svg",
+            scaledSize: new google.maps.Size(45, 45)
+          },
+          title: place.name,
+          position: place.geometry.location,
+          draggable:true
+        });
+        document.getElementById('dlat').value=place.geometry.location.lat();
+        document.getElementById('dlng').value=place.geometry.location.lng();
+
+        // google.maps.event.addListener(destination_marker,'dragend', function(event) {
+        //   destination_marker_drag(event)
+        // });
+
+
+        draw_path(bounds);
+      });
+    });
+  }
+
+  function pickup_marker_drag(event)
+    {
+      var initialLocation = new google.maps.LatLng(event.latLng.lat(),event.latLng.lng());
+      var geocoder = new google.maps.Geocoder();
+      document.getElementById('src_lat_lng').value = initialLocation;
+      document.getElementById('lat').value=event.latLng.lat();
+      document.getElementById('lng').value=event.latLng.lng();
+      geocoder.geocode({'latLng': initialLocation}, function(results, status) {
+          if(status == google.maps.GeocoderStatus.OK) {
+              var address = results[0].formatted_address;
+              document.getElementById('pickup').value=address;
+          }
+      });
+      if(destination_marker){
+         draw_path();
+          // get_fare_estimate();
+      }
+    }
+
+  function draw_path()
+  {
+    var bounds = new google.maps.LatLngBounds();
+    let destination_stops = []
+    let internal_stops = []
+    var waypoints = []
+
+    var pick_up = new google.maps.LatLng($('#lat').val() , $('#lng').val());
+    var destination = new google.maps.LatLng($('#dlat').val() , $('#dlng').val());
+    bounds.extend(pick_up);
+    bounds.extend(destination);
+    var form_data = $("#editForm").serializeJSON()
+    let all_set = check_stops_filled();
+    if(all_set){
+      if(form_data.destination_addresses){
+        let element = document.getElementById('multiple_stops');
+        let element_lat_lng = document.getElementById('dest_stops_lat_lng_div')
+        NodeList.prototype.forEach = Array.prototype.forEach
+        var children = element.childNodes;
+        var latlng = element_lat_lng.childNodes
+        children.forEach((item, index) => {
+            let idx = Number($(item).attr("id").substring(8));
+            const point = new google.maps.LatLng(Number($('#d_stop_lat' + idx).val()), Number($('#d_stop_lng' + idx).val()));
+            waypoints.push({
+              location: point,
+              stopover: true
+            });
+        });
+     
+      }
+      let optimal = $('#b_optimize').is(':checked')
+
+      map.fitBounds(bounds);
+      var request = {
+          origin: pick_up,
+          waypoints: waypoints,
+          optimizeWaypoints: optimal,
+          destination: destination,
+          travelMode: google.maps.TravelMode.DRIVING
+      };
+      directionsService.route(request, function (response, status) {
+          if (status == google.maps.DirectionsStatus.OK) {
+              directionsDisplay.setDirections(response);
+              directionsDisplay.setMap(map);
+              directionsDisplay.setOptions( { suppressMarkers: true } );
+              
+              let distanceTotal = 0;
+              let duration = 0;
+
+              response.routes[0].legs.forEach(function(route) {
+                distanceTotal += route.distance.value * 0.001;
+                duration += route.duration.value / 60; 
+              });
+              $("#estimated_distance").val(distanceTotal);
+              $("#estimated_time").val(Math.ceil((Number(duration).toFixed(2) / 60) * 2));
+            }
+      });
+      $('.e_code_hied').hide(1000);
+    }
+  }
+  function geocoder(latlng)
+  {
+    var city,country,country_code;
+      var latlngs = latlng;
+      latlngs = String(latlngs);
+      latlngs=latlngs.replace(/[{( )}]/g, '');
+      latlngs = latlngs.split(',');
+      document.getElementById('lat').value=latlngs[0];
+      document.getElementById('lng').value=latlngs[1];
+
+      var geocoder = new google.maps.Geocoder();
+      document.getElementById('src_lat_lng').value = latlng;
+      geocoder.geocode({'latLng': latlng}, function(results, status) {
+
+      var user=$('#user_id').val();
+      var token=$('#token').val();
+
+          if(status == google.maps.GeocoderStatus.OK) {
+              var address = results[0].formatted_address;
+              //document.getElementById('pac-input').value=address;
+
+              for (var i=0; i<results[0].address_components.length; i++) {
+
+
+                  //there are different types that might hold a city admin_area_lvl_1 usually does in come cases looking for sublocality type will be more appropriate
+                  if (results[0].address_components[i].types[0] == "locality") {
+                          //this is the object you are looking for
+                          city= results[0].address_components[i];
+                          city=city.long_name;
+                          document.getElementById('city').value=city;
+
+                      }
+
+                      if (results[0].address_components[i].types[0] == "administrative_area_level_2") {
+                          //this is the object you are looking for
+                          //subAdminCity= results[0].address_components[i];
+                         // subAdminCity=subAdminCity.long_name;
+
+
+                      }
+                      if (results[0].address_components[i].types[0] == "country") {
+                          //this is the object you are looking for
+                          country= results[0].address_components[i];
+                          country=country.long_name;
+                          country_code=results[0].address_components[i].short_name;
+
+                      }
+                  }
+          }
+      });
+
+  }
+
+  var providers = [];
+
+  function currentLocation()
+  {
+
+    navigator.geolocation.getCurrentPosition(function(position) {
+          var pos = {
+                    lat: position.coords.latitude,
+                    lng: position.coords.longitude
+                        };
+          map.setCenter(pos);
+          map.setZoom(18);
+          var initialLocation = new google.maps.LatLng(pos);
+          geocoder(initialLocation);
+
+
+          if(pickup_markers != undefined)
+          {
+            pickup_markers.setMap(null);
+          }
+
+          pickup_markers = new google.maps.Marker({
+            map: map,
+            icon: {
+              url:  iconBase + "FLETY_ICONO_SALIDA.svg",
+              scaledSize: new google.maps.Size(50, 80)
+            },
+            position: initialLocation,
+            draggable:true
+          });
+
+          // google.maps.event.addListener(pickup_markers,'dragend', function(event) {
+
+          //   pickup_marker_drag(event)
+          // });
+          var bounds = new google.maps.LatLngBounds();
+          // if(destination_markers != undefined)
+          // {
+          //     draw_path(bounds);
+          // }
+    });
+  }
+
+  google.maps.event.addDomListener(window, 'load', initialize);
+
+  function add_google_place_auto_complete(input_ids, stop_data = null) {
+    var input = document.getElementById("stops-pac-input" + input_ids);
+    var searchBox = new google.maps.places.Autocomplete(input, { componentRestrictions: { country: "<%= country.alpha2 %>" } });
+    searchBoxes.push(searchBox);
+    var bounds = new google.maps.LatLngBounds();
+    if(stop_data){
+      let loc_array = stop_data.location
+      var initialLocation = new google.maps.LatLng(loc_array[0],loc_array[1]);
+
+      if(destination_addresses_markers[input_ids]) {
+          destination_addresses_markers[input_ids] = new google.maps.Marker({
+          map: map,
+          icon: {
+            url: iconBase + 'FLETY_ICONO_PARADA_EXTERNA.svg',
+            scaledSize: new google.maps.Size(30, 30) // Adjust the size as per your requirement
+          },
+          position: initialLocation,
+          draggable: false,
+        });
+
+      } else {
+
+        destination_addresses_markers.push(new google.maps.Marker({
+          map: map,
+          icon: {
+            url: iconBase + 'FLETY_ICONO_PARADA_EXTERNA.svg',
+            scaledSize: new google.maps.Size(30, 30) // Adjust the size as per your requirement
+          },
+          position: initialLocation,
+          draggable: false,
+        }))
+
+      }
+
+        dlatlng = String(loc_array);
+        dlatlng = dlatlng.replace(/[{( )}]/g, '');
+        dlatlng = dlatlng.split(',');
+        $('#dest_stops_lat_lng' + input_ids).val(loc_array);
+        document.getElementById('d_stop_lat' + input_ids).value = dlatlng[0];
+        document.getElementById('d_stop_lng' + input_ids).value = dlatlng[1];
+
+        if(destination_marker && !stop_data){
+            draw_path(bounds);
+        }
+
+      }
+
+      searchBox.addListener('place_changed', function () {
+      var place = searchBox.getPlace();
+      var bounds = new google.maps.LatLngBounds();
+      if (!place.geometry) {
+        console.log("Returned place contains no geometry");
+        return;
+      }
+
+      var bounds = new google.maps.LatLngBounds();
+
+        if (destination_addresses_markers[input_ids] != undefined) {
+          destination_addresses_markers[input_ids].setMap(null);
+        }
+
+        if(destination_addresses_markers[input_ids]) {
+          destination_addresses_markers[input_ids] = new google.maps.Marker({
+            map: map,
+            icon: {
+              url:  iconBase + "FLETY_ICONO_PARADA_EXTERNA.svg",
+              scaledSize: new google.maps.Size(30, 30)
+            },
+            position: place.geometry.location,
+            draggable: false
+          });
+        } else {
+          destination_addresses_markers.push(new google.maps.Marker({
+            map: map,
+            icon: {
+              url:  iconBase + "FLETY_ICONO_PARADA_EXTERNA.svg",
+              scaledSize: new google.maps.Size(30, 30)
+            },
+            position: place.geometry.location,
+            draggable: false
+          }))
+        }
+
+        var dlatlng = place.geometry.location;
+        dlatlng = String(dlatlng);
+        dlatlng = dlatlng.replace(/[{( )}]/g, '');
+        dlatlng = dlatlng.split(',');
+        //console.log({geomertry: place.geometry.location})
+
+        $('#dest_stops_lat_lng' + input_ids).val(place.geometry.location);
+        document.getElementById('d_stop_lat' + input_ids).value = dlatlng[0];
+        document.getElementById('d_stop_lng' + input_ids).value = dlatlng[1];
+
+        if(check_stops_filled())
+        {
+            draw_path(bounds);
+        }
+
+      });
+      if(check_stops_filled()){
+        draw_path(bounds);
+      }
+    }
+
+    function addStop(stop_details) {
+    if(stop_details){
+      let address = stop_details.address
+      let stop_username = stop_details.stop_username || ""
+      let stop_user_phone = stop_details.stop_user_phone || []
+      let smsDelivered = stop_details.smsDelivered || "0"
+      let location = stop_details.location
+      let fix = {address: stop_details.address, location: stop_details.location, stops_inside:[], stop_username, stop_user_phone, smsDelivered}
+      stop_details = fix
+      $('#add_internal_stop_message').hide();
+      $('#add_stop_message').hide()
+      if ($('#dest_stops_lat_lng_div')[0].childElementCount == "<%= setting_detail.multiple_stop_count %>") {
+        $('#add_stop_message').show()
+        return;
+      }
+  
+        let int_stops =  JSON.stringify(stop_details.stops_inside)
+              .replace(/&/g, '&amp;')
+              .replace(/</g, '&lt;')
+              .replace(/>/g, '&gt;')
+              .replace(/"/g, '&quot;');
+        var html = `<div class="col_6" id="picu_lft${stop_idx}" style="margin-bottom: 15px;">`+
+          `<input type="text" id="stops-pac-input${stop_idx}" name="destination_addresses[]" value="${address}" class="form-control mt" style="margin-bottom: 0; width: 60%;  display: inline-block;" placeholder="<%= __('title_stop') %> ${stop_idx + 1} (<%= __('title_indicate_city') %>)"/>`+
+          `<button type="button" class="btn btn-primary add-details-btn" data-index="${stop_idx}" data-address="${address}" onclick="handleAddDetailsClick('${stop_idx}','${address}')" ><%= __('title_add_detail') %></button>
+          <span class="right-span" onclick="removeStop('${stop_idx}')"><i class="fa fa-times"></i></span>`+
+          `</div>`
+  
+      $('#multiple_stops').append(html);
+  
+      var html = `<input type="hidden" id="dest_stops_lat_lng${stop_idx}" name="dest_stops_lat_lng${stop_idx}" />`;
+      $('#dest_stops_lat_lng_div').append(html);
+  
+      var html = `<input type="hidden" id="d_stop_lat${stop_idx}" name="d_stop_lat[]" value="${location[0]}" />` +
+        `<input type="hidden" id="d_stop_lng${stop_idx}" name="d_stop_lng[]" value="${location[1]}" />`+
+        `<input type="hidden" id="stop_username${stop_idx}" name="stop_username[]" value="${stop_username}" />`+
+        `<input type="hidden" id="stop_user_phone${stop_idx}" name="stop_user_phone[]" value="${stop_user_phone}" />`+
+        `<input type="hidden" id="smsDelivered${stop_idx}" name="smsDelivered[]" value="${smsDelivered}" />`
+      $('#dest_stops_location_div').append(html);
+      
+      let val_html = document.getElementById("multiple_stops");
+      let values = val_html.childNodes.length;
+      if(values > 0){
+        $("#b_optimize").removeAttr('disabled');
+        //$('#b_optimize').prop('checked', true);
+      }
+  
+      add_google_place_auto_complete(stop_idx, stop_details);
+      stop_idx++;
+      
+
+    }else{
+      $('#add_stop_message').hide()
+      if ($('#dest_stops_lat_lng_div')[0].childElementCount == "<%= setting_detail.multiple_stop_count %>") {
+        $('#add_stop_message').show()
+        return;
+      }
+      var html = `<div class="col_6" id="picu_lft${stop_idx}" style="margin-bottom: 15px;">`+
+          `<input type="text" id="stops-pac-input${stop_idx}" name="destination_addresses[]" class="form-control mt" style="margin-bottom: 0; width: 60%;  display: inline-block;" placeholder="<%= __('title_stop') %> ${stop_idx + 1} (<%= __('title_indicate_city') %>)"/>`+
+          `<input type="hidden" id="internal_stop_addresses${stop_idx}" name="internal_stop_addresses[]" />`+
+          //`<button type="button" onclick="show_internal_stop_modal(${stop_idx + 1})" class="destination_field int_stop_btn" alt="<%= __('tooltip_stops_address') %>"  title="<%= __('tooltip_stops_address') %>"  ><%= __('title_add_internal_stops') %> <i class="fa fa-plus-circle" aria-hidden="true"></i></button>`+
+          `<button type="button" class="btn btn-primary add-details-btn" data-index="${stop_idx}" onclick="handleAddDetailsClick('${stop_idx}','stops-pac-input${stop_idx}')" style="display:" ><%= __('title_add_detail') %></button>
+          <div id="error-message" style="color: red; display: none; font-size: 14px;">Debe seleccionar una dirección primero</div>
+          <span class="right-span" onclick="removeStop('${stop_idx}')"><i class="fa fa-times"></i></span>`+
+          `</div>`
+
+      $('#multiple_stops').append(html);
+
+      var html =
+      `<input type="hidden" id="dest_stops_lat_lng${stop_idx}" name="dest_stops_lat_lng${stop_idx}" />`;
+
+      $('#dest_stops_lat_lng_div').append(html);
+
+      var html =
+        `<input type="hidden" id="d_stop_lat${stop_idx}" name="d_stop_lat[]" />` +
+        `<input type="hidden" id="d_stop_lng${stop_idx}" name="d_stop_lng[]" />` +
+        `<input type="hidden" id="stop_username${stop_idx}" name="stop_username[]" />` +
+        `<input type="hidden" id="stop_user_phone${stop_idx}" name="stop_user_phone[]" />` +
+        `<input type="hidden" id="smsDelivered${stop_idx}" name="smsDelivered[]" value="0" />`;
+
+      $('#dest_stops_location_div').append(html);
+      let val_html = document.getElementById("multiple_stops");
+      let values = val_html.childNodes.length;
+      if(values > 0){
+        $("#b_optimize").removeAttr('disabled');
+        //r$('#b_optimize').prop('checked', true);
+      }
+
+      add_google_place_auto_complete(stop_idx);
+      stop_idx++;
+
+    }
+    }
+
+
+  function draw_b_opt(){
+    if(document.getElementById('pac-input').value !== "" && document.getElementById('pac-input1').value !== "" && check_stops_filled()){
+          var bounds = new google.maps.LatLngBounds();
+          draw_path(bounds);
+        }
+  }
+
+  function entregado(){
+   
+  }
+  function removeStop(element_id) {
+      $('#add_stop_message').hide()
+      $("#stops-pac-input"+element_id).val("");
+      $("#smsDelivered"+element_id).val("1");
+      document.getElementById('picu_lft' + element_id).remove();
+      document.getElementById('d_stop_lat' + element_id).remove();
+      document.getElementById('d_stop_lng' + element_id).remove();
+      document.getElementById('stop_username' + element_id).remove();
+      document.getElementById('stop_user_phone' + element_id).remove();
+      document.getElementById('smsDelivered' + element_id).remove();
+
+      searchBoxes[element_id] = null;
+      const element = $('#dest_stops_lat_lng' + element_id)[0];
+      var dlatlng = String(element.value);
+      dlatlng = dlatlng.replace(/[{( )}]/g, '');
+      dlatlng = dlatlng.split(',');
+      document.getElementById('dest_stops_lat_lng' + element_id).remove();
+      if (destination_addresses_markers[element_id] != undefined) {
+        destination_addresses_markers[element_id].setMap(null);
+      }
+      let val_html = document.getElementById("multiple_stops");
+      let values = val_html.childNodes.length;
+      if(values == 0){
+        $("#b_optimize").attr("disabled", true);
+        $('#b_optimize').prop('checked', false);
+      }
+
+      if (dlatlng.length == 2) {
+        var bounds = new google.maps.LatLngBounds();
+        draw_path(bounds);
+      }
+    }
+  function show_internal_stop_modal(element_id){
+    $('#internal_stops').empty();
+    
+    let stop_string = ""
+    if(element_id == 0){ // Destination Stop
+      stop_string = document.getElementById('destination_stops').value
+    }else{
+      stop_string = document.getElementById('internal_stop_addresses' + (element_id - 1)).value
+    }    
+    $('#external_stop_id').val(element_id);
+
+    if(stop_string != undefined && stop_string != ""){ // Destination Stop
+      let stops = JSON.parse(stop_string)
+      if(stops.length > 0){
+        stops.forEach((stop, index) => {
+          const html = `<div class="col_12 red_bg" id="i_picu_lft${index}" style="margin-bottom: 15px;">`+
+          `<input type="text" id="i-stops-pac-input${index}" name="stops_addresses[]"  value="${stop.address}" class="place_holder_stop" placeholder="<%= __('title_stops_inside') %> ${index + 1} (<%= __('title_indicate_city') %>)"/>`+
+          `<span style="background: rgb(37 14 98); left: 0px !important;"><i class="fa fa-map-marker"></i></span>`+
+          `<span class="right-span" onclick="removeInternalStop('${index}')"><i class="fa fa-times"></i></span>`+
+          `<input type="hidden" id="i_stop_lat${index}" name="i_stop_lat[]" value="${stop.location[0]}" />` +
+          `<input type="hidden" id="i_stop_lng${index}" name="i_stop_lng[]" value="${stop.location[1]}" />` +
+          `</div>`
+          i_stop_idx = index 
+          $('#internal_stops').append(html);
+        })
+        $('#internal_stop_modal').modal('show');
+        add_google_place_auto_complete_stops(i_stop_idx);
+        return;
+      }
+    }
+    i_stop_idx = 0
+    const html = `<div class="col_12 red_bg" id="i_picu_lft${i_stop_idx}" style="margin-bottom: 15px;">`+
+    `<input type="text" id="i-stops-pac-input${i_stop_idx}" name="stops_addresses[]"  class="place_holder_stop" placeholder="<%= __('title_stops_inside') %> ${i_stop_idx + 1} (<%= __('title_indicate_city') %>)"/>`+
+    `<span style="background: rgb(37 14 98); left: 0px !important;"><i class="fa fa-map-marker"></i></span>`+
+    `<span class="right-span" onclick="removeInternalStop('${i_stop_idx}')"><i class="fa fa-times"></i></span>`+
+    `<input type="hidden" id="i_stop_lat${i_stop_idx}" name="i_stop_lat[]" />` +
+    `<input type="hidden" id="i_stop_lng${i_stop_idx}" name="i_stop_lng[]" />` +
+    `</div>`
+    $('#internal_stops').append(html);
+    $('#internal_stop_modal').modal('show');
+    add_google_place_auto_complete_stops(i_stop_idx);
+  }
+  function addInternalStop() {
+        $('#add_internal_stop_message').hide();
+        let forms_data = $("#internal_stops_form").serializeJSON()  
+        if (forms_data.stops_addresses.length == 40) {
+          $('#add_internal_stop_message').show();
+          return;
+        }
+        i_stop_idx ++;
+        var html = `<div class="col_12 red_bg" id="i_picu_lft${i_stop_idx}" style="margin-bottom: 15px;">`+
+        `<input type="text" id="i-stops-pac-input${i_stop_idx}" name="stops_addresses[]" class="place_holder_stop" placeholder="<%= __('title_stops_inside') %> ${i_stop_idx + 1} (<%= __('title_indicate_city') %>)"/>`+
+        `<span style="background: rgb(37 14 98); left: 0px !important;"><i class="fa fa-map-marker"></i></span>`+
+        `<span class="right-span" onclick="removeInternalStop('${i_stop_idx}')"><i class="fa fa-times"></i></span>`+
+        `<input type="hidden" id="i_stop_lat${i_stop_idx}" name="i_stop_lat[]" />` +
+        `<input type="hidden" id="i_stop_lng${i_stop_idx}" name="i_stop_lng[]" />` +
+        `</div>`
+  
+        $('#internal_stops').append(html);
+        add_google_place_auto_complete_stops(i_stop_idx);
+      }
+
+  function add_google_place_auto_complete_stops(input_ids) {
+    var input = document.getElementById("i-stops-pac-input" + input_ids);
+    var searchBox = new google.maps.places.Autocomplete(input, { componentRestrictions: { country: "<%= country.alpha2 %>" } });
+    searchBox.addListener('place_changed', function () {
+      var bounds = new google.maps.LatLngBounds();
+      var place = searchBox.getPlace();
+      var bounds = new google.maps.LatLngBounds();
+      if (!place.geometry) {
+        console.log("Returned place contains no geometry");
+        return;
+      }
+      if (internal_stops_markers[input_ids] != undefined) {
+        internal_stops_markers[input_ids].setMap(null);
+        }
+
+        if(internal_stops_markers[input_ids]) {
+          internal_stops_markers[input_ids] = new google.maps.Marker({
+            map: map,
+            icon: {
+              url:  iconBase + "FLETY_ICONO_PARADA_EXTERNA.svg",
+              scaledSize: new google.maps.Size(30, 30)
+            },
+            position: place.geometry.location,
+            draggable: false
+          });
+        } else {
+          internal_stops_markers.push(new google.maps.Marker({
+            map: map,
+            icon: {
+              url:  iconBase + "FLETY_ICONO_PARADA_EXTERNA.svg",
+              scaledSize: new google.maps.Size(30, 30)
+            },
+            position: place.geometry.location,
+            draggable: false
+          }))
+        }
+      var ilatlng = place.geometry.location;
+      ilatlng = String(ilatlng);
+      ilatlng = ilatlng.replace(/[{( )}]/g, '');
+      ilatlng = ilatlng.split(',');
+      document.getElementById('i_stop_lat' + input_ids).value = ilatlng[0];
+      document.getElementById('i_stop_lng' + input_ids).value = ilatlng[1];
+      
+    });
+  }
+
+
+  function removeInternalStop(element_id) {
+        $('#add_internal_stop_message').hide();
+        $('#i_picu_lft' + element_id).remove();
+        // var dlatlng = String(element.value);
+        // dlatlng = dlatlng.replace(/[{( )}]/g, '');
+        // dlatlng = dlatlng.split(',');
+        // console.log({dlatlng})
+        // // if (destination_addresses_markers[element_id] != undefined) {
+        //   destination_addresses_markers[element_id].setMap(null);
+        // }
+        // if (dlatlng.length == 2) {
+        //   var bounds = new google.maps.LatLngBounds();
+        //  // draw_path(bounds);
+        // }
+      }
+  function destination_marker_drag(event)
+    {
+      var initialLocation = new google.maps.LatLng(event.latLng.lat(),event.latLng.lng());
+      var geocoder = new google.maps.Geocoder();
+      $("#dest_lat_lng").val(initialLocation);
+      document.getElementById('dlat').value=event.latLng.lat();
+      document.getElementById('dlng').value=event.latLng.lng();
+      geocoder.geocode({'latLng': initialLocation}, function(results, status) {
+        if(status == google.maps.GeocoderStatus.OK) {
+          var address = results[0].formatted_address;
+          $("#destination").val(address);
+        }
+      });
+      var dlatlng = place.geometry.location;
+        dlatlng = String(dlatlng);
+        dlatlng=dlatlng.replace(/[{( )}]/g, '');
+        dlatlng = dlatlng.split(',');
+
+        $('#dest_lat_lng').val(place.geometry.location)
+        document.getElementById('dlat').value=dlatlng[0];
+        document.getElementById('dlng').value=dlatlng[1];
+
+      draw_path();
+    }
+
+  $('#confirm_int_stop').click( function(){
+      let forms_data = $("#internal_stops_form").serializeJSON()  
+        let main_stop = Number(forms_data.external_stop_id)
+        let int_stops_array = [] 
+        let is_invalid_stop = 0   
+        if(forms_data.stops_addresses){
+          forms_data.stops_addresses.forEach((stop, i) => {
+            if(forms_data.stops_addresses[i] == "" || 
+              forms_data.i_stop_lat[i] == "" ||
+              forms_data.i_stop_lng[i] == ""){
+                is_invalid_stop = 1
+                $('#valid_add_msg').show();
+                setTimeout(function () {
+                    $('#valid_add_msg').hide();
+                }, 3000);
+            }
+            let stops_addresses = forms_data.stops_addresses[i]
+            let int_stop_lat = Number(forms_data.i_stop_lat[i])
+            let int_stop_lng = Number(forms_data.i_stop_lng[i])
+            if(stops_addresses !="" && int_stop_lat != 0 && int_stop_lng != 0){
+              let int_stop_details = {
+                address: stops_addresses,
+                location: [int_stop_lat, int_stop_lng]
+              }
+              int_stops_array.push(int_stop_details)
+            }
+          })
+        
+        }
+        if(is_invalid_stop == 1){
+          return;
+        }
+  
+        int_stops_array = JSON.stringify(int_stops_array)
+        let main_form_data = $("#signupForm").serializeJSON()
+        if(main_stop == 0){ // Destination Stop
+          document.getElementById('destination_stops').value = int_stops_array;
+          }else{
+          document.getElementById('internal_stop_addresses' + (main_stop - 1)).value = int_stops_array;
+        }
+        draw_path()
+        $('#internal_stop_modal').modal('hide');
+    })
+
+
+    $("#pac-input").val(tripInfo.source_address);
+    $("#pac-input1").val(tripInfo.destination_address);
+
+    var init = document.getElementById(`pac-input`);
+    var destiny = document.getElementById(`pac-input1`);
+     setTimeout(() => {
+       if(tripInfo.initialDestinationLocation.length > 0 && tripInfo.initial_destination_address){
+         $('#pac-input1').val(tripInfo.initial_destination_address)
+         let destination_stops =  JSON.stringify(tripInfo.destination_stops)
+         $('#destination_stops').val(destination_stops)  
+       }
+   
+       if(tripInfo.destination_addresses != undefined && tripInfo.destination_addresses.length > 0) {
+         tripInfo.destination_addresses.forEach((city_stop, index) => {
+           addStop(city_stop);
+         })
+       }
+       draw_path()
+     }, 1000); 
+
+
+    // if(tripInfo.destination_stops != undefined && tripInfo.destination_stops.length > 0) {
+    //   tripInfo.destination_stops.forEach((stop, index) => {
+    //     addStop();
+    //     $(`#stops-pac-input${index}`).val(stop.address);
+    //     $(`#d_stop_lat${index}`).val(stop.location[0]);
+    //     $(`#d_stop_lng${index}`).val(stop.location[1]);
+    //   })
+    // }
+
+    $("#location").click(function(){
+        currentLocation();
+    });
+
+    $('#editForm').on('submit', function(e) {
+      var keyCode = e.keyCode || e.which;
+      if (keyCode === 13) {
+        e.preventDefault();
+        return false;
+      }
+    });
+
+    $(document).ready(function(){
+      $('#loading_date').datepicker({
+        format: 'dd/mm/yyyy',
+      });
+
+      let time = new Date();
+
+      if(tripInfo.server_start_time_for_schedule) {
+        time = new Date(tripInfo.server_start_time_for_schedule);
+        $('#loading_date').datepicker('update', time);
+      } else {  
+        time = new Date(tripInfo.created_at);
+        $('#loading_date').datepicker('update', time);
+      }
+      $('#loading_hour').timepicker({
+          showMeridian: false,  // This enables AM/PM mode
+          defaultTime: false
+      });
+
+      $('#loading_hour').timepicker('setTime', time);
+      
+      $("#editForm").validate({
+        ignore : [],
+        rules: {
+          loading_hour: "required",
+          loading_date: "required",
+          trip_id: "required",
+          dest_stops_location_div: {
+            required: false
+          },
+          dest_stops_lat_lng_div:{
+            required: false
+          },
+          user_type_id: {
+            required: false
+          },
+          server_date: "required",
+          latitude: "required",
+          lng: {
+            required: false
+          },
+          dlat: {
+            required: false
+          },
+          dlng: "required",
+          estimated_distance: {
+            required: false
+          },
+          type_service: "required",
+          model_id: {
+            required: false
+          },
+          capacity: {
+            required: false
+          },
+          helpers_num_load: {
+            required: false
+          },
+          helpers_num_download: {
+            required: false
+          },
+          night_shift: {
+            required: false
+          },
+          fixed_price: "required",
+          "pac-input": "required",
+          "pac-input1": "required",
+          provider_service_fees: "required",
+        },
+
+        submitHandler: function(form) {
+          const form_data = $("#editForm").serializeJSON();
+          let formObj = {};
+
+    const stopIndex = document.getElementById('exampleModal').getAttribute('data-index');
+    const pickup_user_name = document.getElementById('pickup_user_name').value;
+    const phone1  = document.getElementById('phone1').value;
+    const phone2  = document.getElementById('phone2').value;
+    const phoneArray = [phone1, phone2];
+
+
+    stopsData[stopIndex] = {
+        pickup_user_name,
+        phones: [phone1, phone2]
+    };
+    
+
+   // console.log('Datos de las paradas:', stopsData)
+  
+
+    var destination_addresses = [];
+
+          var destination_addresses = []
+          let pickupUserName = $('#pickupUserName').val();
+          let phone = $('#phone').val();
+          if($('#b_optimize').is(':checked')){
+            if(form_data.destination_addresses){
+              destination_addresses_g.forEach((element, index) => {
+                destination_addresses.push({
+                  address: destination_addresses_g[index],
+                  location: [
+                    Number(d_stop_lat_g[index]),
+                    Number(d_stop_lng_g[index])
+                  ],
+                  stops_inside: [],
+                  stop_username: pickup_user_name_g[index],
+                  stop_user_phone: phoneArray_g[index],
+                  smsDelivered: smsDelivered_g[index],
+                  stop_username: pickup_user_name_g[index] || "",
+                  stop_user_phone: phoneArray_g[index] || [],
+                  smsDelivered: smsDelivered_g[index] || "0"
+                })
+              });
+              
+
+
+              delete form_data.d_stop_lat;
+              delete form_data.d_stop_lng;
+              delete form_data.destination_addresses;
+              delete form_data.internal_stop_addresses;
+              delete form_data.stop_username;
+              delete form_data.stop_user_phone;
+              delete form_data.smsDelivered;
+              
+            }
+         }else{
+          if(form_data.destination_addresses){
+            let element = document.getElementById('multiple_stops');
+            let element_lat_lng = document.getElementById('dest_stops_lat_lng_div')
+            NodeList.prototype.forEach = Array.prototype.forEach
+            var children = element.childNodes;
+            var latlng = element_lat_lng.childNodes;
+            children.forEach((item, index) => {
+                let idx = Number($(item).attr("id").substring(8));
+                const point = new google.maps.LatLng(Number($('#d_stop_lat' + idx).val()), Number($('#d_stop_lng' + idx).val()));
+                destination_addresses.push({
+                  address: $('#stops-pac-input' + idx).val(),
+                  location:[
+                  Number($('#d_stop_lat' + idx).val()),
+                  Number($('#d_stop_lng' + idx).val())
+                  ],
+                  stop_username: $('#stop_username' + idx).val(), 
+                  stop_user_phone: $('#stop_user_phone' + idx).val(),
+                  smsDelivered:  $('#smsDelivered' + idx).val(),
+                });
+            });
+                        
+        }
+ 
+            delete form_data.d_stop_lat;
+            delete form_data.d_stop_lng;
+            delete form_data.destination_addresses;
+            delete form_data.internal_stop_addresses;
+
+          }
+          
+          form_data.destination_addresses = destination_addresses;
+          const data = form_data;
+
+          let dateString = $("#loading_date").val().split("/");
+          let hourString = $("#loading_hour").val().split(" ");
+          let hourSplit = hourString[0].split(":");
+          let hour = hourSplit[0];
+          let minute =  hourSplit[1];
+          dateString[1] = String(Number(dateString[1]) - 1);
+
+          data.loading_date = new Date(dateString[2], dateString[1], dateString[0], hour, minute, 0);
+          data.optimize_field = $('#b_optimize').is(':checked');
+          data.destination_addresses.forEach((stop) => {
+            let stopPhone = stop.stop_user_phone || []
+            if(stopPhone && stopPhone != ""){
+
+              stopPhone = stopPhone.split(',');
+              stop.stop_user_phone = stopPhone
+            }else{
+              stop.stop_user_phone = []
+            }
+          })
+         $.ajax({
+            method: 'POST',
+            url: `/updatetrip?history=<%= history %>`,
+            data: data,
+            dataType: "json",
+            success: (res) => {
+              if(res.success) {
+                //window.history.back();
+                location.replace(document.referrer);
+              } else {
+                // console.log(res);
+              }
+            },
+            error: (err) => {
+              console.log(err);
+            }
+          })
+
+
+        
+        }
+    });
+
+  });
+
+  
+  function getDistanceFromTwoLocation (fromLocation, toLocation) {
+          var lat1 = fromLocation[0]
+          var lat2 = toLocation[0]
+          var lon1 = fromLocation[1]
+          var lon2 = toLocation[1]
+
+          ///////  TOTAL DISTANCE ////
+
+          var R = 6371 // km (change this constant to get miles)
+          var dLat = ((lat2 - lat1) * Math.PI) / 180
+          var dLon = ((lon2 - lon1) * Math.PI) / 180
+          var a =
+              Math.sin(dLat / 2) * Math.sin(dLat / 2) +
+              Math.cos((lat1 * Math.PI) / 180) *
+                  Math.cos((lat2 * Math.PI) / 180) *
+                  Math.sin(dLon / 2) *
+                  Math.sin(dLon / 2)
+          var c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a))
+          return R * c
+ }
+
+  function check_stops_filled(){
+    let fill = true;
+    let val_html = document.getElementById("multiple_stops");
+    let values = val_html.childNodes.length;
+    $('#multiple_stops').children('div').each(function(){
+      dest_idx = Number($(this).attr("id").substring(8));
+      if((searchBoxes[dest_idx].getPlace()===undefined && $("#stops-pac-input"+dest_idx).val() === "") || searchBoxes[dest_idx] === null){
+        fill = false
+      }
+    });
+    return fill;
+  }
+
+  function check_optimization(){
+      let form_data = $("#editForm").serializeJSON();
+      let all_set = check_stops_filled();
+      let val_html = document.getElementById("multiple_stops");
+      let values = val_html.childNodes.length;
+      if(values>0){
+        if(all_set){
+          if($('#b_optimize').is(':checked')){
+              
+              let lato = $("#lat").val();
+              let lngo = $("#lng").val();
+              let dlato = $("#dlat").val();
+              let dlngo = $("#dlng").val();
+              let destination_addresses = []
+              let origin_op = {address: form_data.source_address, location: [lato, lngo]}
+              if(form_data.destination_addresses){
+                let element = document.getElementById('multiple_stops');
+                let element_lat_lng = document.getElementById('dest_stops_lat_lng_div')
+                NodeList.prototype.forEach = Array.prototype.forEach
+                var children = element.childNodes;
+                var latlng = element_lat_lng.childNodes;
+
+
+                children.forEach((item, index) => {
+                    let idx = Number($(item).attr("id").substring(8));
+
+                    destination_addresses.push({
+                      address: $('#stops-pac-input' + idx).val(),
+                      location:[
+                      Number($('#d_stop_lat' + idx).val()),
+                      Number($('#d_stop_lng' + idx).val())
+                      ],
+                      stop_username: $('#stop_username' + idx).val(),
+                      stop_user_phone: $('#stop_user_phone' + idx).val(),
+                      smsDelivered: $('#smsDelivered' + idx).val()
+                    });
+       
+                });
+                destination_addresses.push({
+                      address:  $("#pac-input1").val(),
+                      location:[
+                      Number($("#dlat").val()),
+                      Number($("#dlng").val())
+                      ]
+                    });
+              }
+
+              let order = destination_addresses.slice().sort((a,b) => getDistanceFromTwoLocation(a.location,origin_op.location) -  getDistanceFromTwoLocation(b.location,origin_op.location))
+              let dest_stop = order.pop()
+             
+
+              $("#dlat").val(dest_stop.location[0]);
+              $("#dlng").val(dest_stop.location[1]);
+              $("#pac-input1").val(dest_stop.address);
+              dlato = $("#dlat").val();
+              dlngo = $("#dlng").val();
+
+              
+              $.ajax({
+                      type: 'POST',
+                      dataType: 'json',
+                      data: {
+                          pickup_latitude : lato,
+                          pickup_longitude : lngo, 
+                          destination_latitude : dlato, 
+                          destination_longitude: dlngo, 
+                          'stops_address': order,
+
+                      },
+                      url: "/optimizedorder",
+              success:function(response) {
+                if(destination_addresses_g.length > 0){
+                  destination_addresses_g = [];
+                }
+
+                if(d_stop_lat_g.length > 0){
+                  d_stop_lat_g = []
+                }
+                if(d_stop_lng_g.length>0){
+                  d_stop_lng_g = []
+                }
+
+                if(pickup_user_name_g.length>0){
+                  pickup_user_name_g = []
+                }
+                if(phoneArray_g.length>0){
+                  phoneArray_g = []
+                }
+                if(smsDelivered_g.length>0){
+                  smsDelivered_g = []
+                }
+
+
+                destination_addresses = response.optimized_stops;
+                let optimized_stops =  response.optimized_stops
+                for(let i=0; i<destination_addresses.length; i++){
+                  form_data.destination_addresses[i] = response.optimized_stops[i].address;
+                  form_data.d_stop_lat[i] = response.optimized_stops[i].location[0];
+                  form_data.d_stop_lng[i] = response.optimized_stops[i].location[1];
+                  form_data.stop_username[i] = response.optimized_stops[i].stop_username || "";
+                  form_data.stop_user_phone[i] = response.optimized_stops[i].stop_user_phone || "";
+                  form_data.smsDelivered[i] = response.optimized_stops[i].smsDelivered || "0";
+                  destination_addresses_g.push(response.optimized_stops[i].address);
+                  d_stop_lat_g.push(response.optimized_stops[i].location[0]);
+                  d_stop_lng_g.push(response.optimized_stops[i].location[1]);
+                  pickup_user_name_g.push(response.optimized_stops[i]?.stop_username || "");
+                  phoneArray_g.push(response.optimized_stops[i]?.stop_user_phone || "");
+                  smsDelivered_g.push(response.optimized_stops[i]?.smsDelivered || "0");
+                }
+
+                delete form_data.destination_addresses;
+                delete form_data.d_stop_lat;
+                delete form_data.d_stop_lng;
+
+                form_data.d_stop_lat = d_stop_lat_g;
+                form_data.d_stop_lng = d_stop_lng_g;
+
+
+                saveForm()
+              }
+            })
+            
+          }else{
+            saveForm()
+          }
+      }
+      }else{
+        saveForm();
+      }
+  }
+  
+  function saveForm() {
+
+      $("#editForm").submit();
+  }
+
+    function isNumberKeyOnly(evt){
+      var charCode = (evt.which) ? evt.which : event.keyCode
+        if (charCode > 31 && (charCode < 48 || charCode > 57))
+        {
+          return false;
+        }
+        return true;
+    }
+
+
+
+
+
+function handleAddDetailsClick(stopIndex, address) {
+
+  if (address.includes('stops-pac-input')) {
+    const inputValue = document.getElementById(address).value;
+    if (!inputValue) {
+      const errorMessage = document.getElementById('error-message');
+        errorMessage.style.display = 'block';  
+        setTimeout(function() {
+          errorMessage.style.display = 'none';
+        }, 3000); 
+    }else{
+      document.getElementById('modalForm').reset();
+      let stop_username = $('#stop_username'+ stopIndex).val()
+      let stop_user_phone = $('#stop_user_phone'+ stopIndex).val()
+      if(stop_user_phone != ""){
+        stop_user_phone = stop_user_phone.split(',');
+      }
+      $('#pickup_user_name').val(stop_username || "")
+      $('#phone1').val(stop_user_phone[0] || "")
+      $('#phone2').val(stop_user_phone[1] || "")
+      const modal = document.getElementById('exampleModal');
+      modal.setAttribute('data-index', stopIndex);
+      $('#exampleModal').modal('show');
+    }
+  } else {
+    document.getElementById('modalForm').reset();
+    let stop_username = $('#stop_username'+ stopIndex).val()
+    let stop_user_phone = $('#stop_user_phone'+ stopIndex).val()
+    if(stop_user_phone != ""){
+      stop_user_phone = stop_user_phone.split(',');
+    }
+    $('#pickup_user_name').val(stop_username || "")
+    $('#phone1').val(stop_user_phone[0] || "")
+    $('#phone2').val(stop_user_phone[1] || "")
+    
+    const modal = document.getElementById('exampleModal');
+    modal.setAttribute('data-index', stopIndex);
+    $('#exampleModal').modal('show');
+  }
+}
+
+  document.getElementById('submitBtn').addEventListener('click', function(event) {
+    event.preventDefault(); 
+    const stopIndex = document.getElementById('exampleModal').getAttribute('data-index');
+    const pickup_user_name = document.getElementById('pickup_user_name').value;
+    const phone1  = document.getElementById('phone1').value;
+    const phone2  = document.getElementById('phone2').value;
+    const phoneArray = [phone1, phone2];
+    $('#stop_username'+stopIndex).val(pickup_user_name || "")
+    $('#stop_user_phone'+stopIndex).val(phoneArray || [])
+
+    stopsData[stopIndex] = {
+        pickup_user_name,
+        phones: [phone1, phone2]
+    };
+
+   $('#exampleModal').modal('hide');
+   
+  });
+
+</script>
+
+<% include ../../footer_list.html %>

@@ -1,0 +1,309 @@
+<% include partner/partner_header.html %>
+	<!-- PAGE TITLE -->
+	<div class="page-content-wrap">
+	<div class="alert alert-success" role="alert" id="error" style="display:none; position: fixed;z-index: 100">
+		<button type="button" id="close" class="close"><span aria-hidden="true">&times;</span><span class="sr-only"><%= __('button_close') %></span></button>
+		<p align="center" id="message"> <strong></strong></p>
+	</div>
+
+	<div class="page-title">
+		<h2><span class="fa fa-cogs"></span> <%= __('title_helper_detail') %></h2>
+	</div>
+	<!-- END PAGE TITLE -->
+
+	<!-- PAGE CONTENT WRAPPER -->
+	<% if(typeof data == 'undefined'){ %>
+		<div class="row">
+		<div class="page-content-wrap">
+			<div class="col-md-6 col-sm-8 col-xs-12">
+			<form class="form-horizontal" method="post" id="partner_helper_add" action="/partner_add_helper" enctype="multipart/form-data">
+				<div class="panel panel-default">
+					<div class="panel-body form-group-separated">
+						<div class="form-group">
+							<label class="col-md-3 col-xs-5 control-label"><%= __('title_name') %></label>
+							<div class="col-md-9 col-xs-7">
+								<input type="text" class="form-control" name="name" />
+							</div>
+						</div>
+
+						<div class="form-group">
+							<label class="col-md-3 col-xs-5 control-label"><%= __('title_phone') %></label>
+							<div class="col-md-9 col-xs-7">
+								<div class="col-md-3">
+									<input type="text" name="country_phone_code" class="form-control" value="<%= country_phone_code %>" readonly/>
+								</div>
+								<div class="col-md-9">
+									<input type="text" onkeypress="return isNumberKey(event);" class="form-control" name="phone" minlength="<%= setting_detail.minimum_phone_number_length%>" maxlength="<%= setting_detail.maximum_phone_number_length%>" />
+								</div>
+							</div>
+						</div>
+						<div class="form-group">
+							<label class="col-md-3 col-xs-5 control-label"><%= __('title_cedula') %></label>
+							<div class="col-md-9 col-xs-7">
+								<div class="col-md-3">
+								<select class="form-control select" data-none-selected-text="<%= __('title_nothing_selected') %>"  name="cedula0">
+									<option value='V'>V</option>
+									<option value='E'>E</option>
+								</select>                                
+							</div>
+							<div class="col-md-9">
+								<input name="cedula1"
+									onkeypress="return isNumberKeyCedula(event)" type="text" class="form-control"
+									minlength="6"
+									maxlength="9"
+									placeholder="<%= __('title_enter_valid_cedula') %>"  />
+								</div>
+							</div>
+						</div>
+
+						<div class="form-group">
+							<div class="col-md-12 col-xs-12">
+								<button class="btn btn-primary btn-rounded pull-right submit_button" type="submit" name="update" id="update"><%= __('button_save') %></button>
+							</div>
+						</div>
+
+
+					</div>
+				</div>
+			</form>
+			</div>
+		</div>
+		</div>
+		<% include colorbar.html %>
+
+	<% } else { %>
+		<div class="row">
+		<div class="page-content-wrap">
+			<div class="col-md-6 col-sm-8 col-xs-12">
+					<form class="form-horizontal" id="partner_helper_update" method="post" action="/partner_helper_update" enctype="multipart/form-data">
+						<div class="panel panel-default">
+							<div class="panel-body form-group-separated">
+								<div class="form-group">
+									<input type="hidden" class="form-control" value="<%= data._id %>" name="id" />
+									<label class="col-md-3 col-xs-5 control-label"><%= __('title_name') %></label>
+									<div class="col-md-9 col-xs-7">
+										<input type="text" class="form-control" value="<%= data.name %>" name="name" />
+									</div>
+								</div>
+
+								<div class="form-group">
+									<label class="col-md-3 col-xs-5 control-label"><%= __('title_phone') %></label>
+										<div class="col-md-2">
+											<input type="text" class="form-control" value="<%= data.country_phone_code  %>" disabled/>
+										</div>
+										<div class="col-md-7">
+											<input type="text" onkeypress="return isNumberKey(event);" class="form-control" value="<%= data.phone  %>" name="phone" minlength="<%= setting_detail.minimum_phone_number_length%>" maxlength="<%= setting_detail.maximum_phone_number_length%>"/>
+										</div>
+								</div>
+								<div class="form-group">
+									<label class="col-md-3 col-xs-5 control-label"><%= __('title_cedula') %></label>
+										<div class="col-md-2">
+											<select class="form-control select" data-none-selected-text="<%= __('title_nothing_selected') %>"  name="cedula0">
+												<option value='V' <%=  data.cedula[0] =='V' ? 'selected' : '' %> > V</option>
+												<option value='E' <%=  data.cedula[0] =='E' ? 'selected' : '' %> > E</option>
+											</select>                                
+										</div>
+										<div class="col-md-7">
+											<input name="cedula1" value="<%= data.cedula[1] %>"
+											onkeypress="return isNumberKeyCedula(event)" type="text" class="form-control"
+											minlength="6"
+											maxlength="10"
+											placeholder="<%= __('title_enter_valid_cedula') %>"  />
+										</div>
+								</div>
+								<div class="form-group">
+									<div class="col-md-12 col-xs-12">
+										<button class="btn btn-primary btn-rounded pull-right submit_button" type="submit" name="update" value="submit" id="update"><%= __('button_save') %></button>
+									</div>
+								</div>
+							</div>
+						</div>
+					</form>
+			</div>
+		</div>
+		</div>
+		<% include colorbar.html %>
+
+	<% } %>
+	<!-- END PAGE CONTENT WRAPPER -->
+	</div>
+	<!-- END PAGE CONTENT -->
+	</div>
+	<!-- END PAGE CONTAINER -->
+	<script type="text/javascript">
+	function isNumberKey(evt){
+    var charCode = (evt.which) ? evt.which : event.keyCode
+    if (charCode > 31 && (charCode < 48 || charCode > 57))
+    {
+        return false;
+    }
+    return true;
+}
+
+function getFormData($form){
+	var unindexed_array = $form.serializeArray();
+	var indexed_array = {};
+
+	$.map(unindexed_array, function(n, i){
+		indexed_array[n['name']] = n['value'];
+	});
+
+	return indexed_array;
+}
+
+function isNumberKeyCedula(evt) {
+	var charCode = (evt.which) ? evt.which : event.keyCode
+	if (charCode > 31 && (charCode < 48 || charCode > 57)){
+		return false;
+	}
+	return true;
+}
+
+$(document).ready(function() {
+	$("#partner_helper_update").validate({
+		   rules: {
+		     first_name: "required",
+		     last_name: "required",
+		     password: {
+		      	minlength: 6,
+		      	maxlength: 50
+		    },
+			email: {
+				required: true,
+				email_regex: /^([a-zA-Z0-9_.+-])+\@(([a-zA-Z0-9-])+\.)+([a-zA-Z0-9]{2,4})+$/,
+				minlength: 12,
+				maxlength: 64
+			},
+		    address: {
+		        required: true
+		    },
+			phone: {
+				required: true,
+				minlength : <%= setting_detail.minimum_phone_number_length %>,
+				maxlength : <%= setting_detail.maximum_phone_number_length %>,
+				phone_regex: /^\(?([1-9]{1})\)?([0-9]*)$/
+			},
+		    zipcode: {
+		        required: true
+		    },
+		    title: {
+		        required: true
+		    },
+		    typename:{
+		        required: true
+		    } ,
+		    city : "required"
+		   }
+	});
+	 $("#partner_helper_add").validate({
+	   rules: {
+	     first_name: "required",
+	     last_name: "required",
+	     password: {
+	     	required: true,
+			minlength: 6,
+			maxlength: 50
+	    },
+		email: {
+			required: true,
+			email_regex: /^([a-zA-Z0-9_.+-])+\@(([a-zA-Z0-9-])+\.)+([a-zA-Z0-9]{2,4})+$/,
+			minlength: 12,
+			maxlength: 64
+		},
+	    address: {
+	        required: true
+	    },
+		phone: {
+			required: true,
+			minlength : <%= setting_detail.minimum_phone_number_length %>,
+			maxlength : <%= setting_detail.maximum_phone_number_length %>,
+			phone_regex: /^\(?([1-9]{1})\)?([0-9]*)$/
+		},
+	    zipcode: {
+	        required: true
+	    },
+	    title: {
+	        required: true
+	    },
+	    typename:{
+	        required: true
+	    } ,
+	    city : "required"
+	   },
+	   submitHandler: function(updateform) {
+			updateform.submit();
+	   }
+	});
+
+	 $("#city_name").change(function(){
+		var city =$( "#city_name option:selected" ).text();
+		var city_type =$( "#city_type_name option:selected" ).text();
+		$('#city_type_name').empty();
+		$.ajax({
+                type: 'POST',
+                url: '/getcitytype',
+                data: { 'city':city, 'city_type':city_type},
+                dataType: "json",
+              	success:function(res){
+              		if(res.service_type.length === 0)
+              		{
+              			$("#error").append("<div style='color:red' id='not_type'>Type Not Available</div>");
+              		}
+              		else
+              		{
+              			$("#not_type").remove();
+              			for(var index in res.service_type)
+              			{
+	                      	var city_type_name = res.service_type[index].type_detail.typename;
+	                      	var city_type_id = res.service_type[index]._id;
+	                      	if(city_type_name == city_type)
+	                      	{
+	                      		$("#city_type_name").append("<option value="+city_type_id+" selected>"+ city_type_name + "</option>");
+	                      	}
+	                      	else
+	                      	{
+	                      		$("#city_type_name").append("<option value="+city_type_id+">"+ city_type_name + "</option>");
+	                      	}
+	                    }
+              		}
+                    $('#city_type_name').selectpicker('refresh');
+              	}
+        });
+    });
+
+	var _URL = window.URL || window.webkitURL;
+	$("#profile_image").change(function(e) {
+		validateImage($("#profile_image"),$("#profile_image_dimention"),this.files[0].type)
+	    var file, img;
+	    if ((file = this.files[0])) {
+	        img = new Image();
+
+	        var reader = new FileReader();
+
+	        reader.onload = function (e) {
+	            $('#profile_sel_img').attr('src', e.target.result);
+	        }
+
+	        reader.readAsDataURL(profile_image.files[0]);
+
+	        img.onload = function(e) {
+	            
+	            if(this.width == this.height)
+	            {
+	                $("#profile_image_dimention").html('<font color="red"></font>');
+	                $('#update').prop('disabled', false);
+	            }
+	            else
+	            {
+	                $("#profile_image_dimention").html('<font color="red">Select file with appropriate aspect ratio <b>(1 : 1)</b></font>');
+	                $('#update').prop('disabled', true);
+	            }
+	        };
+	        img.src = _URL.createObjectURL(file);
+	    }
+	});
+
+});
+
+				</script>
+				<% include footer_form.html %>

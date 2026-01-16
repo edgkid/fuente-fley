@@ -1,0 +1,239 @@
+<% include header.html %>
+    <div class="page-title">
+        <h2><span class="fa fa-cogs"></span> <%= __('title_edit_profile') %></h2>
+    </div>
+    <!-- END PAGE TITLE -->
+
+    <% if(typeof message != 'undefined'){ %>
+       <div class="alert alert-success" role="alert">
+          <button type="button" class="close" data-dismiss="alert"><span aria-hidden="true">&times;</span><span class="sr-only"><%= __('title_close') %></span></button>
+          <p align="center"> <strong><%= __(message) %></strong></p>
+      </div>
+      <% } %>
+
+    <!-- PAGE CONTENT WRAPPER -->
+    <div class="row">
+    <div class="page-content-wrap">
+        <div class="col-md-6 col-sm-8 col-xs-12">
+            <% detail.forEach(function(data){ %>
+                <form class="form-horizontal" method="post" action="/customerupdate" enctype="multipart/form-data">
+                    <div class="panel panel-default">
+                        <div class="panel-body form-group-separated">
+
+                            <div class="panel-body">
+                                <input type="hidden"  class="form-control" value="<%= data.picture %>" name="old_img_path"/>
+                                <div class="col-md-9 col-xs-6" id="user_image">
+                                    <img src="<%= data.picture != '' ? setting_detail.image_base_url + data.picture : 'default.png' %>" class="img-thumbnail" id="profile_sel_img"/>
+                                    <input type="file" class="btn btn-primary btn-block btn-rounded fileinput" data-filename-placement="inside" name="file" title="<%= __('title_change_photo')%>" id="profile_image" />
+                                    <div id="profile_image_dimention"></div>
+                                </div>
+                            </div>
+
+                            <div class="form-group">
+                                <input type="hidden" class="form-control" value="<%= data.id %>" name="id" />
+                                <label class="col-md-3 col-xs-5 control-label"><%= __('title_first_name') %></label>
+                                <div class="col-md-9 col-xs-7">
+                                    <input type="text" class="form-control" value="<%= data.first_name %>" name="first_name" id='first_name' />
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label class="col-md-3 col-xs-5 control-label"><%= __('title_last_name') %></label>
+                                <div class="col-md-9 col-xs-7">
+                                    <input type="text" class="form-control" value="<%= data.last_name %>" name="last_name_new" id='last_name' />
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label class="col-md-3 col-xs-5 control-label"><%= __('title_email') %></label>
+                                <div class="col-md-9 col-xs-7">
+                                    
+                                  <% if(is_public_demo == true) { %>
+                                 <input type="text" class="form-control" value="<%= __('PUBLIC_DEMO_EMAIL') %>" name="email" id='email' />
+                                <% } else{ %>
+                                 <input type="text" class="form-control" value="<%= data.email %>" name="email" id='email' />
+                                <% } %>
+                                   
+                                </div>
+                            </div>
+                          
+                            <div class="form-group">
+                                <label class="col-md-3 col-xs-5 control-label"><%= __('title_phone') %></label>
+                                <div class="col-md-9 col-xs-7">
+                                    <div class="col-md-3">
+                                        <input type="text" id="country_phone_code" name="country_phone_code" class="form-control" value="<%= data.country_phone_code  %>" readonly/>
+                                    </div>
+                                    <div class="col-md-9">
+                                        <input type="text" class="form-control" value="<%= data.phone %>" name="phone" onkeypress="return isNumberKey(event);" id="phone"
+                                        minlength="<%= setting_detail.minimum_phone_number_length%>" maxlength="<%= setting_detail.maximum_phone_number_length%>" />
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label class="col-md-3 col-xs-5 control-label"><%= __('title_address') %></label>
+                                <div class="col-md-9 col-xs-7">
+                                    <textarea class="form-control" rows="5" name="address" id='address'><%= data.address %></textarea>
+                                </div>
+                            </div>
+
+                            <div class="form-group">
+                                <label class="col-md-3 col-xs-5 control-label"><%= __('title_country') %></label>
+                                <div class="col-md-9 col-xs-7" id="">
+                                    <select class="form-control select" 
+                                            data-none-selected-text="<%= __('title_nothing_selected') %>"  
+                                            name="country"
+                                            id="select-country"
+                                            onchange="changeCountry()">
+                                            <% countries.forEach(function(country) {  %>
+                                                <option 
+                                                    <%= `${data.country}` === `${country.countryname}` ? "selected" : "" %> 
+                                                    value="<%= country.countryname %>">
+                                                        <%= country.countryname %>
+                                                </option>
+                                            <%  }) %>
+                                    </select>  
+                                </div>
+                            </div>
+
+                            <div class="form-group">
+                                <label class="col-md-3 col-xs-5 control-label"><%= __('title_city') %></label>
+                                <div class="col-md-9 col-xs-7" id="">
+                                    <select class="form-control select" data-none-selected-text="<%= __('title_nothing_selected') %>" data-live-search="true" 
+                                        name="city" id="city_name">
+                                        <option>Seleccione</option>
+                                    </select>
+                                </div>
+                            </div>
+
+                            <div class="form-group">
+                                <label class="col-md-3 col-xs-5 control-label"><%= __('title_zipcode') %></label>
+                                <div class="col-md-9 col-xs-7">
+                                    <input type="text" class="form-control" value="<%= data.zipcode %>" name="zipcode" id='zipcode' />
+                                </div>
+                            </div>
+
+                            <div class="form-group">
+                                <label class="col-md-3 col-xs-5 control-label"><%= __('title_password') %></label>
+                                <div class="col-md-9 col-xs-7">
+                                    <input type="password"  class="form-control" value="" name="password"/>
+                                </div>
+                            </div>
+                             
+                            <div class="form-group">
+                                <div class="col-md-12 col-xs-12">
+                                    <button class="btn btn-primary btn-rounded pull-right" type="submit" name="submit" id="submit" value="submit"><%= __('button_save') %></button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </form>
+                <% }); %>
+        </div>
+    </div>
+    </div>
+    <% include colorbar.html %>
+
+    <!-- END PAGE CONTENT WRAPPER -->
+    </div>
+    <!-- END PAGE CONTENT -->
+    </div>
+    <!-- END PAGE CONTAINER -->
+
+    <script type="text/javascript">
+        function isNumberKey(evt){
+            var charCode = (evt.which) ? evt.which : event.keyCode
+            if (charCode > 31 && (charCode < 48 || charCode > 57))
+                return false;
+            return true;
+        }
+
+        function changeCountry() {
+            let selectedCountryId = $('#select-country').val();
+            let countries = <%- JSON.stringify(countries) %>;
+            $('#city_name').empty();
+
+            countries.forEach(function(country) {    
+                if (country.countryname === selectedCountryId) {
+                    $('#country_phone_code').val(country.countryphonecode);
+                    country.cities.forEach(function(citie) {
+                        $('#city_name').append(`
+                            <option value="${citie.cityname}">
+                                ${citie.cityname}
+                            </option>
+                        `);         
+                    });
+                }
+            });
+            $('#city_name').selectpicker('refresh');
+        }
+
+$(document).ready(function() {
+    let countries = <%- JSON.stringify(countries) %>;
+    let selectedCountryId = $('#select-country').val();
+    let city = "<%= city %>";
+    $('#city_name').empty();
+    $('#city_name').append(`
+        <option selected disabled hidden style='display: none'>Select a city</option>
+    `);
+
+    countries.forEach(function(country) {                
+        if (country.countryname === selectedCountryId) {
+            country.cities.forEach(function(citie) {
+                $('#city_name').append(`
+                    <option 
+                        ${city === citie.cityname ? "selected" : ""} 
+                        value="${citie.cityname}">
+                        ${citie.cityname}
+                    </option>
+                `);         
+            });
+        }
+    });
+
+ $(".form-horizontal").validate({
+   rules: {
+     first_name: "required",
+     last_name: "required",
+    email: {
+        required: true,
+        email_regex: /^([a-zA-Z0-9_.+-])+\@(([a-zA-Z0-9-])+\.)+([a-zA-Z0-9]{2,4})+$/,
+        minlength: 12,
+        maxlength: 64
+    },
+    phone: {
+      required: true,
+        minlength : <%= setting_detail.minimum_phone_number_length %>,
+        maxlength : <%= setting_detail.maximum_phone_number_length %>,
+      phone_regex: /^\(?([1-9]{1})\)?([0-9]*)$/
+    },
+    password: {
+      minlength: 6,
+      maxlength: 50
+    }
+   }
+});
+
+ var _URL = window.URL || window.webkitURL;
+$("#profile_image").change(function(e) {
+    validateImage($("#profile_image"),$("#profile_image_dimention"),this.files[0].type)
+    var file, img;
+    if ((file = this.files[0])) {
+        img = new Image();
+
+        var reader = new FileReader();
+
+        reader.onload = function (e) {
+            $('#profile_sel_img').attr('src', e.target.result);
+        }
+
+        reader.readAsDataURL(profile_image.files[0]);
+
+        img.onload = function(e) {
+            
+        };
+        img.src = _URL.createObjectURL(file);
+    }
+});
+
+});
+
+    </script>
+    <% include footer_form.html %>

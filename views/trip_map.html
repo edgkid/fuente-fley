@@ -1,0 +1,1485 @@
+<% include header.html %> 
+
+<style>
+
+  #legend {
+    box-sizing: border-box;
+    background: #fff;
+    padding: 3px;
+    margin: 8px;
+  }
+
+  #legend h3 {
+    margin-top: 0;
+    text-align: center;
+  }
+
+  #legend img {
+    vertical-align: middle;
+    width: 20px;
+    height: 20px;
+  }
+
+  .item-legend {
+    margin-bottom: 8px;
+  }
+
+  .item-legend span {
+    margin-left: 3px;
+  }
+
+  @media only screen and (max-width: 768px) {
+    #legend {
+      box-sizing: border-box;
+      background: #fff;
+      padding: 3px;
+      margin: 8px;
+    }
+
+    #legend h3 {
+      margin-top: 0;
+    }
+
+    #legend img {
+      vertical-align: middle;
+      width: 20px;
+      height: 20px;
+    }
+
+  .item-legend {
+    margin-bottom: 8px;
+  }
+
+  .item-legend span {
+    margin-left: 3px;
+  }
+}
+ 
+  #temperature-box {
+    font-size: 12px;
+    color: #00BBB4;
+    width: 300px;
+    border-radius: 8px;
+    align-items: center;
+    display: flex;
+    flex-direction: row;
+    justify-content:space-between;
+     border: 2px solid #00BBB4; 
+     padding: 1%;
+     font-family: 'Libre Franklin', sans-serif;
+  }
+  #temperature {
+    font-size: 20px;
+    font-weight: bold;
+    color: #00BBB4;
+    margin-left: 10px;
+  }
+
+.route-info-panel {
+  background: #f8f9fa;
+  border: 1px solid #dee2e6;
+  border-radius: 5px;
+  padding: 15px;
+  margin-bottom: 15px;
+}
+
+.route-info-panel h5 {
+  margin-top: 0;
+  color: #495057;
+}
+
+.route-info-panel .list-group-item {
+  border: 1px solid #dee2e6;
+  margin-bottom: 2px;
+  border-radius: 3px;
+}
+
+   #update-time {
+    font-size: 14px;
+    color: #8C8C8C;
+    margin-left: 10px;
+  }
+  #bold-text {
+  font-weight: bold;
+}
+  #thermometer-icon{
+    width: 35px;
+    height: 45px;
+    background-image: url(corporate_images/temperature.png);
+    background-size: cover;
+   
+  }
+  #button-box {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: #250e62;
+    border-radius: 50%;
+    width: 45px;
+    height: 45px;
+    background-image: url(corporate_images/reload.png );
+    background-size: 20px 20px;
+    background-position: center;
+    background-repeat: no-repeat;
+    cursor: pointer;
+  }
+
+  #openModalBtn{
+    font-family: Arial, Helvetica, sans-serif;
+    border-radius: 10px;
+    border-color: #00BBB4;
+    width: 200px;
+  }
+   .modal {
+      display: none;  
+      position: fixed;
+      z-index: 999;
+      left: 0;
+      top: 0;
+      width: 100%;
+      height: 100%;
+      overflow: auto;
+      background-color: rgba(0,0,0,0.6);  
+    }
+
+     .modal-content {
+      background-color: #F0F0F0;
+      margin: 10% auto;
+      padding: 10px;
+       display: flex;
+       flex-direction: column;
+      border-radius: 10px;
+      width: 80%;
+      max-width: 680px;
+      text-align: center;
+      gap: 10px;
+      box-shadow: 0 0 10px rgba(0,0,0,0.3);
+    }
+
+     .close {
+      display: flex;
+      justify-content: flex-end; 
+      align-items: center;       
+      color: #000000;
+      font-size: 24px;
+      font-weight: bold;
+      cursor: pointer;
+      width: 100%;
+      padding: 8px;  
+    }
+
+    .close:hover {
+      color: black;
+    }
+    .close-icon{
+    width: 20px;
+    height: 20px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 20px;
+    font-weight: bold;
+    border-radius: 50%;
+    border: 2px solid #000000;
+    background-color: #fff;
+    color: #000;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+    cursor: pointer;
+    padding: 0;
+    line-height: 1;
+    transition: background 0.2s ease;
+    }
+    .status-box {
+      display: flex;
+      align-items: center;
+      background: #ffffff;
+      border-radius: 12px;
+      padding: 10px 16px;
+      box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);
+      font-family: 'Arial', sans-serif;
+      gap: 16px;
+      width: 100%;
+      justify-content: space-evenly;
+    }
+
+    .icon-circle {
+      width: 36px;
+      height: 36px;
+      background-color: #26296E;
+      color: #fff;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 16px;
+    }
+
+    .status-content {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+    }
+
+    .update-time, .average-temp {
+      font-size: 14px;
+      display: flex;
+      align-items: center;
+      gap: 4px;
+    }
+
+    .gray-text {
+      color: #888;
+      font-size: 16px;
+    }
+
+    .divider {
+      width: 1px;
+      height: 24px;
+      background-color: #ccc;
+    }
+
+    .temp-value {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      font-weight: bold;
+      color: #00B5C0;
+    }
+
+    .celsius {
+      font-size: 20px;
+      font-weight: bold;
+      color: #00BBB4 ;
+    }
+    .plot-container {
+      width: 100%;         
+      height: 400px;
+      border-radius: 12px;   
+      overflow: hidden;     
+      background-color: white;  
+    }
+ 
+</style>
+
+<div class="page-content-wrap">
+  <div class="row">
+  <div class="col-md-12">
+      <!-- Map and Side Panel -->
+      <div class="panel panel-default">
+      <div class="panel-body panel-body-map" ng-app="meanMapApp">
+          <!-- Google Map -->
+          <div>
+              <!-- Panel de comparación de rutas -->
+              <div id="route-comparison" style="display:none; background:#f8f9fa; padding:10px; margin-bottom:10px; border-radius:5px; border:1px solid #dee2e6;">
+                <div class="row">
+                  <div class="col-md-6">
+                    <h6 style="color:#dc3545; margin:0;"><i class="fa fa-times-circle"></i> Ruta Original</h6>
+                    <div id="original-route" style="font-size:12px; color:#666;"></div>
+                  </div>
+                  <div class="col-md-6">
+                    <h6 style="color:#28a745; margin:0;"><i class="fa fa-check-circle"></i> Ruta Optimizada</h6>
+                    <div id="optimized-route" style="font-size:12px; color:#666;"></div>
+                  </div>
+                </div>
+              </div>
+              
+              <div id="map" style="width:100%; height:450px;"></div>
+              <div id="legend"></div>
+              
+          </div> 
+      </div>
+      </div>
+  </div>
+     <div id="temperature-dispositive"> 
+<div id="temperature-box">
+      <div id="thermometer-icon"></div>
+       <div id="temperature-content">
+        <div style="display: flex;">
+          <div id="temperature" style="display: none;">
+            <p><span id="temperature-value">--</span>°C</p>
+          </div>
+          <div id="update-time" style="display: none;">
+            <p>Actualizado a <br /> las <span id="bold-text">--:--</span></p>
+          </div>
+        </div>
+        <div id="no-temperature" style="display: none;">
+          <p style="margin: 0;">Actualizar temperatura</p>
+        </div>
+      </div>
+      <button id="button-box"></button>
+ </div>
+
+ </div>
+ <div id="temperature-modal"> 
+   <button id="openModalBtn" style="margin: 10px; display: none;">Consultar Histórico </button>
+ </div>
+
+
+ </div>
+      <div id="myModal" class="modal">
+        <div class="modal-content">
+          <div
+            style="display: flex; flex-direction: column; justify-content: space-between; align-items: center; background-color: #F0F0F0;">
+            <div class="close" id="closeModalBtn">
+              <span class="close-icon">
+                &times;
+              </span>
+            </div>
+            <div class="status-box">
+              <div class="icon-circle">
+                <span class="refresh-icon">↻</span>
+              </div>
+              <div class="status-content">
+                <div class="update-time">
+                  <span id="hour-value" class="gray-text">actualizado</span> a las <strong id="bold-text2"> </strong>
+                </div>
+                <div class="divider"></div>
+                <div class="average-temp">
+                  <span class="gray-text">Temperatura promedio</span>
+                  <span class="temp-value">
+                    <span id="temp-value2" class="celsius"> </span>
+                  </span>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div id="barChart" class="plot-container"></div>
+        </div>
+  </div> </div>
+ 
+  <div class="col-md-12">
+              <div class="panel panel-default">
+              <div class="table-responsive">
+                <table class="table ">
+                  <thead>
+                   <tr>
+                    <th width="120"><%= __('title_user_name') %></th>
+                    <th width="120"><%= __('title_provider_name') %></th>
+                    <th width="120"><%= __('title_date_time') %></th>
+                    <th width="100"><%= __('title_pickup_address') %></th>
+                    <th width="100"><%= __('title_destination_address') %></th>
+                    
+                  </tr>
+                </thead>
+  
+                <tbody>
+                 <tr>
+                  <td width="120"><%= user_name %></td>
+                  <td width="120"><%= provider_name %></td>
+                  <td width="120"><%= moment(data.created_at).format("DD MMM 'YY") %></br><%= moment(data.created_at).format("hh:mm a") %></td>
+                  
+                  <td width="100"><%= data.source_address %></td>
+                  <td width="100"><%= data.destination_address || (data.destinationLocation && data.destinationLocation.length > 0 ? 'Destino: ' + data.destinationLocation[0] + ', ' + data.destinationLocation[1] : 'Sin destino') %></td>
+                  
+              </tr>
+            </tbody>
+           
+                
+            </table>
+            </div>  
+            </div>
+            </div>            
+            <div class="col-md-12">
+              <div class="panel panel-default">
+              <div class="table-responsive">
+                <table class="table">
+                  <thead>
+                   <tr>
+                    <th><%= __('title_status') %></th>
+                    <th><%= __('title_amount') %></th>
+                    <th><%= __('title_payment_mode') %></th>
+                    <th><%= __('title_payment_status') %></th>
+                    <th><%= __('title_response') %></th>
+                    <th><%= __('title_current_speed') %></th>
+                    
+                  </tr>
+                </thead>
+  
+                <tbody>
+                 <tr>
+                  <td><% if(data.is_trip_cancelled == 1) { %>
+                  <% if(data.is_trip_cancelled_by_provider == 1) { %>
+                                                            <span class="label label-danger"><%= __('title_cancle_by_provider') %></span>
+                                                         <% } else { %>
+                                                            <span class="label label-danger"><%= __('title_cancle_by_user') %></span>
+                                                         <% } %>
+                  <% } else { if(data.is_provider_status == 2) { %>
+                  <span class="label label-warning"><%= __('title_trip_status_coming') %></span>
+                  <% } else if(data.is_provider_status == 4) { %>
+                  <span class="label label-info"><%= __('title_trip_status_arrived') %></span>
+                  <% } else if(data.is_provider_status == 6) { %>
+                  <span class="label label-info"><%= __('title_trip_status_in_trip') %></span>
+                  <% } else if(data.is_provider_status == 7) { %>
+                    <span class="label label-info"><%= __('title_trip_status_arrived_at_destination') %></span>    
+                  <% } else if(data.is_provider_status == 9) { %>
+                  <span class="label label-success"><%= __('title_trip_status_completed') %></span>
+                  <% } else if(data.is_provider_status == 1) { %>
+                  <span class="label label-success"><%= __('title_accepted_request') %></span>
+                  <% } else if(data.is_provider_status == 0) { %>
+                  <span class="label label-info"><%= __('title_trip_status_waiting') %></span>
+                  <% }} %></td>
+                  <td><%= data.total %></td>
+                    <td><% if(data.payment_mode == 1) { %>
+                    <span class="label label-default"><%= __('title_pay_by_cash') %></span>
+                    <% } else { %>
+                    <span class="label label-primary"><%= __('title_pay_by_card') %></span></td>
+                    <% } %>
+                    <td><% if(data.is_pending_payments == 1) { %>
+                                                        <span class="label label-warning"><%= __('title_pending') %></span>
+                                                        <% } else { %>
+                                                          <% if(data.is_paid == 1) { %>
+                                                          <span class="label label-success"><%= __('title_paid') %></span>
+                                                          <% } else { %>
+                                                          <span class="label label-danger"><%= __('title_not_paid') %></span>
+                                                          <% } %>
+                                                        <% } %>
+                                                        </td>
+                  <td><% if(data.is_provider_accepted == 1) { %>
+                  <span class="label label-success"><%= __('title_accepted_request') %></span>
+                  <% } else if(data.is_provider_accepted == 0) { %>
+                  <span class="label label-warning"><%= __('titel_trip_rejected') %></span>
+                   <% } else { %>
+                  <span class="label label-warning"><%= __('title_trip_status_no_response') %></span>
+                  <% } %>
+                </td>
+                <td><span id="trip_speed">0</span> Km/h
+                </td>
+
+              </tr>
+            </tbody>
+           
+                
+            </table>
+            </div>  
+            </div>
+            </div>
+  
+  </div>
+  
+  <!-- Panel de optimización de rutas -->
+  <div class="col-md-12">
+    <div class="panel panel-primary">
+      <div class="panel-heading">
+        <h4 class="panel-title"><i class="fa fa-cogs"></i> Optimización de Rutas</h4>
+      </div>
+      <div class="panel-body">
+        <div class="row">
+          <div class="col-md-12 text-center" style="margin-bottom: 15px;">
+            <button type="button" class="btn btn-success btn-lg" onclick="optimizeCurrentTrip()" style="margin-right: 10px;">
+              <i class="fa fa-magic"></i> Optimizar Ruta
+            </button>
+            <button type="button" class="btn btn-info btn-lg" onclick="showRouteInfo()" style="margin-right: 10px;">
+              <i class="fa fa-info-circle"></i> Ver Detalles
+            </button>
+            <button type="button" class="btn btn-warning btn-lg" onclick="toggleComparison()" id="comparison-btn" style="display:none;">
+              <i class="fa fa-exchange"></i> Ver Comparación
+            </button>
+          </div>
+        </div>
+        <div class="row">
+          <div class="col-md-12">
+            <div id="route-info-container"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  
+  <% include colorbar.html %>
+
+  </div>
+  </body>
+          <!-- END PRELOADS -->
+  
+      
+  <!-- Google Maps API -->
+  <script src="<%=url%>" async defer"></script>
+  <script src="socket.io/socket.io.js"></script>
+  <script src="/js/route-optimizer.js"></script>
+  
+       <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+      <script src="https://cdn.jsdelivr.net/npm/moment@2.29.4/moment.min.js"></script>
+      <script src="https://cdn.jsdelivr.net/npm/moment/locale/es.js"></script>
+      <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
+      <script src="socket.io/socket.io.js"></script>
+  <script>
+    function initialize() {
+      var lat = "<%= data.destinationLocation[0] %>"
+      var lng = "<%= data.destinationLocation[1] %>"
+      var iconBase = '/map_pin/icons/';
+      var map_view = {
+        center: new google.maps.LatLng(lat, lng),
+        zoom: 15,
+        streetViewControl: false,
+        mapTypeId: google.maps.MapTypeId.ROADMAP
+      };
+
+      window.map = new google.maps.Map(document.getElementById("map"), map_view);
+      window.stopMarkers = [];
+      var map = window.map;
+
+      const icons = {
+        exit: {
+          name: "<%= __('title_origin') %>",
+          icon: iconBase + "FLETY_ICONO_SALIDA.svg",
+        },
+        arrival: {
+          name: "<%= __('title_destination') %>",
+          icon: iconBase + "FLETY_ICONO_LLEGADA.svg",
+        },
+        external_stop: {
+          name: "<%= __('title_external_stop') %>",
+          icon: iconBase + "FLETY_ICONO_PARADA_EXTERNA.svg",
+        },
+      };
+
+      const legend = document.getElementById("legend");
+
+      for (const key in icons) {
+        const type = icons[key];
+        const name = type.name;
+        const icon = type.icon;
+        const div = document.createElement("div");
+        div.className = "item-legend";
+
+        div.innerHTML = `<img src="${icon}"><span>${name}</span>`;
+        legend.appendChild(div);
+      }
+
+      map.controls[google.maps.ControlPosition.LEFT_BOTTOM].push(legend);
+  
+      <% if(data.is_trip_cancelled != 1 &&  data.is_provider_status >= 1){ %>
+      var bounds = new google.maps.LatLngBounds();
+      <% if(data.providerLocation.length != 0){ %>
+      var providerStartLocation = {
+        lat: <%= data.providerLocation[0] %>,
+        lng: <%= data.providerLocation[1] %>
+      }; 
+
+      var providerStartLocation_initialLocation = new google.maps
+                                                .LatLng(providerStartLocation);
+
+      var driver_marker = new google.maps.Marker({
+          position: providerStartLocation_initialLocation,
+          map: map,
+          icon:
+          {
+            url: '/map_pin/truck_pin.png',
+            scaledSize: new google.maps.Size(50, 75)// Adjust the size as per your requirement
+          }
+      });
+
+      map.panTo( new google.maps.LatLng(
+        providerStartLocation.lat, providerStartLocation.lng
+      ));
+
+      /*
+      var lat =  <%= data.providerLocation[0] %>;
+      var lng = <%= data.providerLocation[1] %>
+      var rotation = 0;
+
+      var icon = {
+        path: window.google.maps.SymbolPath.FORWARD_CLOSED_ARROW,
+        scale: 6,
+                fillColor: 'red',
+                fillOpacity: 0.8,
+                strokeWeight: 2,
+        rotation: rotation
+      }
+
+      var driver_marker = new google.maps.Marker({
+        position: providerStartLocation_initialLocation,
+        optimize: false,
+        map: map,
+        icon: icon,
+      }); 
+
+      map.panTo( new google.maps.LatLng(
+        lat, lng
+      ));
+
+      setInterval(() => {
+        var new_latlng = new google.maps.LatLng(lat, lng);
+        driver_marker.setPosition(new_latlng);
+        icon.rotation =  rotation+= 5
+        driver_marker.setIcon(icon)
+        lat++
+        lng++
+      }, 1000);*/
+
+      bounds.extend(providerStartLocation_initialLocation);
+      
+      var URL = window.location.protocol + '//'+ window.location.hostname;
+      //var URL = 'http://localhost:5000';
+      var socket = io.connect(URL);
+      
+      socket.on('connect',function() { });
+      
+      socket.on("'<%= data._id %>'",function(data) {
+
+        if(data.speed){
+          $('#trip_speed').text((data.speed).toFixed(1));
+        }else{
+          $('#trip_speed').text(0);
+        }
+
+        if(data.is_trip_updated){
+          window.location.reload();
+          return;
+        }
+
+        let location = data.location
+
+        var new_latlng = new google.maps.LatLng(location[0], location[1]);
+        driver_marker.setPosition(new_latlng);
+        map.panTo( new google.maps.LatLng(location[0], location[1]));
+
+        if(typeof trip_path_array == "undefined"){
+          return;        
+        }
+        
+        var trip_path = {'lat':location[0],'lng':location[1] };
+        let path_array = trip_path_array
+        let path_colour = '#FF0000'
+
+        if(trip_data?.drop_trip_status == "<%= CONTAINER_DROP_STATUS.PICKED_UP%>"){
+          path_array = arrivedToEndPathArray
+          path_colour = '#50ca1b'
+        }
+        path_array.push(trip_path);
+
+        let trippath = new google.maps.Polyline({
+            path: path_array,
+            geodesic: true,
+            strokeColor: path_colour,
+            strokeOpacity: 1.0,
+            strokeWeight: 2
+        });
+
+        trippath.setMap(map);
+      });
+  
+  
+        socket.on('disconnect',function() {
+      });
+  
+      <% } %>
+  
+      <% if(data.sourceLocation.length != 0){ %>
+      var startTripLocation = {
+        lat: <%= data.sourceLocation[0] %>,
+        lng: <%= data.sourceLocation[1] %>
+      };
+  
+      var startTripLocation_initialLocation = new google.maps.LatLng(startTripLocation);
+      var marker = new google.maps.Marker({
+        position: startTripLocation_initialLocation,
+        map: map,
+        icon: {
+          url: iconBase + 'FLETY_ICONO_SALIDA.svg',
+          scaledSize: new google.maps.Size(45, 45) // Adjust the size as per your requirement
+      }
+      });
+      bounds.extend(startTripLocation_initialLocation);
+      <% } %>
+  
+      <% if(data.destinationLocation.length != 0){ %>
+      var endTripLocation = {
+        lat: <%= data.destinationLocation[0] %>,
+        lng: <%= data.destinationLocation[1] %>
+      };
+  
+      var endTripLocation_initialLocation = new google.maps.LatLng(endTripLocation);
+  
+      var marker = new google.maps.Marker({
+        position: endTripLocation_initialLocation,
+        map: map,
+        icon: {
+            url: iconBase + 'FLETY_ICONO_LLEGADA.svg',
+            scaledSize: new google.maps.Size(45, 45) // Adjust the size as per your requirement
+          }
+      });
+      bounds.extend(endTripLocation_initialLocation);
+      <% } %>
+  
+      map.fitBounds(bounds);
+  
+      <% } %>
+  
+      // <% if(typeof trip_path_data != 'undefined' &&  data.is_provider_status >= 6){ %>
+      // var bounds = new google.maps.LatLngBounds();
+  
+      // var providerStartLocation = {
+      //   lat: <%= trip_path_data.providerStartLocation[0] %>,
+      //   lng: <%= trip_path_data.providerStartLocation[1] %>
+      // };
+  
+      // var providerStartLocation_initialLocation = new google.maps.LatLng(providerStartLocation);
+  
+      // if (<%= trip_path_data.providerStartLocation[0] %> !== 0 && <%= trip_path_data.providerStartLocation[1] %> !== 0) {
+      //   var marker = new google.maps.Marker({
+      //     position: providerStartLocation_initialLocation,
+      //     map: map,
+      //     icon: iconBase + 'truck_pin.png'
+      //   });
+      //   bounds.extend(providerStartLocation_initialLocation);
+      // }
+  
+      // var startTripLocation = {
+      //   lat: <%= trip_path_data.startTripLocation[0] %>,
+      //   lng: <%= trip_path_data.startTripLocation[1] %>
+      // };
+  
+      // var startTripLocation_initialLocation = new google.maps.LatLng(startTripLocation);
+  
+      // if (<%= trip_path_data.startTripLocation[0] %> !== 0 && <%= trip_path_data.startTripLocation[1] %> !== 0) {
+      //   var marker = new google.maps.Marker({
+      //     position: startTripLocation_initialLocation,
+      //     map: map,
+      //     icon: iconBase + 'pickup.png'
+      //   });
+      //   bounds.extend(startTripLocation_initialLocation);
+      // }
+      // if (<%= data.is_trip_cancelled_by_provider %> == 1) {
+  
+      //   var bounds = new google.maps.LatLngBounds(startTripLocation_initialLocation, providerStartLocation_initialLocation);
+      //   map.fitBounds(bounds);
+      // } else {
+  
+      //   var endTripLocation = {
+      //     lat: <%= trip_path_data.endTripLocation[0] %>,
+      //     lng: <%= trip_path_data.endTripLocation[1] %>
+      //   };
+  
+      //   var endTripLocation_initialLocation = new google.maps.LatLng(endTripLocation);
+  
+        // if (<%= trip_path_data.endTripLocation[0] %> !== 0 && <%= trip_path_data.endTripLocation[1] %> !== 0) {
+        //   var marker = new google.maps.Marker({
+        //     position: endTripLocation_initialLocation,
+        //     map: map,
+        //     icon: iconBase + 'destination.png'
+        //   });
+        //   bounds.extend(endTripLocation_initialLocation);
+        // } else {
+        //   var endTripLocation = {
+        //     lat: <%= trip_path_data.startTripToEndTripLocations[trip_path_data.startTripToEndTripLocations.length-1][0] %>,
+        //     lng: <%= trip_path_data.startTripToEndTripLocations[trip_path_data.startTripToEndTripLocations.length-1][1] %>
+        //   };
+  
+        //   var endTripLocation_initialLocation = new google.maps.LatLng(endTripLocation);
+        //   bounds.extend(endTripLocation_initialLocation);
+        // }
+  
+        map.fitBounds(bounds);
+        var trip_data = <%- JSON.stringify(data) %>
+        
+        // Mostrar paradas intermedias
+        if (trip_data.destination_addresses && trip_data.destination_addresses.length > 0) {
+          trip_data.destination_addresses.forEach((stops, index) => {
+            var stopLocation = new google.maps.LatLng({ 
+              lat: Number(stops.location[0]), 
+              lng: Number(stops.location[1]) 
+            });
+            
+            // Usar icono numerado si la ruta está optimizada
+            var markerIcon;
+            if (trip_data.optimize_field && trip_data.optimize_field.optimized) {
+              markerIcon = {
+                url: 'data:image/svg+xml;charset=UTF-8,' + encodeURIComponent(`
+                  <svg width="30" height="30" xmlns="http://www.w3.org/2000/svg">
+                    <circle cx="15" cy="15" r="12" fill="#28a745" stroke="white" stroke-width="2"/>
+                    <text x="15" y="20" text-anchor="middle" fill="white" font-size="12" font-weight="bold">${index + 1}</text>
+                  </svg>
+                `),
+                scaledSize: new google.maps.Size(30, 30)
+              };
+            } else {
+              markerIcon = {
+                url: iconBase + 'FLETY_ICONO_PARADA_EXTERNA.svg',
+                scaledSize: new google.maps.Size(30, 30)
+              };
+            }
+            
+            var marker = new google.maps.Marker({
+              position: stopLocation,
+              map: map,
+              icon: markerIcon,
+              title: stops.address || `Parada ${index + 1}`
+            });
+            
+            // Agregar info window con detalles de la parada
+            var infoWindow = new google.maps.InfoWindow({
+              content: `
+                <div>
+                  <h6>Parada ${index + 1}</h6>
+                  <p><strong>Dirección:</strong> ${stops.address || 'Sin dirección'}</p>
+                  ${stops.stop_username ? `<p><strong>Contacto:</strong> ${stops.stop_username}</p>` : ''}
+                  ${stops.stop_user_phone ? `<p><strong>Teléfono:</strong> ${stops.stop_user_phone}</p>` : ''}
+                  ${stops.stops_inside && stops.stops_inside.length > 0 ? 
+                    `<p><strong>Paradas internas:</strong> ${stops.stops_inside.length}</p>` : ''}
+                </div>
+              `
+            });
+            
+            marker.addListener('click', function() {
+              infoWindow.open(map, marker);
+            });
+            
+            bounds.extend(stopLocation);
+          });
+        }
+        
+        // Mostrar información de ruta optimizada si existe
+        if (trip_data.optimize_field && trip_data.optimize_field.optimized) {
+          var optimizedInfo = document.createElement('div');
+          optimizedInfo.className = 'optimized-route-info';
+          optimizedInfo.style.cssText = 'background: #28a745; color: white; padding: 10px; margin: 10px; border-radius: 5px; box-shadow: 0 2px 5px rgba(0,0,0,0.2); font-weight: bold;';
+          optimizedInfo.innerHTML = `
+            <div style="text-align: center;">
+              <i class="fa fa-check-circle"></i> RUTA OPTIMIZADA
+              <br><small style="font-weight: normal;">${trip_data.optimize_field.waypoints.length} paradas ordenadas</small>
+            </div>
+          `;
+          map.controls[google.maps.ControlPosition.TOP_CENTER].push(optimizedInfo);
+        }
+        
+        // Dibujar líneas de conexión para mostrar el orden optimizado
+        if (trip_data.optimize_field && trip_data.optimize_field.optimized && trip_data.destination_addresses.length > 1) {
+          var routePath = [];
+          
+          // Agregar origen
+          routePath.push(new google.maps.LatLng(trip_data.sourceLocation[0], trip_data.sourceLocation[1]));
+          
+          // Agregar paradas en orden optimizado
+          trip_data.destination_addresses.forEach(stop => {
+            routePath.push(new google.maps.LatLng(Number(stop.location[0]), Number(stop.location[1])));
+          });
+          
+          // Agregar destino
+          if (trip_data.destinationLocation && trip_data.destinationLocation.length > 0) {
+            routePath.push(new google.maps.LatLng(trip_data.destinationLocation[0], trip_data.destinationLocation[1]));
+          }
+          
+          // Dibujar línea de ruta optimizada
+          var optimizedPath = new google.maps.Polyline({
+            path: routePath,
+            geodesic: true,
+            strokeColor: '#28a745',
+            strokeOpacity: 0.8,
+            strokeWeight: 4
+          });
+          optimizedPath.setMap(map);
+        }
+  
+      var startToTripStartLocations = []
+      <% trip_path_data.providerStartToStartTripLocations.forEach(function(location){ %>
+      var lat = <%= location[0] %>;
+      var lng = <%= location[1] %>;
+      var trip_path = {'lat':lat,'lng':lng };
+      startToTripStartLocations.push(trip_path);
+      <% }) %>
+
+      var trip_path_array = [];
+      let arrivedToEndPathArray = []
+      
+      <% trip_path_data.startTripToEndTripLocations.forEach(function(location){ %>
+      var lat = <%= location[0] %>;
+      var lng = <%= location[1] %>;
+      var trip_path = {'lat':lat,'lng':lng };
+      trip_path_array.push(trip_path);
+      <% }) %>
+
+      <% trip_path_data?.arrivedTripToEndTripLocations.forEach(function(location){ %>
+      var lat = <%= location[0] %>;
+      var lng = <%= location[1] %>;
+      var trip_path = {'lat':lat,'lng':lng };
+      arrivedToEndPathArray.push(trip_path);
+      <% }) %>
+
+        // console.log(trip_path_array.length
+  
+        // <% trip_path_data.startTripToEndTripLocations.forEach(function(location){ %>
+        //   var lat = <%= location[0] %>;
+        //   var lng = <%= location[1] %>;
+  
+        //   var origin = new google.maps.LatLng(<%= location[0] %>,<%= location[1] %>);
+        //   // alert(origin.lat())
+        //    var lat = origin.lat();
+        //   var lng = origin.lng();
+        // // var destination = new google.maps.LatLng(originals[i+1]);
+        //   var trip_path = {'lat':lat,'lng':lng };
+        //   trip_path_array.push(trip_path);
+  
+        // <% }) %>
+        
+        var trippath = new google.maps.Polyline({
+              path: trip_path_array,
+              geodesic: true,
+              strokeColor: '#FF0000',
+              strokeOpacity: 1.0,
+              strokeWeight: 2
+        });
+        trippath.setMap(map);
+  
+        var trippath = new google.maps.Polyline({
+              path: arrivedToEndPathArray,
+              geodesic: true,
+              strokeColor: '#50ca1b',
+              strokeOpacity: 1.0,
+              strokeWeight: 2
+        });
+        trippath.setMap(map);
+
+        // var trip_path_array = [];
+        // <% trip_path_data.startTripToEndTripLocations.forEach(function(location){ %>
+        // var lat = <%= location[0] %>;
+        // var lng = <%= location[1] %>;
+        // var trip_path = {
+        //   'lat': lat,
+        //   'lng': lng
+        // };
+        // trip_path_array.push(trip_path);
+  
+        // <% }) %>
+  
+        // var trippath = new google.maps.Polyline({
+        //   path: trip_path_array,
+        //   geodesic: true,
+        //   strokeColor: '#FF0000',
+        //   strokeOpacity: 1.0,
+        //   strokeWeight: 2
+        // });
+        // trippath.setMap(map);
+      // }
+
+      <% } else if(data.is_trip_cancelled_by_user == 1){%>
+  
+      $('#map_path').hide();
+  
+      <% } %>      
+    }
+    google.maps.event.addDomListener(window, 'load', initialize);
+    
+    // Funciones para optimización de rutas
+    function optimizeCurrentTrip() {
+      const tripId = '<%= data._id %>';
+      const currentWaypoints = [];
+      
+      // Obtener paradas actuales si existen
+      var trip_data = <%- JSON.stringify(data) %>;
+      if (trip_data.destination_addresses && trip_data.destination_addresses.length > 0) {
+        trip_data.destination_addresses.forEach(stop => {
+          currentWaypoints.push({
+            lat: Number(stop.location[0]),
+            lng: Number(stop.location[1]),
+            address: stop.address || '',
+            stop_username: stop.stop_username || '',
+            stop_user_phone: stop.stop_user_phone || ''
+          });
+        });
+      }
+      
+      // Guardar ruta original antes de optimizar
+      const originalRoute = [...currentWaypoints];
+      
+      window.routeOptimizer.optimizeRoute(tripId, currentWaypoints).then(result => {
+        if (result.success) {
+          // Mostrar comparación
+          showRouteComparison(originalRoute, result.optimized_route.waypoints);
+          
+          // Actualizar los datos locales sin recargar
+          trip_data.optimize_field = result.optimized_route;
+          trip_data.destination_addresses = result.optimized_route.waypoints.map(wp => ({
+            address: wp.address,
+            location: [wp.lat, wp.lng],
+            stop_username: wp.stop_username,
+            stop_user_phone: wp.stop_user_phone
+          }));
+          
+          // Actualizar la vista inmediatamente
+          updateMapWithOptimizedRoute();
+          showRouteInfo();
+          
+          alert('Ruta optimizada exitosamente - Ver comparación encima del mapa');
+        } else {
+          alert('Error al optimizar la ruta: ' + (result.error || 'Error desconocido'));
+        }
+      });
+    }
+    
+    function showRouteInfo() {
+      const tripId = '<%= data._id %>';
+      var trip_data = <%- JSON.stringify(data) %>;
+      
+      // Calcular distancia total estimada
+      let totalDistance = 0;
+      if (trip_data.sourceLocation && trip_data.destinationLocation) {
+        totalDistance = calculateDistance(
+          trip_data.sourceLocation[0], trip_data.sourceLocation[1],
+          trip_data.destinationLocation[0], trip_data.destinationLocation[1]
+        );
+      }
+      
+      const routeInfo = {
+        origin: {
+          lat: trip_data.sourceLocation[0],
+          lng: trip_data.sourceLocation[1],
+          address: trip_data.source_address || 'Origen'
+        },
+        destination: {
+          lat: trip_data.destinationLocation[0],
+          lng: trip_data.destinationLocation[1],
+          address: trip_data.destination_address || 'Destino'
+        },
+        waypoints: trip_data.destination_addresses || [],
+        optimize_field: trip_data.optimize_field || null,
+        total_stops: (trip_data.destination_addresses || []).length,
+        estimated_distance: totalDistance
+      };
+      
+      displayRouteDetails(routeInfo);
+    }
+    
+    function calculateDistance(lat1, lon1, lat2, lon2) {
+      const R = 6371;
+      const dLat = (lat2 - lat1) * Math.PI / 180;
+      const dLon = (lon2 - lon1) * Math.PI / 180;
+      const a = Math.sin(dLat / 2) * Math.sin(dLat / 2) +
+                Math.cos(lat1 * Math.PI / 180) * Math.cos(lat2 * Math.PI / 180) *
+                Math.sin(dLon / 2) * Math.sin(dLon / 2);
+      const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+      return R * c;
+    }
+    
+    function displayRouteDetails(routeInfo) {
+      const container = document.getElementById('route-info-container');
+      const optimizedContainer = document.getElementById('multiple_stops_optimized');
+      
+      if (!container) return;
+      
+      const isOptimized = routeInfo.optimize_field && routeInfo.optimize_field.optimized;
+      
+      // Mostrar en el contenedor principal
+      container.innerHTML = `
+        <div class="panel panel-info">
+          <div class="panel-heading">
+            <h5><i class="fa fa-info-circle"></i> Detalles de la Ruta</h5>
+          </div>
+          <div class="panel-body">
+            <div class="row">
+              <div class="col-md-6">
+                <p><strong><i class="fa fa-play"></i> Origen:</strong><br>
+                   <small>${routeInfo.origin.address}</small></p>
+                <p><strong><i class="fa fa-stop"></i> Destino:</strong><br>
+                   <small>${routeInfo.destination.address}</small></p>
+              </div>
+              <div class="col-md-6">
+                <p><strong><i class="fa fa-map-marker"></i> Paradas:</strong> ${routeInfo.total_stops}</p>
+                <p><strong><i class="fa fa-road"></i> Distancia:</strong> ${routeInfo.estimated_distance.toFixed(2)} km</p>
+                <p><strong><i class="fa fa-cogs"></i> Estado:</strong> 
+                   ${isOptimized ? 
+                     '<span class="label label-success"><i class="fa fa-check"></i> Optimizada</span>' : 
+                     '<span class="label label-warning"><i class="fa fa-exclamation-triangle"></i> Sin optimizar</span>'}
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
+      `;
+      
+      // Mostrar paradas optimizadas en el contenedor específico si existe
+      if (optimizedContainer && routeInfo.total_stops > 0) {
+        optimizedContainer.innerHTML = `
+          <div style="padding: 10px; background: ${isOptimized ? '#d4edda' : '#fff3cd'}; border-radius: 5px;">
+            <h6><i class="fa fa-list-ol"></i> ${isOptimized ? 'Paradas Optimizadas' : 'Paradas Actuales'}</h6>
+            ${routeInfo.waypoints.map((stop, index) => `
+              <div style="margin: 5px 0; padding: 5px; background: white; border-radius: 3px; border-left: 4px solid ${isOptimized ? '#28a745' : '#ffc107'};">
+                <strong>${index + 1}. ${stop.address || 'Sin dirección'}</strong>
+                ${stop.stop_username ? `<br><small><i class="fa fa-user"></i> ${stop.stop_username}</small>` : ''}
+                ${stop.stop_user_phone ? `<br><small><i class="fa fa-phone"></i> ${stop.stop_user_phone}</small>` : ''}
+              </div>
+            `).join('')}
+          </div>
+        `;
+        optimizedContainer.hidden = false;
+      }
+    }
+    
+    // Función para actualizar el mapa con ruta optimizada
+    function updateMapWithOptimizedRoute() {
+      // Limpiar marcadores existentes de paradas
+      if (window.stopMarkers) {
+        window.stopMarkers.forEach(marker => marker.setMap(null));
+      }
+      window.stopMarkers = [];
+      
+      // Limpiar líneas existentes
+      if (window.optimizedPath) {
+        window.optimizedPath.setMap(null);
+      }
+      
+      // Recrear marcadores con nueva numeración
+      if (trip_data.destination_addresses && trip_data.destination_addresses.length > 0) {
+        trip_data.destination_addresses.forEach((stops, index) => {
+          var stopLocation = new google.maps.LatLng({ 
+            lat: Number(stops.location[0]), 
+            lng: Number(stops.location[1]) 
+          });
+          
+          var markerIcon = {
+            url: 'data:image/svg+xml;charset=UTF-8,' + encodeURIComponent(`
+              <svg width="30" height="30" xmlns="http://www.w3.org/2000/svg">
+                <circle cx="15" cy="15" r="12" fill="#28a745" stroke="white" stroke-width="2"/>
+                <text x="15" y="20" text-anchor="middle" fill="white" font-size="12" font-weight="bold">${index + 1}</text>
+              </svg>
+            `),
+            scaledSize: new google.maps.Size(30, 30)
+          };
+          
+          var marker = new google.maps.Marker({
+            position: stopLocation,
+            map: map,
+            icon: markerIcon,
+            title: stops.address || `Parada ${index + 1}`
+          });
+          
+          window.stopMarkers.push(marker);
+        });
+      }
+      
+      // Dibujar nueva línea de ruta optimizada
+      if (trip_data.destination_addresses.length > 1) {
+        var routePath = [];
+        routePath.push(new google.maps.LatLng(trip_data.sourceLocation[0], trip_data.sourceLocation[1]));
+        
+        trip_data.destination_addresses.forEach(stop => {
+          routePath.push(new google.maps.LatLng(Number(stop.location[0]), Number(stop.location[1])));
+        });
+        
+        if (trip_data.destinationLocation && trip_data.destinationLocation.length > 0) {
+          routePath.push(new google.maps.LatLng(trip_data.destinationLocation[0], trip_data.destinationLocation[1]));
+        }
+        
+        window.optimizedPath = new google.maps.Polyline({
+          path: routePath,
+          geodesic: true,
+          strokeColor: '#28a745',
+          strokeOpacity: 0.8,
+          strokeWeight: 4
+        });
+        window.optimizedPath.setMap(map);
+      }
+      
+      // Mostrar indicador de optimización
+      if (!window.optimizedInfo) {
+        window.optimizedInfo = document.createElement('div');
+        window.optimizedInfo.className = 'optimized-route-info';
+        window.optimizedInfo.style.cssText = 'background: #28a745; color: white; padding: 10px; margin: 10px; border-radius: 5px; box-shadow: 0 2px 5px rgba(0,0,0,0.2); font-weight: bold;';
+        map.controls[google.maps.ControlPosition.TOP_CENTER].push(window.optimizedInfo);
+      }
+      
+      window.optimizedInfo.innerHTML = `
+        <div style="text-align: center;">
+          <i class="fa fa-check-circle"></i> RUTA OPTIMIZADA
+          <br><small style="font-weight: normal;">${trip_data.destination_addresses.length} paradas ordenadas</small>
+        </div>
+      `;
+    }
+    
+    // Función para mostrar comparación de rutas
+    function showRouteComparison(originalRoute, optimizedRoute) {
+      const comparisonPanel = document.getElementById('route-comparison');
+      const originalDiv = document.getElementById('original-route');
+      const optimizedDiv = document.getElementById('optimized-route');
+      
+      if (!comparisonPanel || !originalDiv || !optimizedDiv) return;
+      
+      // Mostrar ruta original
+      originalDiv.innerHTML = originalRoute.map((stop, index) => 
+        `<div style="margin:2px 0; padding:3px; background:white; border-left:3px solid #dc3545;">
+          ${index + 1}. ${stop.address || 'Sin dirección'}
+        </div>`
+      ).join('');
+      
+      // Mostrar ruta optimizada
+      optimizedDiv.innerHTML = optimizedRoute.map((stop, index) => 
+        `<div style="margin:2px 0; padding:3px; background:white; border-left:3px solid #28a745;">
+          ${index + 1}. ${stop.address || 'Sin dirección'}
+        </div>`
+      ).join('');
+      
+      // Mostrar el panel
+      comparisonPanel.style.display = 'block';
+      
+      // Mostrar botón de comparación
+      document.getElementById('comparison-btn').style.display = 'inline-block';
+      
+      // Auto-ocultar después de 15 segundos
+      setTimeout(() => {
+        if (comparisonPanel.style.display !== 'none') {
+          comparisonPanel.style.display = 'none';
+        }
+      }, 15000);
+    }
+    
+    // Función para alternar la visualización de comparación
+    function toggleComparison() {
+      const comparisonPanel = document.getElementById('route-comparison');
+      if (comparisonPanel.style.display === 'none') {
+        comparisonPanel.style.display = 'block';
+      } else {
+        comparisonPanel.style.display = 'none';
+      }
+    }
+    
+    // Mostrar información de ruta al cargar la página
+    window.addEventListener('load', function() {
+      setTimeout(showRouteInfo, 1000);
+    });
+   </script>
+  </script>
+   <script>
+    const renderTemperature = (data) => {
+      document.getElementById("temperature-value").textContent = data.Temp1;
+      document.getElementById("temp-value2").textContent = data.Temp1;
+      const lastTime = new Date(data.LastTime);
+      const hours = lastTime.getHours();
+      const minutes = String(lastTime.getMinutes()).padStart(2, '0');
+      const ampm = hours >= 12 ? 'p.m' : 'a.m';
+      const hour12 = hours % 12 || 12;
+      const formattedTime = `${hour12}:${minutes} ${ampm}`;
+
+      document.getElementById("bold-text").textContent = formattedTime;
+      document.getElementById("bold-text2").textContent = formattedTime;
+      document.getElementById("temperature").style.display = "block";
+      document.getElementById("update-time").style.display = "block";
+      document.getElementById("no-temperature").style.display = "none";
+      document.getElementById("openModalBtn").style.display = "block";
+       
+    };
+
+    window.addEventListener("DOMContentLoaded", () => {
+      const stored = localStorage.getItem("vehicleData");
+      document.getElementById("no-temperature").style.display = "block";
+      const dataObj = <%- JSON.stringify(data) %>;
+       if (dataObj?.assigned_vehicle_details?.hasDevicesTemperature) {
+         document.getElementById("temperature-dispositive").style.display = "block"; 
+      if (dataObj.is_provider_status === 9) {
+         document.getElementById("temperature-modal").style.display = "block";
+        document.getElementById("openModalBtn").style.display = "block";
+        document.getElementById("temperature-dispositive").style.display = "none"; 
+      } else {
+        document.getElementById("temperature-modal").style.display = "block";
+        document.getElementById("temperature-dispositive").style.display = "block";
+        document.getElementById("no-temperature").style.display = "block";
+      }
+    } else {
+      document.getElementById("temperature-modal").style.display = "none";
+      document.getElementById("temperature-dispositive").style.display = "none";
+      document.getElementById("no-temperature").style.display = "none";
+    }
+      if (stored && dataObj.is_provider_status !== 9) {
+      try {
+        const data = JSON.parse(stored);
+        const plateNumber = dataObj?.assigned_vehicle_details?.vehicle_plate_no;
+
+        if (data && typeof data.Temp1 !== "undefined" && plateNumber === data.PlateNo) {
+          renderTemperature(data);
+        }
+      } catch (err) {
+        console.error("Error parsing stored data:", err);
+      }
+    }
+
+      const button = document.getElementById('button-box');
+
+  button.onclick = async function () {
+    const dataObj = <%- JSON.stringify(data) %>;
+     const plateNumber = dataObj?.assigned_vehicle_details?.vehicle_plate_no;
+
+    if (!plateNumber || plateNumber.toString().trim() === '') {
+      alert('⚠️ Vehicle plate number is not available.');
+      return;
+    }
+
+    const payload = { plateNumber };
+
+    try {
+      const response = await axios.post(
+        '/corporate_check_temperature_average',
+        payload,
+        { headers: { 'Content-Type': 'application/json' } }
+      );
+
+       const result = response.data;  
+
+ 
+      if (result && result.Temp1 !== undefined) {
+        localStorage.setItem("vehicleData", JSON.stringify(result));
+        renderTemperature(result);
+      } else {
+        alert("⚠️ No se encontró información de promedio de temperatura.");
+      }
+
+    } catch (error) {
+      console.error("❌ Error fetching temperature average:", error);
+      alert("Something went wrong while fetching temperature average.");
+    }
+  };
+    });
+</script>
+
+  <script>
+    const modal = document.getElementById('myModal');
+    const openBtn = document.getElementById('openModalBtn');
+    const closeBtn = document.getElementById('closeModalBtn');
+
+    openBtn.onclick = async () => {
+      try {
+        const dataObj = <%- JSON.stringify(data) %>;
+        const plateNumber = dataObj?.assigned_vehicle_details?.vehicle_plate_no;
+        const dataCreatedAt = dataObj?.provider_trip_start_time;
+        const now = new Date();
+        if (!dataCreatedAt) {
+          alert('⚠️ El viaje aún no ha comenzado, por favor espere a que el proveedor inicie el viaje.');
+          return;
+        }
+
+        const dataEnd = (dataObj?.is_provider_status === 9)
+          ? dataObj?.provider_trip_end_time
+          : now;
+
+
+        const formattedCreatedAt = moment(dataCreatedAt).format("YYYY-MM-DD HH:mm");
+        const formattedEnd = moment(dataObj?.provider_trip_end_time).format("YYYY-MM-DD HH:mm");
+
+        const response = await axios.post('/corporate_checkhistory_temperature', {
+          plateNumber: plateNumber,
+          dataCreatedAt: formattedCreatedAt,
+          dataEnd: dataObj.is_provider_status === 9 ? dataObj?.provider_trip_end_time : now
+        });
+
+        const result = response.data;
+
+        const normalizedResult = Array.isArray(result)
+          ? result
+          : (result && Object.keys(result).length > 0 ? [result] : []);
+
+        if (normalizedResult.length === 0) {
+          let messageEnd = "";
+
+          if (dataObj.is_provider_status === 9) {
+            messageEnd = `y finalizó el ${formattedEnd}.`;
+          } else {
+            messageEnd = `y el viaje aún no ha finalizado (hasta ${formattedEnd}).`;
+          }
+
+          alert(`⚠️ Sin información de temperatura histórica disponible.
+  El viaje fue iniciado el ${formattedCreatedAt} ${messageEnd}`);
+          return;
+        }
+
+        const x = normalizedResult.map(item => item.truetime);
+        const y = normalizedResult.map(item => item.temp1);
+
+
+        const plotData = [
+          {
+            x,
+            y,
+            type: 'scatter',
+            mode: 'lines',
+            line: { shape: 'spline', width: 0 },
+            fill: 'tozeroy',
+            fillcolor: 'rgba(84, 209, 205, 0.05)',
+            hoverinfo: 'skip'
+          },
+          {
+            x,
+            y,
+            type: 'scatter',
+            mode: 'lines',
+            line: { shape: 'spline', width: 0 },
+            fill: 'tozeroy',
+            fillcolor: 'rgba(84, 209, 205, 0.1)',
+            hoverinfo: 'skip'
+          },
+          {
+            x,
+            y,
+            type: 'scatter',
+            mode: 'lines',
+            line: { shape: 'spline', width: 0 },
+            fill: 'tozeroy',
+            fillcolor: 'rgba(84, 209, 205, 0.2)',
+            hoverinfo: 'skip'
+          },
+          {
+            x,
+            y,
+            type: 'scatter',
+            mode: 'lines',
+            line: {
+              shape: 'spline',
+              color: 'rgba(84, 209, 205, 1)',
+              width: 2
+            },
+            hoverinfo: 'x+y'
+          }
+        ];
+
+
+        const date = moment(dataCreatedAt);
+        const formatDate = date.locale('es').format('D [de] MMMM');
+        const dateNow = moment(new Date()).locale('es');
+        const formatDateNow = dataObj.is_provider_status === 9
+          ? moment(dataObj?.provider_trip_end_time).format('D [de] MMMM [a las] HH:mm') + ' (el viaje ya finalizó)'
+          : dateNow.format('D [de] MMMM') + ' (el viaje aún no ha terminado)';
+        const layout = {
+          width: 700,
+          height: 400,
+          title: {
+            text: `<b>Histórico Temperatura</b><br><span style="font-size:14px; color:gray;">${formatDate} - ${formatDateNow}</span>`,
+            font: {
+              size: 20,
+              family: 'Arial, sans-serif',
+              color: '#000',
+              weight: 'bold'
+            }
+          },
+          xaxis: {
+            title: '',
+            tickangle: -45,
+            showgrid: false
+          },
+          yaxis: {
+            title: 'Temperatura (°C)',
+            range: [0, 40],
+            showgrid: false
+          },
+          margin: { t: 50, b: 50 },
+          showlegend: false
+        };
+
+
+        Plotly.newPlot('barChart', plotData, layout, { responsive: true, displayModeBar: false });
+
+      } catch (error) {
+        console.error('❌ Error al llamar la API:', error);
+      }
+
+      modal.style.display = 'block';
+    };
+
+    closeBtn.onclick = () => {
+      modal.style.display = 'none';
+    };
+
+    window.onclick = (event) => {
+      if (event.target === modal) {
+        modal.style.display = 'none';
+      }
+    };
+  </script>
+
+  <% include footer_list.html %>

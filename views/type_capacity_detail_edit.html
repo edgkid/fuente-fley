@@ -1,0 +1,155 @@
+<% include header.html %>
+
+<div class="alert alert-success" role="alert" id="promo_error" style="display:none">
+  <button type="button" id="close" class="close"><span aria-hidden="true">&times;</span><span class="sr-only"><%= __('button_close') %></span></button>
+  <p align="center" id="message"> <strong></strong></p>
+</div>
+
+
+<!-- PAGE CONTENT WRAPPER -->
+<div class="row">
+<div class="page-content-wrap">
+  <div class="col-md-6 col-sm-8 col-xs-12">
+    <% if(typeof data != 'undefined'){ %>
+
+    <form class="form-horizontal" method="post" id="update_form" action="/update_type_capacity">
+      <div class="panel panel-default">
+        <div class="panel-body form-group-separated">
+          <div class="form-group">
+            <input type="hidden" class="form-control" value="<%= data.id %>" name="id" />
+            <label class="col-md-3 col-xs-5 control-label"><%= __('title_capacity_name') %></label>
+            <div class="col-md-9 col-xs-7">
+              <input type="text" class="form-control" value="<%= data.capacity_name %>" name="capacity_name" />
+            </div>  
+          </div>
+          <div class="form-group">
+            <input type="hidden" class="form-control" value="<%= data.id %>" name="id" />
+            <label class="col-md-3 col-xs-5 control-label"><%= __('title_value') %></label>
+            <div class="col-md-9 col-xs-7">
+              <input type="text" class="form-control" onkeypress="return isNumberKeyNew(event);" value="<%= data.value %>" name="value" />
+            </div>  
+          </div>
+
+            <div class="form-group">
+              <input type="hidden" class="form-control" value="<%= data.id %>" name="id" />
+              <label class="col-md-3 col-xs-5 control-label"><%= __('title_unit') %></label>
+              <div class="col-md-9 col-xs-7">
+            <select class="form-control select" data-none-selected-text="<%= __('title_unit') %>" name="unit">
+              <option value="0" <%= data.unit == "0" ? selected="selected" : '' %>  ><%= __('unit_kilos') %> </option>  
+              <option value="1" <%= data.unit == "1" ? selected="selected" : '' %>  ><%= __('unit_litre') %> </option>  
+              <option value="2" <%= data.unit == "2" ? selected="selected" : '' %>  ><%= __('unit_meter_cube') %> </option>  
+              <option value="3" <%= data.unit == "3" ? selected="selected" : '' %>  ><%= __('unit_pallets') %> </option>  
+            </select>
+          </div>
+        </div>
+        <div class="form-group">
+            <div class="col-md-12 col-xs-12">
+              <button class="btn btn-primary btn-rounded pull-right" type="submit" name="save" value="save">
+                <%= __('button_save') %>
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </form>
+
+    <% }else{ %>
+    <form class="form-horizontal" method="post" id="add_form" action="/add_type_capacity">
+      <div class="panel panel-default">
+        <div class="panel-body form-group-separated">
+          <div class="form-group">
+            <label class="col-md-3 col-xs-5 control-label"><%= __('title_capacity_name') %></label>
+            <div class="col-md-9 col-xs-7">
+              <input type="text" class="form-control" id="capacity_name" name="capacity_name" />
+            </div>
+          </div>
+          <div class="form-group">
+            <label class="col-md-3 col-xs-5 control-label"><%= __('title_value') %></label>
+            <div class="col-md-9 col-xs-7">
+              <input type="text" class="form-control" onkeypress="return isNumberKeyNew(event);" id="value" name="value" />
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label class="col-md-3 col-xs-5 control-label"><%= __('title_unit') %></label>
+            <div class="col-md-9 col-xs-7">
+              <select class="form-control select" data-none-selected-text="<%= __('title_unit') %>" name="unit">
+                <option value="0" ><%= __('unit_kilos') %> </option>  
+                <option value="1" ><%= __('unit_litre') %> </option>  
+                <option value="2" ><%= __('unit_meter_cube') %> </option>  
+                <option value="3" ><%= __('unit_pallets') %> </option>  
+              </select>            
+            </div>
+          </div>
+          <div class="form-group">
+            <div class="col-md-12 col-xs-12">
+              <button class="btn btn-primary btn-rounded pull-right" type="submit" id="save" name="save" value="save">
+                <%= __('button_save') %>
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </form>
+    <% } %>
+  </div>
+</div>
+</div>
+<% include colorbar.html %>
+
+<script type="text/javascript">
+  $(document).ready(function() {
+
+    $('#start_date').datepicker({
+      format: 'yyyy-mm-dd',
+      startDate: new Date(Date.now())
+
+    }).on("input change", function(e) {
+      var end_date = $('#start_date').datepicker('getDate');
+      end_date.setDate(end_date.getDate() + 1);
+      $('#code_expiry').datepicker('setStartDate', end_date);
+    });
+
+    $('#code_expiry').datepicker({
+      format: 'yyyy-mm-dd'
+
+    }).on("input change", function(e) {
+      var start_date = $('#code_expiry').datepicker('getDate');
+      start_date.setDate(start_date.getDate() - 1);
+      $('#start_date').datepicker('setEndDate', start_date);
+    });
+
+    $("#update_form").validate({
+      ignore: [],
+      rules: {
+        token_name: "required"
+      },
+      submitHandler: function(form) {
+        form.submit();
+      }
+    });
+
+    $("#add_form").validate({
+      ignore: [],
+      rules: {
+        capacity_name: "required",
+        value: {
+          required: true
+        },
+
+      },
+      submitHandler: function(form) {
+        form.submit();
+      }
+    });
+  });
+
+  function isNumberKeyNew(evt) {
+    var charCode = (evt.which) ? evt.which : event.keyCode
+    if (charCode > 31 && (charCode < 48 || charCode > 57))
+    return false;
+    return true;
+  }
+
+</script>
+<% include footer_form.html %>

@@ -1,0 +1,666 @@
+<% include header.html %>
+<style>
+  .break_text {
+    max-width: 76px;
+    white-space: break-spaces !important;
+  }
+
+  .modal-body {
+  max-height: 70vh; 
+  overflow-y: auto;
+}
+
+.modal-content{
+  border-radius: 12px;
+  border-width: 1px;
+}
+.modal-title {
+  font-size: 21px;
+  font-weight: 700;
+  color: rgb(37, 14, 98);
+  text-align: center;
+  margin: 1rem 0;
+}
+.modal-header {
+  background-color: #f8f9fa;
+  border-bottom: none;
+  border-radius: 12px;
+}
+.modal-footer .btn, .modal-footer .btn:hover {
+  background: rgb(37, 14, 98);
+  color: #f8f9fa;
+  border-radius: 16px;
+}
+.modal-footer {
+  background-color: #f8f9fa;
+  border-top: none;
+  text-align: center;
+  border-radius: 12px;
+}
+
+</style>
+<!-- PAGE CONTENT WRAPPER -->
+<div id="content" >
+  <div class="page-content-wrap">
+    <% if(typeof message != 'undefined'){ %>
+    <div class="alert alert-success" role="alert">
+      <button type="button" class="close" data-dismiss="alert"><span aria-hidden="true">&times;</span><span class="sr-only"><%= __('button_close') %></span></button>
+      <p align="center"> <strong><%= __(message) %></strong></p>
+    </div>
+    <% } %> 
+    <div class="alert alert-success" role="alert" id="promo_error" style="display:none">
+      <button type="button" id="close" class="close" data-dismiss="alert"><span aria-hidden="true">&times;</span><span class="sr-only"><%= __('button_close') %></span></button>
+      <p align="center" id="message"> <strong></strong></p>
+    </div>
+    <!-- START TIMELINE FILTER --> 
+
+    <div class="col-md-12">                           
+      <div class="panel panel-default">                                
+        <div class="panel-body">
+
+        
+          <form class="form-horizontal" role="form" method="post" action="/partners">  
+            <input type="hidden" name="page" id="page" value="0" />
+            <div class="form-group">     
+
+              <div class="col-md-4">
+                <div style="text-align: center;">
+                  <label><%= __('title_sort') %></label>   
+                </div>
+                <div class="col-md-6">
+                  <div class="input-group">
+                    <span class="input-group-addon"><span class="glyphicon glyphicon-sort"></span></span>
+                    <select class="form-control select" data-none-selected-text="<%= __('title_nothing_selected') %>" placeholder="Select to Sort" name="sort_item">
+                      <% if(sort_field == "unique_id") { %>
+                      <option value='unique_id' selected><%= __('title_id') %></option>
+                      <option value='first_name'><%= __('title_name') %></option>
+                      <option value='email'><%= __('title_email') %></option>
+                      <% } else if(sort_field == "first_name") { %>
+                      <option value='unique_id'><%= __('title_id') %></option>
+                      <option value='first_name' selected><%= __('title_name') %></option>
+                      <option value='email'><%= __('title_email') %></option>
+                      <% } else{ %>
+                      <option value='unique_id'><%= __('title_id') %></option>
+                      <option value='first_name' ><%= __('title_name') %></option>
+                      <option value='email' selected><%= __('title_email') %></option>
+                      <% } %>
+                    </select>
+                  </div>
+                </div>
+                <div class="col-md-6">
+                  <div class="input-group">
+                    <span class="input-group-addon"><span class="glyphicon glyphicon-sort"></span></span>
+                    <select class="form-control select" data-none-selected-text="<%= __('title_nothing_selected') %>" placeholder="Select to Sort" name="sort_item">
+                      <% if(sort_order == "1") { %>
+                      <option value="1" selected><%= __('sort_asc') %></option>
+                      <option value="-1"><%= __('sort_desc') %></option>
+                      <% } else{ %>
+                      <option value="1" ><%= __('sort_asc') %></option>
+                      <option value="-1" selected><%= __('sort_desc') %></option>
+                      <% } %>
+                    </select>
+                  </div>
+                </div>
+              </div>
+              <div class="col-md-4">
+                <div style="text-align: center;">
+                  <label><%= __('title_search') %></label>   
+                </div>
+                <div class="col-md-6">
+                  <div class="input-group">
+                    <span class="input-group-addon"><span class="glyphicon glyphicon-sort"></span></span>
+                    <select class="form-control select" data-none-selected-text="<%= __('title_nothing_selected') %>" id="sel" placeholder="Select to Sort" name="search_item">
+                      <option value='partner_company_name' <%= (search_item == "partner_company_name") ? 'selected' : '' %>><%= __('title_company_name') %></option>
+                      <option value='active' <%= (search_item == "active") ? 'selected' : '' %>><%= __('title_active') %></option>
+                      <option value='completed' <%= (search_item == "completed") ? 'selected' : '' %>><%= __('title_completed') %></option>
+                      <option value='inactive' <%= (search_item == "inactive") ? 'selected' : '' %>><%= __('title_inactive') %></option>
+                      <option value='first_name' <%= (search_item == "first_name") ? 'selected' : '' %>><%= __('title_name') %></option>
+                      <option value='email' <%= (search_item == "email") ? 'selected' : '' %>><%= __('title_email') %></option>
+                      <option value='country' <%= (search_item == "country") ? 'selected' : '' %>><%= __('title_country') %></option>
+                      <option value='phone' <%= (search_item == "phone") ? 'selected' : '' %>><%= __('title_phone') %></option>
+                  </select>
+                  </div> 
+                </div>
+                <div class="col-md-6">
+                  <div class="panel panel-default">
+                    <div class="panel-body panel-body-search">
+                      <div class="input-group">
+                        <span class="input-group-addon"><span class="fa fa-search"></span></span>
+                        <input type="text" class="form-control" value="<%= search_value %>" onkeypress="return alphaNumSpace(event);"name="search_value" placeholder="<%= __('title_search') %>"/>
+                      </div>                                                                
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div class="col-md-4">
+                <div style="text-align: center;">
+                  <label><%= __('title_date_filter') %></label>   
+                </div>
+                <div class="col-md-12">
+
+                  <div class="btn-group">
+                    <div class="input-group">
+                      <input type="text" class="form-control datepicker" value="<%= filter_start_date %>" placeholder="<%= __('title_start_date') %>" name="start_date" id="start_date" readonly/>
+                      <span class="input-group-addon add-on">-</span>
+                      <input type="text" class="form-control datepicker"  value="<%= filter_end_date %>" placeholder="<%= __('title_end_date') %>" name="end_date" id="end_date" readonly/>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+            </div>
+            <div class="col-md-5">
+              <div class="col-md-12">
+                <ul class="pagination" >
+         
+            <% include paginate_lookup.html %>
+
+          
+        </ul>                       
+</a></li>
+        </ul>                       
+
+              </div>
+            </div>
+            <div class="col-md-3">
+              <div class="col-md-6" >
+                <select class="form-control select" data-live-search="true" data-none-selected-text="<%= __('title_nothing_selected') %>" id="sel" placeholder="Select to Search" name="selected_city">
+                  <option selected value="" ><%= __('title_all_city')%> </option>
+                  <% cities.forEach(function(data, index){ %>
+                    <% if(selected_city?.toString() == data._id.toString()) { %>
+                      <option value="<%= data._id%>" selected><%= data.cityname %></option>
+                    <% }else{ %>
+                      <option value="<%= data._id%>"><%= data.cityname %></option>
+                    <% } %>  
+                  <% }) %>
+                </select>
+              </div>
+              <div class="col-md-6 super_admin_validate" >
+                <select class="form-control select" data-none-selected-text="<%= __('title_nothing_selected') %>" id="selected_country_id" placeholder="Select Country" name="selected_country_id">
+                 <option selected disabled hidden style='display: none'><%= __('title_select_country')%></option>
+                 <option value="">All</option>
+                 <% countries.forEach(function(country){ %>
+                   <% if(selected_country_id == country._id.toString()){ %>
+                       <option value="<%= country._id %>" selected><%= country.countryname %></option>
+                   <% } else { %>
+                       <option value="<%= country._id %>"><%= country.countryname %></option>
+                   <% } %>
+                 <% }) %>
+                </select>
+                </div>
+
+            </div>
+
+            <div  class="form-group col-md-4" >
+              <div class="col-md-6">
+                <button type="submit" id="apply_filter" class="btn btn-primary" style="height: 35px; width: 100%;  "><span><%= __('button_apply') %></span></button>
+              </div>
+              <div class="col-md-6">
+                  
+                   <button class="btn btn-danger pull-right" type="button" style="height: 35px; width: 100%;" onClick ="export_excel()"><i class="fa fa-download"></i><%= __('button_export_excel') %></button>
+
+                    
+<!--                    <button class="btn btn-danger pull-right" type="button" type="button" style="height: 35px; width: 100%;" onClick ="$('#customers2').tableExport({type:'excel', escape:'false', ignoreColumn: [5]});"><i class="fa fa-bars"></i> <%= __('button_export_excel') %></button>-->
+              </div>
+            </div>    
+            
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="row">
+    <div class="col-md-12">
+      <div class="panel panel-default">                                        
+                                    
+        <div class="table-responsive" style="padding-bottom: 175px;">
+          <table class="table text-center" id="customers2">               
+            <thead>
+              <tr>
+                <th><%= __('title_id') %></th>
+                <th><%= __('title_name') %></th>
+                <th><%= __('title_company_name') %></th>
+                <th><%= __('title_email') %></th>
+                <th><%= __('title_rif') %></th>
+                <th><%= __('title_completed') %></th>
+                <th class="break_text"><%= __('title_active_vehicles') %></th>
+                <th class="break_text"><%= __('title_registered_providers') %></th>
+                <th><%= __('title_phone') %></th>
+                <th><%= __('title_city') %></th>
+                <th><%= __('title_profile') %></th>
+                <th><%= __('button_action') %></th>
+              </tr>
+            </thead>
+
+            <tbody>
+              <% detail.forEach(function(data){ %>
+                <tr class="demo" >
+                  <td><%= data.unique_id %></td>
+                  <td id="a"><%= data.first_name +' '+ data.last_name %></td>
+                  <td><%= data.partner_company_name %></td>
+                  <td><% if(is_public_demo == true ) { %>
+                        <%= __('PUBLIC_DEMO_EMAIL') %>
+                      <% }else{ %>
+                        <%= data.email %> 
+                      <% } %>
+                  </td>
+                  <td><%= data.rif %></td>
+                  <td><%= data.tripCount %></td>
+                  <td><%= data.vehicle_detail %></td>
+                  <td><%= data.providerCount %></td>
+                  <td><%= data.country_phone_code %> <%= data.phone %></td>
+                  <td>
+                    <% if(data?.city_id){ %>
+                      <% cities.forEach(function(city, index){ %>
+                        <% if(city._id.toString() == data?.city_id.toString()){ %>
+                          <%= city.cityname %>
+                        <% } %>
+                      <% }) %>
+                    <% } %>
+                  </td>  
+                  <td>
+                      <% if(data.is_approved == 1 && data.picture != "") { %>
+                        <a href="<%= data.picture ? setting_detail.image_base_url + data.picture : 'javascript:;' %>" target="_blank"><span class="btn btn-success btn-condensed"><i class="glyphicon glyphicon-user"></i></span></a>
+                      <% }else if(data.is_approved == 1){ %>
+                          <a href="<%= data.picture ? setting_detail.image_base_url + data.picture : 'javascript:;' %>"><span class="btn btn-success btn-condensed"><i class="glyphicon glyphicon-user"></i></span></a>
+                      <% }else if(data.picture != ""){ %>
+                      <a href="<%= data.picture ? setting_detail.image_base_url + data.picture : 'javascript:;' %>" target="_blank"><span class="btn btn-danger btn-condensed"><i class="glyphicon glyphicon-user"></i></span></a>
+                      <% }else{ %>
+                        <a href="<%= data.picture ? setting_detail.image_base_url + data.picture : 'javascript:;' %>" ><span class="btn btn-danger btn-condensed"><i class="glyphicon glyphicon-user"></i></span></a>
+                      <% } %>
+                  </td>
+                  <td>
+                   <div class="btn-group">
+                    <a href="#" data-toggle="dropdown" class="btn btn-primary dropdown-toggle"><%= __('button_action') %> <span class="caret"></span></a>
+                    <ul class="dropdown-menu" style="right: 0 !important; left: unset;" role="menu">
+                      <li class="partner_detail">
+                        <form method="post" action="/partner_detail">
+                          <input type="hidden" name="id" value="<%= data.id %>" />
+                          <button type="submit" class="btn btn-default" style="width:100%;" ><%= __('titel_view_in_detail') %></button>
+                        </form>
+                      </li>
+                      <li>
+                        <form method="post" action="requests">
+                          <input type="hidden" name="request" value="request">
+                          <input type="hidden" name="provider_type_id" value="<%= data.id %>">
+                          <input type="submit" name="submit" class="btn btn-default" style="width: 100%" id='<%= data.id %>' value="<%= __('button_history') %>"> 
+                        </form>
+                      </li>  
+                      <li>
+                          <form method="post" action="/partner_vehicle_list">
+                              <input type="hidden" name="partner_id" value="<%= data.id %>" />
+    
+                              <button type="submit" class="btn btn-default" style="width:100%;"><%= __('title_vehicle') %></button>
+                          </form>
+                      </li>
+                      <li>
+                        <form method="post" action="/partner_provider_list">
+                          <input type="hidden" name="id" value="<%= data.id %>" />
+                          <button type="submit" class="btn btn-default" style="width:100%;" ><%= __('titel_view_provider') %></button>
+                        </form>
+                      </li>
+                      <li>
+                  <form method="post" action="/admin_partner_bank_detail">
+                    <input type="hidden" name="id" value="<%= data.id %>" />
+                    <button type="submit" class="btn btn-default" style="width:100%;"><%= __('button_banking_detail') %> </button>
+                  </form>
+                </li>
+                      <% if(data.is_approved == 1){ %>                                                    
+                      <li  ><form method="post" action="partner_is_approved">
+                       <input type="hidden" name="is_approved" value="<%= data.is_approved %>">
+                        <input type="hidden" name="id" value="<%= data.id %>">
+                       <input type="submit" name="submit" class="btn btn-default" style="width: 100%" id='<%= data.id %>' value="<%= __('button_decline') %>"> 
+                       <input type="hidden" name="page" value="<%= current_page %>">
+                     </form>
+                   </li>
+                   <% } else { %>
+                   <li>
+                     <form method="post" action="partner_is_approved">
+                       <input type="hidden" name="id" value="<%= data.id %>">
+                       <input type="hidden" name="is_approved" value="<%= data.is_approved %>">
+                       <input type="submit" name="submit" class="btn btn-default" style="width: 100%" id='<%= data.id %>' value="<%= __('button_approve') %>"> 
+                       <input type="hidden" name="page" value="<%= current_page %>">
+                     </form>
+                   </li>
+                    <% } %>
+                    
+                    <% if(data.is_approved == 1){ %>
+                    <li>
+                        <button type="button" onclick="add_wallet('<%= data.id %>')" class="btn btn-default" style="width:100%;"><%= __('button_add_wallet') %></button>
+
+                    </li>
+                    <% } %>
+                    <% if(data.rif_url && data.rif_url !== ""){ %>
+                      <li>
+                        <button type="button" class="btn btn-default" style="width: 100%" id="viewRif<%=data._id%>">View Rif</button>
+                      </li>
+                  <% } %>
+                  <% if(data.document_2 && data.document_2 !== ""){ %>
+                    <li>
+                      <button type="button" class="btn btn-default" id="viewDoc2<%=data._id%>">View Document 2</button>
+                    </li>
+                <% } %>
+                <% if(data.government_id_proof && data.government_id_proof !== ""){ %>
+                  <li>
+
+                      <form method="get"  target="_blank" action="<%= setting_detail.image_base_url + data.government_id_proof %>">
+
+                          <button type="submit" class="btn btn-default" style="width:100%;"><%= __('button_download_idproof') %></button>
+                      </form>
+                  </li>
+              <% } %>
+
+                <% if(data.rif_url && data.rif_url !== ""){ %>
+
+                <li>
+                  <form method="post" action="admin_delete_partner_document">
+                    <input type="hidden" name="type" value="0">
+                    <input type="hidden" name="id" value="<%= data.id %>">
+                    <input type="submit" name="submit" class="btn btn-default" style="width: 100%" id='<%= data.id %>' value="<%= __('button_delete_rif') %>"> 
+                  </form>
+                </li>
+                <% } %>
+                <% if(data.document_2 && data.document_2 !== ""){ %>
+
+                <li>
+                  <form method="post" action="admin_delete_partner_document">
+                    <input type="hidden" name="type" value="1">
+                    <input type="hidden" name="id" value="<%= data.id %>">
+                    <input type="submit" name="submit" class="btn btn-default" style="width: 100%" id='<%= data.id %>' value="<%= __('button_delete_constitutivo') %>"> 
+                  </form>
+                </li>
+                <% } %>
+                <% if(data.government_id_proof && data.government_id_proof !== ""){ %>
+
+                <li>
+                  <form method="post" action="admin_delete_partner_document">
+                    <input type="hidden" name="type" value="2">
+                    <input type="hidden" name="id" value="<%= data.id %>">
+                    <input type="submit" name="submit" class="btn btn-default" style="width: 100%" id='<%= data.id %>' value="<%= __('button_delete_idproof') %>"> 
+                  </form>
+                </li>
+                <% } %>
+
+                    <li class="delete_partner_button">
+                      <form method="post" class="delete_form" action="admin_delete_partner">
+                        <input type="hidden" name="partner_id" value="<%= data.id %>">
+                        <input type="submit" name="submit" class="btn btn-default" style="width: 100%" id='<%= data.id %>' value="<%= __('button_delete') %>"> 
+                      </form>
+                    </li>
+
+                     </ul>
+                    </div>
+                  </td>
+                </tr>
+                <div class="modal animated fadeIn" id="service_type_select<%= data.id %>" tabindex="-1" role="dialog" aria-labelledby="smallModalHead" aria-hidden="true">
+                  <div class="modal-dialog" style="width: 300px;">
+                    <div class="modal-content">
+                      <div class="modal-header">
+                        <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only"><%= __('button_close') %></span></button>
+                        <h4 class="modal-title"><%= __('title_select_service_type') %></h4>
+                      </div>
+                      <form class="form-horizontal" id="demo">  
+                        <div class="modal-body">
+                          <div class="form-group">
+                            <div class="col-md-12">
+                              <select class="form-control select" data-none-selected-text="<%= __('title_nothing_selected') %>" name="service_type_list" id="service_type_list<%= data.id %>">
+                                <option selected disabled hidden style='display: none'></option>
+                              </select>
+                              <div id="message<%= data.id %>"></div>
+                            </div>
+                          </div>
+                        </div>
+                        <div class="modal-footer">
+                         <input type="button" name="button" id="submit<%= data.id %>" value="submit">
+                        </div>
+                      </div>
+                      </form>
+                    </div>
+                  </div>
+                  <div class="modal animated fadeIn" id="rifModal<%= data.id %>" tabindex="-1" aria-labelledby="rifModalLabel" aria-hidden="true">
+                    <div class="modal-dialog modal-lg">
+                      <div class="modal-content">
+                        <div class="modal-header">
+                          <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only"><%= __('button_close') %></span></button>
+                          <h5 class="modal-title" id="rifModalLabel<%= data.id %>">Rif</h5>
+                        </div>
+                        <div class="modal-body">
+                          <iframe style="width: 100%; height: 446px;" src="" id="rifIframe<%= data.id %>"></iframe>
+                          <img style="width: 100%; height: 446px;" src="<%= setting_detail.image_base_url + data.rif_url %>" id="rifImage<%= data.id %>"></iframe>
+                        </div>
+                        <div class="modal-footer">
+                          <form method="get"  target="_blank" action="<%= setting_detail.image_base_url + data.rif_url %>">
+                            <button type="submit" class="btn btn-secondary" ><%= __('button_download_rif') %></button>
+                          </form>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="modal animated fadeIn" id="doc2Modal<%= data.id %>" tabindex="-1" aria-labelledby="doc2ModalLabel" aria-hidden="true">
+                    <div class="modal-dialog modal-lg">
+                      <div class="modal-content">
+                        <div class="modal-header">
+                          <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only"><%= __('button_close') %></span></button>
+                          <h5 class="modal-title" id="doc2ModalLabel<%= data.id %>">Constitutivo</h5>
+                        </div>
+                        <div class="modal-body">
+                          <iframe style="width: 100%; height: 446px;" src="" id="doc2Iframe<%= data.id %>"></iframe>
+                          <img style="width: 100%; height: 446px;" src="<%= setting_detail.image_base_url + data.document_2 %>" id="doc2Image<%= data.id %>">
+                        </div>
+                        <div class="modal-footer">
+                          <form method="get"  target="_blank" action="<%= setting_detail.image_base_url + data.document_2 %>">
+                            <button type="submit" class="btn btn-secondary" ><%= __('button_download_constitutivo_doc') %></button>
+                          </form>
+                        </div>
+                      </div>
+                    </div>
+                  </div>                                    
+
+              <% }); %> 
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>                                                    
+  </div>  
+  <% include colorbar.html %>
+                             
+</div>    
+
+
+<div class="modal animated fadeIn" id="add_wallet_modal" tabindex="-1" role="dialog" aria-labelledby="smallModalHead" aria-hidden="true">
+    <div class="modal-dialog" style="width: 300px;">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only"><%= __('button_close') %></span></button>
+                <h4 class="modal-title"><%= __('title_add_wallet') %></h4>
+            </div>
+            <form class="form-horizontal" id="add_wallet_form">
+                <div class="modal-body">
+                    <div class="form-group">
+                        <div class="col-md-12">
+                            <input type="hidden" id="add_wallet_user_id" name="user_id">
+                            <input type="text" onkeypress="return isNumberKey(event);" name="wallet" id="wallet_amount" class="form-control" placeholder="<%= __('title_wallet_amount') %>">
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <input type="submit" class="btn btn-primary" name="button" value="<%= __('button_add') %>">
+                </div>
+        </div>
+        </form>
+    </div>
+</div>
+
+
+<script type="text/javascript" src="js/dist/pdfmake.min.js"></script>
+<script type="text/javascript" src="js/dist/vfs_fonts.js"></script>
+<script type="text/javascript">
+
+  /*$(document).ready(function(){
+
+    $('#demo').click(function(e){
+
+      $('#header').show();
+      var docDefinition = {
+        content: [{
+          style: 'tableExample',
+          table: {
+
+            body: [
+            [ 'PROVIDER NAME', 'EMAIL', 'PHONE', 'ADDRESS' , 'ZIPCODE'],
+            <% detail.forEach(function(data){ %>
+              [ '<%= data.first_name %>  <%= data.last_name %>', '<%= data.email %>', '<%= data.country_phone_code %>  <%= data.phone %>', '<%= data.address %>','<%= data.zipcode %>'],
+              <% }); %>
+            ]
+          }
+        }]
+      };
+
+      pdfMake.createPdf(docDefinition).download(Math.random()+".pdf");
+      $('#header').hide();
+
+    });
+  });*/
+
+</script>
+
+<script type="text/javascript">
+  $(document).ready(function() {
+    <% detail.forEach(function(data){ %>
+      $("#viewRif<%=data._id%>").on("click", function() {
+        $('#rifModal<%=data._id%>').modal('show')
+        let url = "<%= setting_detail.image_base_url + data.rif_url %>"
+        if (url.match(/\.(pdf)$/i) !== null){         
+          let viewUrl = "https://docs.google.com/viewer?url=" + encodeURIComponent(url) + "&embedded=true";
+          $('#rifIframe<%= data.id %>').attr('src', viewUrl);
+          $('#rifIframe<%= data.id %>').show();
+          $('#rifImage<%= data.id %>').hide();
+        }else{
+          $('#rifIframe<%= data.id %>').hide();
+          $('#rifImage<%= data.id %>').show();
+        }
+        $('#downloadRifButton<%= data.id %>').attr('href', url);
+      })
+
+      $("#viewDoc2<%=data._id%>").on("click", function() {
+        $('#doc2Modal<%=data._id%>').modal('show')
+        let url = "<%= setting_detail.image_base_url + data.document_2 %>"
+        if (url.match(/\.(pdf)$/i) !== null){         
+          let viewUrl = "https://docs.google.com/viewer?url=" + encodeURIComponent(url) + "&embedded=true";
+          $('#doc2Iframe<%= data.id %>').attr('src', viewUrl);
+          $('#doc2Iframe<%= data.id %>').show();
+          $('#doc2Image<%= data.id %>').hide();
+        }else{
+          $('#doc2Iframe<%= data.id %>').hide();
+          $('#doc2Image<%= data.id %>').show();
+        }
+
+        $('#downloadDoc2Button<%= data.id %>').attr('href', url);
+
+      })
+
+    <% }) %>
+
+   $('#start_date').datepicker({
+    format: 'yyyy-mm-dd',
+    <% if(filter_end_date){ %>
+        endDate: new Date("<%= filter_end_date %>")
+    <% }else{ %>
+    endDate: new Date(Date.now())
+    <% } %>
+
+   }).on("input change", function (e) { 
+    var end_date = $('#start_date').datepicker('getDate');
+    end_date.setDate(end_date.getDate() + 1);
+    $('#end_date').datepicker('setStartDate', end_date);
+    $('.datepicker-dropdown').hide()
+  });
+
+   $('#end_date').datepicker({
+    format: 'yyyy-mm-dd',
+    endDate: new Date(Date.now()),
+    <% if(filter_start_date){ %>
+    startDate: new Date("<%= filter_start_date %>")
+    <% } %>
+
+   }).on("input change", function (e) { 
+    var start_date = $('#end_date').datepicker('getDate');
+    start_date.setDate(start_date.getDate() - 1);
+    $('#start_date').datepicker('setEndDate', start_date);
+    $('.datepicker-dropdown').hide()
+  });
+  
+  $('.delete_form').submit(function (event){
+      if (window.confirm("Are you sure you want to DELETE this Partner")) {
+          return true;
+      } else {
+          return false;
+      }
+  })
+  
+  $('#add_wallet_form').validate({
+            rules: {
+                wallet : "required"
+            },
+            submitHandler: function (form) {
+
+                var user_id = $('#add_wallet_user_id').val();
+                $.ajax({
+                    type: 'POST',
+                    url: '/admin_add_partner_wallet_amount',
+                    data: $("#add_wallet_form").serialize(),
+                    dataType: "json",
+                    success: function (res) {
+                        
+                        $('#add_wallet_modal').modal('hide');
+                        $('#wallet_amount').val('');
+                        if(res.success == true)
+                        {
+                            $('#wallet'+user_id).html(res.wallet); 
+                         
+                            $('#promo_error').show();
+                            setTimeout(function () {
+                                $('#promo_error').hide();
+                            }, 3000);
+                            document.getElementById('message').innerHTML = res.message;
+                        }
+                        else
+                        {
+                          $('#promo_error').show();
+                            setTimeout(function () {
+                                $('#promo_error').hide();
+                            }, 3000);
+                            document.getElementById('message').innerHTML = res.error_code;
+                        }
+                    }
+                });
+            }
+        })
+
+   
+ });
+ function add_wallet(id)
+    {
+        $('#add_wallet_user_id').val(id);
+        $('#add_wallet_modal').modal('show');
+    }
+ 
+ function export_excel(){
+
+            $.ajax({
+                      type: 'POST',
+                      url: '/genetare_partner_excel',
+                      data: $('.form-horizontal').serialize(),
+                      dataType: "json",
+                      success: function (res) {
+                          window.open(res)
+                      }
+            });
+      }
+</script>  
+
+</div>
+
+<% include footer_list.html %> 

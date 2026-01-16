@@ -1,0 +1,171 @@
+<% include header.html %>
+<link href="css/fSelect.css"
+rel="stylesheet" type="text/css" />
+<script src="js/fSelect.js"
+type="text/javascript"></script>    
+
+<div class="alert alert-success" role="alert" id="promo_error" style="display:none">
+  <button type="button" id="close" class="close"><span aria-hidden="true">&times;</span><span class="sr-only"><%= __('button_close') %></span></button>
+  <p align="center" id="message"> <strong></strong></p>
+</div>
+
+
+<!-- PAGE CONTENT WRAPPER -->
+<div class="row">
+<div class="page-content-wrap">
+  <div class="col-md-6 col-sm-8 col-xs-12">
+    <% if(typeof data != 'undefined'){ %>
+
+    <form class="form-horizontal" method="post" id="update_form" action="/update_type_service">
+      <div class="panel panel-default">
+        <div class="panel-body form-group-separated">
+          <div class="form-group">
+            <input type="hidden" class="form-control" value="<%= data.id %>" name="id" />
+            <label class="col-md-3 col-xs-5 control-label"><%= __('title_name') %></label>
+            <div class="col-md-9 col-xs-7">
+              <input type="text" class="form-control" value="<%= data.service_name %>" name="service_name" />
+            </div>
+          </div>
+          <div class="form-group">
+            <input type="hidden" class="form-control" value="<%= data.id %>" name="id" />
+            <label class="col-md-3 col-xs-5 control-label"><%= __('title_courier_type') %></label>
+            <div class="col-md-9 col-xs-7">
+              <select class="form-control select" data-none-selected-text="<%= __('title_courier_type') %>" name="courier_type">
+                <option value="<%= constant_json.COURIER_FLOW %>" <%= data.courier_type == "0" ? selected="selected" : '' %>  ><%= __('title_courier_flow') %> </option>  
+                <option value="<%= constant_json.COURIER_CISTERNA_FLOW %>" <%= data.courier_type == "1" ? selected="selected" : '' %>  ><%= __('title_courier_cisterna') %> </option>  
+                <option value="<%= constant_json.COURIER_ESCOMBRO_FLOW %>" <%= data.courier_type == "2" ? selected="selected" : '' %>  ><%= __('title_courier_escombro_basura') %> </option>  
+              </select>
+            </div>
+          </div>
+          <div class="form-group">
+
+            <label class="col-md-3 control-label"><%= __('title_specifications') %></label>
+            <div class="col-md-9">
+                <select id="specification_array" multiple="multiple" name="specification_array[]">
+                  <optgroup id="append" label='<%= __('title_specifications_list') %>'>
+                    <% specification_list.forEach(function(specification){ %>
+                      <% if(data.specification_array.indexOf(specification._id) !== -1){ %>
+                            <option value="<%= specification._id %>" selected><%= specification.specification_name %></option>
+                      <% } else { %>
+                        <option value="<%= specification._id %>"><%= specification.specification_name %></option>
+                      <% } %>
+                      <% }) %>
+                  </optgroup>
+              </select>
+            </div>
+          </div>
+        </div>
+
+
+          <div class="form-group">
+            <div class="col-md-12 col-xs-12">
+              <button class="btn btn-primary btn-rounded pull-right" type="submit" name="save" value="save">
+                <%= __('button_save') %>
+              </button>
+            </div>
+          </div>
+        </div>
+    </form>
+
+    <% }else{ %>
+    <form class="form-horizontal" method="post" id="add_form" action="/add_type_service">
+      <div class="panel panel-default">
+        <div class="panel-body form-group-separated">
+          <div class="form-group">
+            <label class="col-md-3 col-xs-5 control-label"><%= __('title_name') %></label>
+            <div class="col-md-9 col-xs-7">
+              <input type="text" class="form-control" id="service_name" name="service_name" />
+            </div>
+          </div>
+          <div class="form-group">
+            <label class="col-md-3 control-label"><%= __('title_courier_type') %></label>
+            <div class="col-md-9">
+                <select class="form-control select" data-none-selected-text="<%= __('title_nothing_selected') %>" id="courier_type" name="courier_type">
+                  <option value="<%= constant_json.COURIER_FLOW %>" ><%= __('title_courier_flow') %> </option>  
+                  <option value="<%= constant_json.COURIER_CISTERNA_FLOW %>" ><%= __('title_courier_cisterna') %> </option>  
+                  <option value="<%= constant_json.COURIER_ESCOMBRO_FLOW %>" ><%= __('title_courier_escombro_basura') %> </option>  
+              </select>
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label class="col-md-3 control-label"><%= __('title_specifications') %></label>
+            <div class="col-md-9">
+                <select id="specification_array" multiple="multiple" name="specification_array[]">
+                  <optgroup id="append" label='<%= __('title_specifications_list') %>'>
+                      <% specification_list.forEach(function(data){ %>
+                        <option value="<%= data._id %>"><%= data.specification_name %></option>
+                    <% }) %>
+                  </optgroup>
+              </select>
+            </div>
+          </div>
+
+          <div class="form-group">
+            <div class="col-md-12 col-xs-12">
+              <button class="btn btn-primary btn-rounded pull-right" type="submit" id="save" name="save" value="save">
+                <%= __('button_save') %>
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </form>
+    <% } %>
+  </div>
+  </div>
+</div>
+  <% include colorbar.html %>
+
+<script type="text/javascript">
+  $(document).ready(function() {
+    $('#specification_array').fSelect({
+        placeholder: '<%= __("title_select_specification")%>',
+        numDisplayed: 3,
+        overflowText: '{n} selected',
+        searchText: '<%= __("title_search_text")%>',
+        showSearch: true
+    });
+
+
+    $('#start_date').datepicker({
+      format: 'yyyy-mm-dd',
+      startDate: new Date(Date.now())
+
+    }).on("input change", function(e) {
+      var end_date = $('#start_date').datepicker('getDate');
+      end_date.setDate(end_date.getDate() + 1);
+      $('#code_expiry').datepicker('setStartDate', end_date);
+    });
+
+    $('#code_expiry').datepicker({
+      format: 'yyyy-mm-dd'
+
+    }).on("input change", function(e) {
+      var start_date = $('#code_expiry').datepicker('getDate');
+      start_date.setDate(start_date.getDate() - 1);
+      $('#start_date').datepicker('setEndDate', start_date);
+    });
+
+    $("#update_form").validate({
+      ignore: [],
+      rules: {
+        service_name: "required"
+      },
+      submitHandler: function(form) {
+        form.submit();
+      }
+    });
+
+    $("#add_form").validate({
+      ignore: [],
+      rules: {
+        service_name: "required"
+      },
+      submitHandler: function(form) {
+        form.submit();
+      }
+    });
+  });
+</script>
+<% include footer_form.html %>

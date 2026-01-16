@@ -1,0 +1,431 @@
+<% include header.html %> 
+
+<style>
+  .trip-info {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 15px;
+
+    position: absolute;
+    right: 0;
+    top: 2% !important;
+    left: 6% !important;
+    text-align: center;
+    font-size: 20px;
+    color: #333;
+    border-radius: 8px;
+  }
+  
+  .trip-info .row {
+    display: flex;
+    justify-content: center;
+    width: 100%;
+    margin-bottom: 22px;
+  }
+  
+  .trip-info .row div {
+    margin: 0 12px;
+    font-weight: 600;
+    background-color: #29165a;
+    color: #fff;
+    padding: 8px 14px;
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    transition: transform 0.2s ease;
+  }
+  
+  .trip-info .row div:hover {
+    transform: translateY(-2px);
+  }
+  
+  .flety_logo_container {
+    position: absolute;
+    bottom: 4% !important;
+    right: 6% !important;
+    transform: translateY(0);
+  }
+  
+  .logo_img {
+    max-width: 180px !important;
+    height: auto;
+  }
+  .monthly_trips {
+    margin-right: 4rem !important;
+    margin-left: 2rem !important;
+  }
+
+  .gm-fullscreen-control{
+    z-index: 9999;
+  }
+
+  @media (max-width: 768px) {
+    .trip-info {
+      padding: 10px;
+      font-size: 18px;
+    }
+  
+    .trip-info .row {
+      flex-direction: column;
+      align-items: center;
+    }
+  
+    .flety_logo_container {
+      position: absolute;
+      bottom: 4% !important;
+      right: 6% !important;
+    }
+  
+    .trip-info .row div {
+      margin: 10px 0;
+    }
+    .trip-info .row {
+      margin-bottom: 0px;
+    }
+    .monthly_trips {
+      margin-right: 4rem !important;
+      margin-left: 4rem !important;
+    }
+  }
+  
+  @media (max-width: 1024px) {
+    .logo_img {
+      max-width: 140px !important;
+    }
+  }
+  </style>
+  <div class="page-content-wrap">
+<div class="row">
+    <!-- Map and Side Panel -->
+    <div class="panel panel-default">
+    <div class="panel-body panel-body-map">
+        <!-- Google Map -->
+        <div class="row">                      
+                <div class="panel panel-default">
+                  <div class="panel-body panel-body-map">
+                    <div id="map" style="width: 100%; min-height: 615px;"></div>
+                    <div class="trip-info" id="trip-info">
+                      <div class="row">
+                        <div> <%= __('sub_menu_title_running_requests') %> : <span id="active_trips"><%= totalTrips[0].running_trips %></span> </div>
+                        <div><%= __('sub_menu_title_schedule_requests') %> : <span id="scheduled_trips"><%= totalTrips[0].scheduled_trips %> </span></div>
+                        <div><%= __('sub_menu_title_completed_requests') %> :  <span id="completed_trips"> <%= totalTrips[0].completed_trips + totalTripHistories[0].completed_today %> </span></div>
+                      </div>
+                      <div class="row monthly_trips" >
+                        <div ><%= __('title_total_trips_month') %> : <span id="monthly_completed_trips"><%= totalTripHistories[0].completed_month %></span></div>
+                      </div>
+                    </div>
+                    <div class="flety_logo_container" id="flety_logo">
+                      <img class="logo_img" src="web_images/FLETY_LOGOAZUL.png" alt="">
+                    </div>
+                  </div>
+              </div>
+             
+        </div>
+
+    </div>
+    </div>
+</div>
+<% include colorbar.html %>
+
+</div>
+</div>
+</div>
+</body>
+<audio id="audio-alert" src="audio/alert.mp3" preload="auto"></audio>
+<audio id="audio-fail" src="audio/fail.mp3" preload="auto"></audio>
+        <!-- END PRELOADS -->
+
+    
+    <!-- Google Maps API -->
+<script src="https://developers.google.com/maps/documentation/javascript/examples/markerclusterer/markerclusterer.js">
+    </script>
+<script src="<%=map_url%>"></script>
+<script>
+
+google.maps.event.addDomListener(window, 'load', initialize);
+
+function initialize() {
+  var iconBase = '/map_pin/icons/';
+  var provider_markers = [];
+  var data1 = "All";
+  var markers = [];
+
+  let latitude = "<%=latitude%>"
+  let longitude = "<%=longitude%>"
+
+  const map_view = {
+        center: new google.maps.LatLng(latitude, longitude),
+        zoom: 10,
+        mapTypeId: google.maps.MapTypeId.ROADMAP
+    };
+
+    const icons = {
+        exit: {
+          name: "<%= __('title_origin') %>",
+          icon: iconBase + "FLETY_ICONO_SALIDA.svg",
+        },
+        arrival: {
+          name: "<%= __('title_destination') %>",
+          icon: iconBase + "FLETY_ICONO_LLEGADA.svg",
+        },
+        external_stop: {
+          name: "<%= __('title_external_stop') %>",
+          icon: iconBase + "FLETY_ICONO_PARADA_EXTERNA.svg",
+        },
+    };
+
+    const logo = document.getElementById("flety_logo");
+    const legend = document.getElementById("trip-info");
+
+    var map = new google.maps.Map(document.getElementById("map"), map_view);
+    map.controls[google.maps.ControlPosition.RIGHT_TOP].push(legend);
+    map.controls[google.maps.ControlPosition.RIGHT_BOTTOM].push(logo);
+
+    var locations = [];
+
+    <% trips.forEach(function(trip) { %>
+
+        var lat = <%= trip.providerLocation[0] %>;
+        var lon =  <%= trip.providerLocation[1] %>;
+        // map.setCenter({ lat : lat, lng : lon });
+        var position = [lat, lon];
+
+        var latlng = new google.maps.LatLng(lat, lon);
+        map.panTo(latlng);
+        // var car_model = "";
+        // var car_index = provider_detail_array[index].vehicle_detail.findIndex(x => x.is_selected == true);
+        // if(car_index > -1){
+        //     car_model = provider_detail_array[index].vehicle_detail[car_index].model;
+        // }
+          
+        var contentString =
+                '<p><b><%= config_json.trip_no %></b>: ' + <%= trip.unique_id %> +
+                '</p>';
+
+        locations.push({
+            latlon: new google.maps.LatLng(lat, lon),
+            message: new google.maps.InfoWindow({
+                content: contentString,
+                maxWidth: 320, disableAutoPan: true
+            }),
+            type_image: "<%= setting_detail.image_base_url %>" + "<%= trip.type_image[0] %>"
+        });
+
+    <% }); %>
+    let trips = <%-JSON.stringify(trips)%>
+    locations.forEach(function (loc_data, i) {
+      const maxHeight = 30;
+      // Create a new image object to get the original dimensions
+      const img = new Image();
+      img.src = loc_data.type_image;
+      img.onload = function() {
+          const aspectRatio = img.width / img.height;
+          const scaledWidth = maxHeight * aspectRatio;
+            var marker_selected_provider = new google.maps.Marker({
+                position: loc_data.latlon,
+                map: map,
+                icon: {
+                    url: loc_data.type_image,
+                    scaledSize: new google.maps.Size(scaledWidth, maxHeight) // Adjust the size as per your requirement
+                }
+            });
+            const trip = trips[i]
+
+            provider_markers.push(marker_selected_provider);
+
+            google.maps.event.addListener(marker_selected_provider, 'click', function (e) {
+              $.ajax({
+                type: 'POST',
+                url: '/map_get_provider_data',
+                data: {
+                        provider_id: trip.provider_id,
+                        trip_id: trip._id
+                      } ,
+                dataType: "json",
+                success: function (res) {
+                  if(res.success){
+                    const name = res.provider ? res.provider.first_name + ' ' + res.provider.last_name : ""
+                    const cedula = res.cedula ? res.cedula : ""
+                    const phone = res.provider ? res.provider.country_phone_code + res.provider.phone : ""
+                    const truck_model = trip?.service_type_name ?trip?.service_type_name : ""
+                    const plate = trip?.assigned_vehicle_details?.vehicle_plate_no ?trip?.assigned_vehicle_details?.vehicle_plate_no : "" 
+                    let status = res?.trip?.is_provider_status ? res.trip.is_provider_status  : "" 
+                    let status_text = ""  
+                    if(status == 1) {
+                      status_text = '<%= __('title_accepted_request')%>'
+                    } else if(status == 2) {
+                      status_text = '<%= __('title_trip_status_coming')%>'
+                    } else if(status == 4) {
+                      status_text = '<%= __('title_trip_status_arrived')%>'
+                    } else if(status == 6) {
+                      status_text = '<%= __('title_trip_status_trip_started')%>'
+                    } else if(status == 7) {
+                      status_text = '<%= __('title_trip_status_arrived_at_destination')%>'
+                    } else if(status == 9) {
+                      status_text = '<%= __('title_trip_status_completed')%>'
+                    } 
+                    const speed = res?.trip?.speed ? (res.trip.speed).toFixed(0) + " km" : "" 
+                    var contentString =
+                    '<p><b><%= __('title_provider_name') %></b>: ' + name +
+                    '<br><b><%= __('title_cedula') %></b>: ' + cedula +
+                    '<br><b><%= __('title_provider_phone') %></b>: ' + phone +
+                    '<br><b><%= __('title_car_model') %></b>: ' + truck_model +
+                    '<br><b><%= __('title_plate_no') %></b>: ' + plate +
+                    '<br><b><%= __('title_status') %></b>: ' + status_text +
+                    '<br><b><%= __('title_current_speed') %></b>: ' + speed +
+                    '</p>';
+
+                    currentSelectedMarker = loc_data;
+                    loc_data.message =  new google.maps.InfoWindow({
+                                            content: contentString,
+                                            maxWidth: 320, disableAutoPan: true
+                                        })
+
+                    loc_data.message.open(map, marker_selected_provider);
+                    setTimeout(function () {
+                        loc_data.message.close();
+                    }, 5000);
+                  }
+                }
+              });
+            });
+          };      
+        });
+      
+      function refresh_data(provider_markers_array) {
+        $.ajax({
+          type: 'POST',
+          url: '/track_trips',
+          data: {get_new_data : 1} ,
+          dataType: "json",
+          success: function (res) {
+            if(res.success){
+              let trips = res.trips
+              let totalTrips = res.totalTrips
+              let totalTripHistories = res.totalTripHistories
+              $('#active_trips').text(totalTrips[0].running_trips);
+              $('#scheduled_trips').text(totalTrips[0].scheduled_trips);
+              $('#completed_trips').text(totalTrips[0].completed_trips + totalTripHistories[0].completed_today);
+              $('#monthly_completed_trips').text(totalTripHistories[0].completed_month);
+              for (let i = 0; i < provider_markers_array.length; i++) {
+                provider_markers_array[i].setMap(null);
+              }
+              provider_markers = []; 
+              add_truck_markers(trips)
+            }else{
+              location.reload()
+            }
+          }
+        })
+      }
+
+      function add_truck_markers(trips){
+        let locations = [];
+        trips.forEach((trip) => {
+          var lat = trip.providerLocation[0];
+          var lon =  trip.providerLocation[1];
+          var position = [lat, lon];
+
+          var latlng = new google.maps.LatLng(lat, lon);
+            
+          var contentString =
+                  '<p><b><%= config_json.trip_no %></b>: ' + trip.unique_id  +
+                  '</p>';
+
+          locations.push({
+            latlon: new google.maps.LatLng(lat, lon),
+            message: new google.maps.InfoWindow({
+                content: contentString,
+                maxWidth: 320, disableAutoPan: true
+            }),
+            type_image: "<%= setting_detail.image_base_url %>" + trip.type_image[0]
+        });
+
+        });
+        locations.forEach(function (loc_data, i) {
+        const maxHeight = 30;
+        const img = new Image();
+        img.src = loc_data.type_image;
+        img.onload = function() {
+          const aspectRatio = img.width / img.height;
+          const scaledWidth = maxHeight * aspectRatio;
+          var marker_selected_provider = new google.maps.Marker({
+              position: loc_data.latlon,
+              map: map,
+              icon: {
+                  url: loc_data.type_image,
+                  scaledSize: new google.maps.Size(scaledWidth, maxHeight)
+              }
+          });
+          const trip = trips[i]
+          provider_markers.push(marker_selected_provider);
+          google.maps.event.addListener(marker_selected_provider, 'click', function (e) {
+            $.ajax({
+              type: 'POST',
+              url: '/map_get_provider_data',
+              data: {
+                      provider_id: trip.provider_id,
+                      trip_id: trip._id
+                    } ,
+              dataType: "json",
+              success: function (res) {
+                if(res.success){
+                  const name = res.provider ? res.provider.first_name + ' ' + res.provider.last_name : ""
+                  const cedula = res.cedula ? res.cedula : ""
+                  const phone = res.provider ? res.provider.country_phone_code + res.provider.phone : ""
+                  const truck_model = trip?.service_type_name ?trip?.service_type_name : ""
+                  const plate = trip?.assigned_vehicle_details?.vehicle_plate_no ?trip?.assigned_vehicle_details?.vehicle_plate_no : "" 
+                  let status = res?.trip?.is_provider_status ? res.trip.is_provider_status  : "" 
+                  let status_text = ""  
+                  if(status == 1) {
+                    status_text = '<%= __('title_accepted_request')%>'
+                  } else if(status == 2) {
+                    status_text = '<%= __('title_trip_status_coming')%>'
+                  } else if(status == 4) {
+                    status_text = '<%= __('title_trip_status_arrived')%>'
+                  } else if(status == 6) {
+                    status_text = '<%= __('title_trip_status_trip_started')%>'
+                  } else if(status == 7) {
+                    status_text = '<%= __('title_trip_status_arrived_at_destination')%>'
+                  } else if(status == 9) {
+                    status_text = '<%= __('title_trip_status_completed')%>'
+                  } 
+                  const speed = res?.trip?.speed ? (res.trip.speed).toFixed(0) + " km" : "" 
+                  var contentString =
+                  '<p><b><%= __('title_provider_name') %></b>: ' + name +
+                  '<br><b><%= __('title_cedula') %></b>: ' + cedula +
+                  '<br><b><%= __('title_provider_phone') %></b>: ' + phone +
+                  '<br><b><%= __('title_car_model') %></b>: ' + truck_model +
+                  '<br><b><%= __('title_plate_no') %></b>: ' + plate +
+                  '<br><b><%= __('title_status') %></b>: ' + status_text +
+                  '<br><b><%= __('title_current_speed') %></b>: ' + speed +
+                  '</p>';
+
+                  currentSelectedMarker = loc_data;
+                  loc_data.message =  new google.maps.InfoWindow({
+                                          content: contentString,
+                                          maxWidth: 320, disableAutoPan: true
+                                      })
+
+                  loc_data.message.open(map, marker_selected_provider);
+                  setTimeout(function () {
+                      loc_data.message.close();
+                  }, 5000);
+                }
+              }
+            });
+          });
+        };      
+      });
+    }
+
+
+    setInterval(function () {
+      refresh_data(provider_markers); 
+    }, 120000)
+}
+
+
+</script>
+
+<% include footer_list.html %>

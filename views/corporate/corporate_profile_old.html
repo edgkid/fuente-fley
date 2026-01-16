@@ -1,0 +1,536 @@
+<% include corporate_header.html %>
+<style>
+    .img_div {
+        padding-bottom: 15px;
+    }
+
+    .img-thumbnail{
+        display: inline-block;
+        max-width: 100%;
+        height: auto;
+        padding: 0px;
+        line-height: 1.42857143;
+        border: 0px;
+        border-radius: 4px;
+        -webkit-transition: all .2s ease-in-out;
+        -o-transition: all .2s ease-in-out;
+        transition: all .2s ease-in-out;
+    }
+    .img-thumbnail:hover {
+        box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.5);
+        }
+
+    .img-thumbnail img {
+        display: block;
+        width: 100%;
+        height: auto;
+    }
+
+    .pdf-uploaded {
+  display: inline-block;
+  background-color: #f2f2f2;
+  border-radius: 5px;
+  padding: 5px 10px;
+  color: #333;
+  font-size: 14px;
+  font-weight: bold;
+  line-height: 1.5;
+}
+
+.pdf-uploaded-icon {
+  display: inline-block;
+  width: 20px;
+  height: 20px;
+  margin-right: 5px;
+  text-align: center;
+  color: #4CAF50;
+}
+
+.pdf-uploaded-text {
+  display: inline-block;
+  vertical-align: middle;
+}
+
+.note-container {
+  background-color: #f5f5f5;
+  border: 1px solid #ccc;
+  padding: 10px;
+  border-radius: 5px;
+  box-shadow: 0 0 6px rgba(0, 0, 0, 0.1);
+}
+
+.note-text {
+  margin: 0;
+  color: green;
+  font-size: 14px;
+}
+
+    
+</style>
+    <div class="page-content-wrap">
+        <% if(typeof message !='undefined' ){ %>
+            <div class="alert alert-success" role="alert">
+                <button type="button" class="close" data-dismiss="alert"><span aria-hidden="true">&times;</span><span
+                        class="sr-only">
+                        <%= __('button_close') %>
+                    </span></button>
+                <p align="center">
+                    <%= __(message) %>
+                </p>
+            </div>
+            <% } %>
+
+
+                <div class="panel panel-default">
+                    <div class="row">
+                    <div class="col-md-12">
+                        <div class="panel-body form-group-separated">
+                            <form class="form-horizontal" id="editForm" enctype="multipart/form-data" method="post"
+                                action="/corporate_edit_profile">
+                                <input type="hidden" name="id" value="<%= login1._id %>" />
+
+                                <div class="col-md-4">
+                                    <div class="form-group img_div">
+                                        <label class="control-label">
+                                          <%= __('title_profile_pic') %>
+                                        </label>
+                                        <div class="">
+                                          <input type="file" class="btn btn-primary btn-block btn-rounded fileinput corporate_btn_hide"
+                                          data-filename-placement="inside" name="pictureData" accept="image/*"
+                                          id="profile_image" title="<%= __('title_partner_profile') %>" />
+                                          <br>
+                    
+                                          <img id="old_image"
+                                            src="<%= login1.picture && login1.picture  != '' ?  setting_detail.image_base_url + login1.picture : 'default.png' %>"
+                                            class="img-thumbnail" id="profile_sel_img" style="height:100px; width:100px;" />
+                                        </div>
+                                        <br>
+                                            <% if(login1.picture && login1.picture !== ""){ %>
+                                                <button type="button" onclick='return download_file("<%= setting_detail.image_base_url + login1.picture%>")'  class="btn btn-success corporate_btn_hide">
+                                                    <%= __('button_view_download') %>
+                                                </button>
+                                            <% } %>
+                                          
+                                    
+                    
+                                      </div>
+                                      
+                                      <div class="form-group img_div">
+                                        <label class="control-label">
+                                          <%= __('title_rif') %> (<%= __('title_image_pdf') %>)
+                                        </label>
+                                        <div class="">
+                                            <% if(!login1.rif_url || login1.rif_url == ""){ %>
+
+                                          <input type="file" class="btn btn-primary btn-block btn-rounded fileinput corporate_btn_hide"
+                                            data-filename-placement="inside" name="rif_url" accept="image/*, application/pdf"
+                                            id="rif_url" title="<%= __('change_rif') %> (<%= __('title_image_pdf') %>)" />
+                                            <% } %>
+
+                                          <br>
+                                          <img id="rif_img"
+                                            src="<%= login1.rif_url && login1.rif_url  != '' ? setting_detail.image_base_url + login1.rif_url : 'default.png' %>"
+                                            class="img-thumbnail" style="height:100px; width:100px;" />
+                                            <div class="pdf-container" id="rif_pdf_message" style="display: none;">
+                                                <div id="pdf-status" class="pdf-uploaded">
+                                                  <span class="pdf-uploaded-icon">&#x2714;</span>
+                                                  <span class="pdf-uploaded-text">PDF already uploaded!!</span>
+                                                </div>
+                                              </div>
+
+                                        </div>
+                                        <br>
+                                        <% if(login1.rif_url && login1.rif_url !== ""){ %>
+                                            <button type="button" onclick='return download_file("<%= setting_detail.image_base_url + login1.rif_url%>")'  class="btn btn-success corporate_btn_hide">
+                                                <%= __('button_view_download') %>
+                                            </button>
+                                        <% } %>
+
+                                      </div>
+                                      
+                                      <div class="form-group img_div">
+                                        <label class="control-label">
+                                          <%= __('title_upload_constitutivo') %> (<%= __('title_pdf') %>)
+                                        </label>
+                                        <div class="">
+                                            <% if(!login1.document_2 || login1.document_2 == ""){ %>    
+                                                <input type="file" class="btn btn-primary btn-block btn-rounded fileinput corporate_btn_hide"
+                                                data-filename-placement="inside" name="document_2" accept="application/pdf" id="document_2"
+                                                title="<%= __('title_upload_constitutivo') %> (<%= __('title_pdf') %>) " />
+                                                <br>
+                                            <% } %>
+                                          <% if(login1.document_2 && login1.document_2 !== ""){ %>
+                                              <div class="pdf-container">
+                                                <div id="pdf-status" class="pdf-uploaded">
+                                                  <span class="pdf-uploaded-icon">&#x2714;</span>
+                                                  <span class="pdf-uploaded-text">PDF already uploaded!!</span>
+                                                </div>
+                                            </div>
+                                                <br>
+
+                                                <button type="button" onclick='return download_file("<%= setting_detail.image_base_url + login1.document_2%>")' class="btn btn-success corporate_btn_hide">
+                                                  <%= __('button_view_download') %>
+                                                </button>
+                                              
+                                        <% }else{ %>
+                                            <img
+                                            src="<%=  'default.png' %>"
+                                            class="img-thumbnail" style="height:100px; width:100px;" />
+                                            
+                                        <%  }%>
+                                        </div>
+
+                                      </div>
+                                      <% if((login1.rif_url && login1.rif_url !== "") || (login1.document_2 && login1.document_2 !== "")){ %>
+
+                                      <div class="form-group">
+                                        <div class="col-md-10">
+                                          <div class="note-container">
+                                            <p class="note-text"><%= __('tooltip_note_upload_doc_corporate') %></p>
+                                          </div>
+                                        </div>
+                                      </div>
+                                      <%  }%>
+                                 
+                    
+                                </div>
+    
+                      
+                                <div class="col-md-8">
+                                    <div class="form-group">
+                                        <label class="col-md-3 control-label">
+                                            <%= __('title_company_name') %>
+                                        </label>
+                                        <div class="col-md-6">
+                                            <input type="text" class="form-control"
+                                                placeholder="<%= __('title_company_name') %>" name="company_name"
+                                                value="<%= login1.company_name %>" id="company_name" />
+                                        </div>
+                                    </div>
+
+                                    <div class="form-group">
+                                        <label class="col-md-3 control-label">
+                                            <%= __('title_rif') %>
+                                        </label>
+                                        <div class="col-md-2">
+
+                                            <select class="form-control select" data-none-selected-text="<%= __('title_nothing_selected') %>"  name="rif0">
+                                                <option value="<%= __('title_rif_v')%>" <%=  rif[0] == __('title_rif_v') ? 'selected' : '' %>> <%= __('title_rif_v')%></option>
+                                                <option value="<%= __('title_rif_e')%>" <%=  rif[0] == __('title_rif_e') ? 'selected' : '' %>> <%= __('title_rif_e')%></option>
+                                                <option value="<%= __('title_rif_j')%>" <%=  rif[0] == __('title_rif_j') ? 'selected' : '' %>> <%= __('title_rif_j')%></option>
+                                                <option value="<%= __('title_rif_p')%>" <%=  rif[0] == __('title_rif_p') ? 'selected' : '' %>> <%= __('title_rif_p')%></option>
+                                                <option value="<%= __('title_rif_g')%>" <%=  rif[0] == __('title_rif_g') ? 'selected' : '' %>> <%= __('title_rif_g')%></option>
+                                                                  </select>                                
+                                        </div>
+                                        <div class="col-md-4">
+                                            <% if(corporate_country.countryname == "Panama") { %>
+                                                <input name="rif1" value="<%= rif[1] %>"
+                                                    type="text" class="form-control"
+                                                    placeholder="<%= __('title_enter_valid_rif') %>"  />
+                                            <% } else { %>
+                                                <input name="rif1" value="<%= rif[1] %>"
+                                                    onkeypress="return isNumberKeyRif(event)" type="text" class="form-control"
+                                                    minlength="6"
+                                                    maxlength="10"
+                                                    placeholder="<%= __('title_enter_valid_rif') %>"  />
+                                            <% } %>
+
+                                        </div>
+                                    </div>
+
+                                    <div class="form-group">
+                                        <label class="col-md-3 control-label">
+                                            <%= __('title_address') %>
+                                        </label>
+                                        <div class="col-md-6">
+                                            <input type="text" class="form-control"
+                                                placeholder="<%= __('title_address') %>" name="address"
+                                                value="<%= login1.address %>" id="address" />
+                                        </div>
+                                    </div>
+                                    
+                                    <div class="form-group">
+                                        <label class="col-md-3 control-label">
+                                            <%= __('title_name') %>
+                                        </label>
+                                        <div class="col-md-6">
+                                            <input type="text" class="form-control"
+                                                placeholder="<%= __('title_name') %>" name="name"
+                                                value="<%= login1.name %>" id="name" />
+                                        </div>
+                                    </div>
+
+                                    <div class="form-group">
+                                        <label class="col-md-3 control-label">
+                                            <%= __('title_email') %>
+                                        </label>
+                                        <div class="col-md-6">
+                                            <input type="text" value="<%= login1.email %>" class="form-control"
+                                                placeholder="<%= __('title_email') %>" name="email" id="email"
+                                                readonly />
+                                        </div>
+                                    </div>
+
+                                    <div class="form-group">
+                                        <label class="col-md-3 control-label">
+                                            <%= __('button_current_password') %>
+                                        </label>
+                                        <div class="col-md-6">
+                                            <input type="password" class="form-control"
+                                                placeholder="<%= __('button_current_password') %>" name="password"
+                                                id="password" />
+                                        </div>
+                                    </div>
+
+                                    <div class="form-group">
+                                        <label class="col-md-3 control-label">
+                                            <%= __('title_phone') %>
+                                        </label>
+                                        <div class="col-md-2">
+                                            <input type="text" name="phonecode" class="form-control"
+                                                value="<%= login1.country_phone_code %>" readonly />
+
+
+                                        </div>
+                                        <div class="col-md-4">
+                                            <input name="phone" value="<%= login1.phone %>"
+                                                onkeypress="return isNumberKey(event)" type="text" class="form-control"
+                                                minlength="<%= setting_detail.minimum_phone_number_length%>"
+                                                maxlength="<%= setting_detail.maximum_phone_number_length%>"
+                                                placeholder="<%= __('title_phone') %>" id="phone" />
+                                        </div>
+                                    </div>
+                                    <div class="form-group">
+                                        <label class="col-md-3 control-label">
+                                            <%= __('title_phone_for_invoice') %>
+                                        </label>
+                                        <div class="col-md-2">
+                                            <input type="text" name="phonecode" class="form-control"
+                                                value="<%= login1.country_phone_code %>" readonly />
+
+
+                                        </div>
+                                        <div class="col-md-4">
+                                            <input name="alt_phone" value="<%= login1.alt_phone %>"
+                                                onkeypress="return isNumberKey(event)" type="text" class="form-control"
+                                                minlength="<%= setting_detail.minimum_phone_number_length%>"
+                                                maxlength="<%= setting_detail.maximum_phone_number_length%>"
+                                                placeholder="<%= __('title_phone_for_invoice') %>" id="alt_phone" />
+                                        </div>
+                                    </div>
+                                    <div class="form-group">
+
+                                        <label class="col-md-3 control-label">
+                                            <%= __('title_country') %>
+                                        </label>
+                                        <div class="col-md-6">
+
+                                            <select class="form-control select" 
+                                            data-none-selected-text="<%= __('title_nothing_selected') %>"  
+                                            name="country">
+                                            <% countries.forEach(function(country) {  %>
+                                                    <option 
+                                                      <%= `${login1.country_id}` === `${country._id}` ? "selected" : "" %> 
+                                                      value="<%= country._id %>">
+                                                        <%= country.countryname %>
+                                                    </option>
+                                              <%  }) %>
+                                            </select>   
+                                        </div>
+
+                                    </div>
+
+                                    <% if(isMasterCorp && activeApi) { %>
+                                    <div class="form-group">
+                                        <label class="col-md-3 control-label">
+                                            <%= __('title_api_key') %>
+                                        </label>
+                                        <div class="col-md-6">
+                                            <input disabled value="<%= key %>"
+                                                type="text" 
+                                                class="form-control"
+                                                placeholder="<%= __('title_api_key') %>" />
+                                        </div>
+                                    </div>
+                                    <% } %>
+
+                                    <div class="form-group" >
+                                        <div class="col-md-12 col-xs-5">
+                                            <button class="btn btn-primary btn-rounded pull-right corporate_btn_hide" type="submit"
+                                                name="update" value="update" id="update">
+                                                <%= __('button_update') %>
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </form>
+
+                        </div>
+                    </div>
+                    </div>
+                    <% include colorbar.html %>
+
+                </div>
+                <link href="css/image-cropper/imgareaselect-default.css" rel="stylesheet" media="screen">
+                <link rel="stylesheet" href="css/image-cropper/jquery.awesome-cropper.css">
+
+                <script src="js/image-cropper/jquery.imgareaselect.js"></script>
+                <script src="js/image-cropper/jquery.awesome-cropper.js"></script>
+                <script type="text/javascript" src="http://pagead2.googlesyndication.com/pagead/show_ads.js"> </script>
+
+                <script type="text/javascript">
+
+                    function isNumberKey(evt) {
+                        var charCode = (evt.which) ? evt.which : event.keyCode
+                        if (charCode > 31 && (charCode < 48 || charCode > 57))
+                            return false;
+                        return true;
+                    }
+                    function isNumberKeyRif(evt) {
+                        var charCode = (evt.which) ? evt.which : event.keyCode
+                        if (charCode > 31 && (charCode < 48 || charCode > 57))
+                            return false;
+                        return true;
+                    }
+
+                    var _URL = window.URL || window.webkitURL;
+                    $("#profile_image").change(function (e) {
+                        var file, img;
+                        if ((file = this.files[0])) {
+                            img = new Image();
+
+                            var reader = new FileReader();
+
+                            reader.onload = function (e) {
+                                $('#profile_sel_img').attr('src', e.target.result);
+                            }
+
+                            reader.readAsDataURL(profile_image.files[0]);
+
+                            $('#update').prop('disabled', false);
+                            img.src = _URL.createObjectURL(file);
+                            var fileType = file["type"];
+                            var validImageTypes = ["image/jpeg", "image/png"]; // List of valid image file types
+                            if ($.inArray(fileType, validImageTypes) < 0) { // Check if the file type is valid
+                                alert("Invalid file type. Please select a valid jpeg or png image file.");
+                                $(this).val(""); // Clear the file input
+                                return false;
+                            }
+
+                        }
+                    });
+
+                    $("#rif_url").change(function (e) {
+                        var file = this.files[0];
+                        var fileType = file["type"];
+                        var validImageTypes = ["image/jpeg", "image/png", "application/pdf"]; // List of valid image file types
+                        var maxSizeInBytes = 7 * 1024 * 1024; // 7 MB maximum file size
+                        if (file.size > maxSizeInBytes) { // Check if the file size is greater than the maximum allowed
+                            alert("El tamaño del archivo es demasiado grande. Seleccione un archivo de menos de 7 MB.");
+                            $(this).val(""); // Clear the file input
+                            return false;
+                        }
+                        if ($.inArray(fileType, validImageTypes) < 0) { // Check if the file type is valid
+                            alert("Tipo de archivo no válido. Seleccione una imagen o un archivo PDF válido.");
+                            $(this).val(""); // Clear the file input
+                            return false;
+                        }
+
+                    })
+
+                    $("#document_2").change(function (e) {
+                        var file = this.files[0];
+                        var fileType = file["type"];
+                        var validImageTypes = ["application/pdf"]; // List of valid file types
+                        var maxSizeInBytes = 7 * 1024 * 1024; // 7 MB maximum file size
+                        if (file.size > maxSizeInBytes) { // Check if the file size is greater than the maximum allowed
+                            alert("El tamaño del archivo es demasiado grande. Seleccione un archivo de menos de 7 MB.");
+                            $(this).val(""); // Clear the file input
+                            return false;
+                        }
+                        if ($.inArray(fileType, validImageTypes) < 0) { // Check if the file type is valid
+                            alert("Tipo de archivo no válido. Seleccione un archivo PDF válido.");
+                            $(this).val(""); // Clear the file input
+                            return false;
+                        }
+
+                    })
+
+                </script>
+
+                <script>
+
+                    $(document).ready(function () {
+                        var imageLink = $('#rif_img').attr('src');
+                        if(imageLink.match(/\.(pdf)$/) != null) {
+                            // Show image
+                            $('#rif_pdf_message').show();
+                            $('#rif_img').hide();
+
+                        }
+
+                        $('#sample_input').awesomeCropper(
+                            { width: 150, height: 150, debug: false }
+                        );
+                        $('.delete_form').submit(function (event) {
+                            if (window.confirm("Are you sure you want to DELETE ?")) {
+                            return true;
+                            } else {
+                            return false;
+                            }
+                        })
+                    });
+                    function download_file(url){
+                            var fileUrl = url
+                            var fileExt = fileUrl.split('.').pop().toLowerCase();
+                            var filename = 'file.' + fileExt;
+                            downloadURI(fileUrl, filename);
+                        }
+
+                    function downloadURI(uri, name) {
+                        var link = document.createElement('a');
+                        link.download = name;
+                        link.href = uri;
+                        document.body.appendChild(link);
+                        link.click();
+                        document.body.removeChild(link);
+                    }
+
+
+                    (function () {
+                        var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+                        ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+                        var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+                    })();
+                    $(function () {
+                        $("#editForm").validate({
+                            rules: {
+                                name: "required",
+                                password: {
+                                    maxlength: 50,
+                                    minlength: 6,
+                                    required: true
+                                },
+                                email: {
+                                    required: true,
+                                    email: true
+
+                                },
+                                phone: {
+                                    required: true,
+                                    minlength: <%= setting_detail.minimum_phone_number_length %>,
+                                    maxlength: <%= setting_detail.maximum_phone_number_length %>,
+                                    phone_regex: /^\(?([1-9]{1})\)?([0-9]*)$/
+                                },
+                                rif0: {
+                                    required: true
+                                },
+                                rif1: {
+                                    required: true
+                                }
+                            }
+                        });
+                    });
+                </script>
+
+                <% include footer_form.html %>

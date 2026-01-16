@@ -1,0 +1,83 @@
+<% include corporate_header.html %>
+<link
+    rel="stylesheet"
+    href="dispatcher_new_design/css/font-awesome.min.css"
+    type="text/css"
+/>
+<link
+    rel="stylesheet"
+    href="dispatcher_new_design/css/style.css"
+    type="text/css"
+/>
+
+<style>
+  html, body {
+    margin: 0;
+    padding: 0;
+    height: 100%;
+    width: 100%;
+    font-family: 'Open Sans', sans-serif;
+    background-color: #fff;
+  }
+
+  #dynamic-iframe {
+    height: 100vh;
+    border: none;
+    display: block;
+    transition: all 0.3s ease-in-out;
+  }
+</style>
+
+<body class="gray_bg">
+  <iframe
+    id="dynamic-iframe"
+    src="<%= new_statistics %>"
+    title="corporate statistics Flety"
+  ></iframe>
+
+  <script>
+    function adjustIframeToSidebar() {
+      const sidebar = document.getElementById('x-navigation');
+      const iframe = document.getElementById('dynamic-iframe');
+
+      if (!sidebar || !iframe) return;
+
+      const sidebarWidth = sidebar.offsetWidth;
+
+      iframe.style.marginLeft = `${sidebarWidth}px`;
+      iframe.style.width = `calc(100% - ${sidebarWidth}px)`;
+    }
+
+    window.addEventListener('load', adjustIframeToSidebar);
+    window.addEventListener('resize', adjustIframeToSidebar);
+    
+    // Enviar token al iframe
+    const iframe = document.getElementById('dynamic-iframe');
+    const authToken = sessionStorage.getItem('auth-storage');
+    console.log('🔑 Token en sessionStorage:', authToken);
+    
+    if (iframe && authToken) {
+      const sendToken = () => {
+        console.log('📤 Enviando token al iframe...');
+        iframe.contentWindow.postMessage({ type: 'auth-token', token: authToken }, '*');
+      };
+      
+      iframe.addEventListener('load', function() {
+        console.log('✅ Iframe cargado, enviando token');
+        sendToken();
+        setTimeout(sendToken, 500);
+        setTimeout(sendToken, 1000);
+        setTimeout(sendToken, 2000);
+      });
+    } else {
+      console.log('⚠️ No hay token o iframe:', { iframe: !!iframe, authToken: !!authToken });
+    }
+    
+    const observer = new MutationObserver(adjustIframeToSidebar);
+    const target = document.getElementById('x-navigation');
+    if (target) {
+      observer.observe(target, { attributes: true, attributeFilter: ['class', 'style'] });
+    }
+  </script>
+</body>
+<% include footer_form.html %>

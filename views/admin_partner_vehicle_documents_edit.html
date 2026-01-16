@@ -1,0 +1,143 @@
+<% include header.html %>
+<style>
+    .type-pdf{
+        font-size: 35px; 
+        color: #250e62; 
+    }
+</style>
+
+
+    <% if(typeof message != 'undefined'){ %>
+              <div class="alert alert-success" role="alert">
+                <button type="button" class="close" data-dismiss="alert"><span aria-hidden="true">&times;</span><span class="sr-only"><%= __('button_close') %></span></button>
+                <p align="center"><%= __(message) %></p>
+              </div>
+    <% } %>
+
+    <div class="page-content-wrap">
+        <form class="form-horizontal" id="editForm" enctype="multipart/form-data" method="post" action="/vehicle_documents_update_partner">
+            <div class="panel panel-default">
+                <div class="panel-body form-group-separated">   
+                     
+                    <div class="form-group">
+                        <label class="col-md-3 control-label"><%= __('title_document_picture') %></label>
+                        <div class="col-md-3">
+                            <input type="file" class="btn btn-primary btn-block btn-rounded fileinput" data-filename-placement="inside" id="vehicle_doc" name="document_picture" accept="image/*, application/pdf" title="<%= __('title_change_document_picture')%>"/>
+                          <br>
+                          <img src="<%= detail.document_picture  != '' ?  setting_detail.image_base_url + detail.document_picture : 'default.png' %>"  id="profile_sel_img" class="img-thumbnail" style="height:70px; width:100px;" />
+                          <i id="profile_sel_img" class="fa fa fa-file-pdf-o type-pdf"></i>
+                          <div id="profile_image_dimention"></div>
+                        </div>
+                    </div>
+                    
+                    <input type="hidden" name="id" value="<%= detail._id %>" />
+
+                    <% if(detail.is_expired_date ==true) { %> 
+                        <div class="form-group">
+                            <label class="col-md-3 control-label"><%= __('title_expiry_date') %></label>
+                            <div class="col-md-3">
+                                <% if(detail.expired_date) { %>
+                                    <input type="text" class="form-control datepicker"  placeholder="<%= __('title_no_expiry_date') %>" name="expired_date" id="expired_date" readonly
+                                    value="<%= detail.expired_date ? moment(detail.expired_date).format('YYYY-MM-DD'): '' %>" />
+                                <% }else{ %>
+                                    <input type="text" class="form-control datepicker"  placeholder="<%= __('title_please_select_date') %>" name="expired_date" id="expired_date" readonly/>
+                                <% } %>
+                            </div>
+                        </div>
+                    <% } %>
+                    
+                    <% if(detail.is_unique_code ==true) { %> 
+                        <div class="form-group">
+                            <label class="col-md-3 control-label"><%= __('title_unique_code') %></label>
+                            <div class="col-md-3">
+                                <input type="text" class="form-control" value="<%= detail.unique_code %>" placeholder="<%= __('title_no_unique_code') %>" name="unique_code" id="unique_code" />
+                            </div>
+                        </div>
+                    <% } %>
+                                  
+                    <div class="form-group">
+                        <div class="col-md-12 col-xs-5">
+                            <button class="btn btn-primary btn-rounded pull-right" type="submit" name="update" value="update" id="update"> <%= __('button_update') %></button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </form>
+    </div>
+            
+
+<script type="text/javascript">
+    $(document).ready(function () {
+        let imageLink = $('#profile_sel_img').attr('src');
+        if(imageLink.match(/\.(pdf)$/) != null) {
+            // Show image
+            $('.type-pdf').show();
+            $('#profile_sel_img').hide();
+        }else{
+            $('.type-pdf').hide();
+            $('#profile_sel_img').show();
+        }
+    })
+
+function isNumberKey(evt){
+    var charCode = (evt.which) ? evt.which : event.keyCode
+    if (charCode > 31 && (charCode < 48 || charCode > 57))
+        return false;
+    return true;
+}
+
+var _URL = window.URL || window.webkitURL;
+    $("#vehicle_doc").change(function(e) {
+        let file = this.files[0];
+        const fileType = file["type"];
+        const validImageTypes = ["image/jpeg", "image/png", "application/pdf"]; 
+        const maxSizeInBytes = 5 * 1024 * 1024;
+        if (file.size > maxSizeInBytes) { 
+            alert("El tamaño del archivo es demasiado grande. Seleccione un archivo de menos de 7 MB.");
+            $(this).val(""); 
+            return false;
+        }
+        if ($.inArray(fileType, validImageTypes) < 0) {
+            alert("Tipo de archivo no válido. Seleccione una imagen o un archivo PDF válido.");
+            $(this).val(""); 
+            return false;
+        }
+        if(fileType == "application/pdf"){
+            $('#profile_sel_img').hide();            
+            $('.type-pdf').show();   
+        }else{
+            $('#profile_sel_img').show();
+            $('.type-pdf').hide();   
+            let img;
+            img = new Image();
+            let reader = new FileReader();
+            reader.onload = function (e) {
+                $('#profile_sel_img').attr('src', e.target.result);
+            }
+            reader.readAsDataURL(vehicle_doc.files[0]);
+            img.src = _URL.createObjectURL(file);
+        }
+    });
+
+</script>   
+              
+<script>
+    $(function() {
+
+        $('#expired_date').datepicker({
+            format: 'yyyy-mm-dd',
+            startDate: new Date(Date.now()),
+            autoclose: true
+
+        });
+
+
+     $( "#editForm" ).validate({
+       rules: {
+         
+      }
+    });
+    });
+</script>     
+
+<% include footer_form.html %>

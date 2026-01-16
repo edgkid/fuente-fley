@@ -1,0 +1,119 @@
+<% include ../header.html %>
+<!-- PAGE TITLE -->
+<div class="page-title">
+	<h2><span class="fa fa-cogs"></span> 
+		<%= __('title_partner_details') %>
+	</h2>
+</div>
+<!-- END PAGE TITLE -->
+<div class="row">
+	<div class="page-content-wrap">
+		<form class="form-horizontal" method="post" action="/admin_update_partner_detail" >
+            <input type="hidden" class="form-control" value="<%= partnerdata._id %>" name="id" />
+			<div class="panel panel-default">
+				<div class="panel-body form-group-separated ">   
+					                        
+    				<div class="form-group">
+    					<label class="col-md-3 col-xs-6 control-label"><%= __('title_image') %></label>
+                        <div class="col-md-9 col-xs-6">
+                            
+                            <img src="<%=   partnerdata.picture != '' ? setting_detail.image_base_url + partnerdata.picture : 'default.png' %>" style="height: 60px; width: 120px;" class="img-thumbnail" />
+                        </div>
+                	</div>
+
+                    <div class="form-group">
+                        <label class="col-md-3 col-xs-6 control-label"><%= __('title_id_proof') %></label>
+                        <div class="col-md-9 col-xs-6">
+                            
+                            <img src="<%=   partnerdata.government_id_proof != '' ? setting_detail.image_base_url + partnerdata.government_id_proof : 'default.png' %>" style="height: 60px; width: 120px;" class="img-thumbnail" />
+                        </div>
+                    </div>
+
+
+                    <div class="form-group">
+                    	<label class="col-md-3 col-xs-6 control-label"><%= __('title_first_name') %></label>
+                        <div class="col-md-9 col-xs-6">
+                            <input type="text"  class="form-control" value="<%= partnerdata.first_name %>" name="first_name"/>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                    	<label class="col-md-3 col-xs-6 control-label"><%= __('title_last_name') %></label>
+                        <div class="col-md-9 col-xs-6">
+                            <input type="text"  class="form-control" value="<%= partnerdata.last_name %>" name="last_name"/>
+                        </div>
+                    </div>
+                    
+
+                    <div class="form-group">
+                        <label class="col-md-3 col-xs-5 control-label"><%= __('title_email') %></label>
+                        <div class="col-md-9 col-xs-7">
+                             <input type="text"  class="form-control" id="email" value="<%= partnerdata.email %>"  name="email" />								
+                        </div>
+                    </div>
+            
+					<div class="form-group">
+						<label class="col-md-3 col-xs-6 control-label"><%= __('title_phone') %></label>
+                        <div class="col-md-9 col-xs-6">
+                            
+                            <label class="control-label"><%= partnerdata.phone %></label>
+                        </div>
+                    </div>
+
+					<div class="form-group">
+                        <label class="col-md-3 col-xs-6 control-label"><%= __('title_country') %></label>
+                        <div class="col-md-9 col-xs-6">
+                            <label class="control-label"><%= partnerdata.country %></label>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                    	<label class="col-md-3 col-xs-6 control-label"><%= __('title_address') %></label>
+                        <div class="col-md-9 col-xs-6">
+                            <label class="control-label"><%= partnerdata.address %></label>
+                        </div>
+                    </div>
+
+                     
+					<div class="form-group">
+						<label class="col-md-3 col-xs-5 control-label"><%= __('titel_company_name') %></label>
+                        <div class="col-md-9 col-xs-7">
+                          <input type="text"  class="form-control" value="<%= partnerdata.partner_company_name %>" name="partner_company_name"/>
+                        </div>
+					</div>
+
+                    <div class="form-group">
+                        <label class="col-md-3 col-xs-5 control-label"><%= __('title_password') %></label>
+                        <div class="col-md-3 col-xs-3">
+                            <input type="password"  class="form-control" value="" name="password"/>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <div class="col-md-3 col-xs-3">
+                            <button class="btn btn-primary btn-rounded pull-right" type="submit" name="submit" id="submit" value="submit"><%= __('button_save') %></button>
+                        </div>
+                    </div>
+
+				</div>
+			</div>
+        </form>
+	</div>
+</div>
+<% include colorbar.html %>
+
+    <script type="text/javascript">
+	
+    $(document).ready(function() {
+        $(".form-horizontal").validate({
+          rules: {
+            first_name: "required",
+            last_name: "required",
+            password: {
+                minlength: 6,
+                maxlength: 50
+            }
+          }
+       });
+    })
+    </script>
+<% include footer_list.html %>

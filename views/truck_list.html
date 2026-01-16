@@ -1,0 +1,467 @@
+<% include header.html %>
+
+<style>
+.card-body {
+  position: relative;
+  text-align: center;
+}
+.card-body .btn-primary {
+  font-weight: 500;
+  font-size: 14px;
+  text-transform: uppercase;
+  padding: 8px 20px;
+  transition: all 0.2s;
+}
+
+
+.modal-body {
+  max-height: 70vh; 
+  overflow-y: auto;
+}
+
+.modal-content{
+  border-radius: 12px;
+  border-width: 1px;
+}
+
+.card-img-top {
+  max-width: 100%;
+  max-height: 100%;
+  object-fit: contain; 
+  display: flex;
+  margin: auto;
+}
+
+.image-container {
+  position: relative;
+}
+
+.download-wrapper {
+  position: absolute;
+  top: 10px;
+  right: 30px;
+  z-index: 1;
+  background-color: rgb(211 200 224);
+  padding: 10px;
+  border-radius: 50%;
+
+}
+.download{
+  right: 92px;
+}
+.btn-download {
+  background-color: rgb(0, 191, 179);
+  color: #fff;
+  border-radius: 50px;
+  padding: 12px 28px;
+  font-size: 16px;
+  text-transform: uppercase;
+  font-weight: 500;
+  transition: all 0.2s ease;
+  box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
+  border: none;
+  outline: none;
+}
+
+.card-title {
+  font-size: 1.5rem;
+  font-weight: 700;
+  margin-bottom: 1rem;
+  color: rgb(37, 14, 98);
+}
+
+.icon_class {
+    font-size: 37px;
+    color:  rgb(37 14 98);
+}
+
+.modal-title {
+  font-size: 21px;
+  font-weight: 700;
+  color: rgb(37, 14, 98);
+  text-align: center;
+  margin: 1rem 0;
+}
+
+.pdf-uploaded {
+  background-color: rgb(242 242 242);
+  border-radius: 5px;
+  padding: 23px 46px;
+  color: rgb(51 51 51);
+  font-size: 23px;
+  font-weight: bold;
+  line-height: 1.5;
+}
+
+
+
+
+</style>
+<!-- PAGE CONTENT WRAPPER -->
+<div class="page-content-wrap">
+
+  <% if(typeof message != 'undefined'){ %>
+  <div class="alert alert-success" role="alert">
+    <button type="button" class="close" data-dismiss="alert"><span aria-hidden="true">&times;</span><span class="sr-only"><%= __('button_close') %></span></button>
+    <p align="center"> <strong><%= __(message) %></strong></p>
+  </div>
+  <% } %>
+
+  <div class="alert alert-success" role="alert" id="promo_error" style="display:none">
+    <button type="button" id="close" class="close" data-dismiss="alert"><span aria-hidden="true">&times;</span><span class="sr-only"><%= __('button_close') %></span></button>
+    <p align="center" id="message"> <strong></strong></p>
+  </div>
+  <!-- START TIMELINE FILTER -->
+  <div class="col-md-12">
+    <div class="panel panel-default">
+      <div class="panel-body">
+        <form class="form-horizontal" role="form" method="post" action="/truck_list">
+          <div class="form-group">
+            <input type="hidden" name="page" id="page" value="0" />
+            <div class="col-md-4">
+              <div style="text-align: center;">
+                <label><%= __('title_sort') %></label>
+              </div>
+              <div class="col-md-6">
+                <div class="input-group">
+                  <span class="input-group-addon"><span class="glyphicon glyphicon-sort"></span></span>
+                  <select class="form-control select" placeholder="Select to Sort" name="sort_item">
+                    <option value='unique_id' <%= sort_field=='unique_id' ? 'selected' : '' %>><%= __('title_id') %></option>
+                    </select>
+                </div>
+              </div>
+              <div class="col-md-6">
+                <div class="input-group">
+                  <span class="input-group-addon"><span class="glyphicon glyphicon-sort"></span></span>
+                  <select class="form-control select" placeholder="Select to Sort" name="sort_item">
+                    <option value="1" <%= sort_order==1 ? 'selected' : '' %>><%= config_json.sort_asc %></option>
+                    <option value="-1" <%= sort_order==-1 ? 'selected' : '' %>><%= config_json.sort_desc %></option>
+                  </select>
+                </div>
+              </div>
+            </div>
+            <div class="col-md-4">
+              <div style="text-align: center;">
+                <label><%= __('title_search') %></label>
+              </div>
+              <div class="col-md-6">
+                  <select class="form-control select" data-live-search="true" id="search_truck_type_id"  name="search_truck_type_id">
+                    <option selected disabled hidden style='display: none'><%= __('title_select_type_of_truck')%></option>
+                    <% types.forEach(function(type){ %>
+                      <% if(type._id == search_truck_type_id){ %>
+                        <option value="<%= type._id %>" selected><%= type.typename %></option>
+                      <% } else { %>
+                        <option value="<%= type._id %>"><%= type.typename %></option>
+                      <% } %>
+                    <% }) %>
+                </select>
+              </div>
+              <div class="col-md-6">
+                <div class="panel panel-default">
+
+                <select class="form-control select" data-live-search="true" id="search_model_type_id"  name="search_model_type_id">
+                    <option selected disabled hidden style='display: none'><%= __('title_select_model')%></option>
+                        <% models.forEach(function(model){ %>
+                          <% if(model._id == search_model_type_id){ %>
+                            <option value="<%= model._id %>" selected><%= model.model_name %></option>
+                          <% } else { %>
+                            <option value="<%= model._id %>"><%= model.model_name %></option>
+                          <% } %>    
+                        <% }) %>
+                </select>
+            </div>
+        </div>
+            </div>
+            <div class="col-md-4">
+              <div style="text-align: center;">
+                <label><%= __('title_date_filter') %></label>
+              </div>
+              <div class="col-md-12">
+                <div class="btn-group">
+                  <div class="input-group">
+                    <input type="text" class="form-control datepicker" value="<%= filter_start_date %>" placeholder="<%= __('title_start_date') %>" name="start_date" id="start_date" readonly />
+                    <span class="input-group-addon add-on">-</span>
+                    <input type="text" class="form-control datepicker" value="<%= filter_end_date %>" placeholder="<%= __('title_end_date') %>" name="end_date" id="end_date" readonly />
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="col-md-12">
+              <div class="col-md-4">
+                <div class="col-md-8">
+                  <ul class="pagination">
+                    <% include paginate_lookup.html %>
+                  </ul>
+                </div>
+              </div>
+              <div class="col-md-4">
+                <div class="col-md-4">
+                  <select class="form-control select" data-live-search="true" data-none-selected-text="<%= __('title_nothing_selected') %>" id="sel" placeholder="Select to Search" name="selected_city">
+                    <option selected value="" ><%= __('title_all_city')%> </option>
+                    <% cities.forEach(function(data, index){ %>
+                      <% if(selected_city?.toString() == data._id.toString()) { %>
+                        <option value="<%= data._id%>" selected><%= data.cityname %></option>
+                      <% }else{ %>
+                        <option value="<%= data._id%>"><%= data.cityname %></option>
+                      <% } %>  
+                    <% }) %>
+                  </select>
+                </div>
+                <div class="col-md-4">
+                  <select class="form-control select" data-none-selected-text="<%= __('title_nothing_selected') %>" id="sel" placeholder="Select to Search" name="search_item">
+                    <option value='plate_no' <%= (search_item == "plate_no") ? 'selected' : '' %>><%= __('title_plate_no') %></option>
+                    <option value='partner_name' <%= (search_item == "partner_name") ? 'selected' : '' %>><%= __('title_name') %></option>
+                    <option value='active' <%= (search_item == "active") ? 'selected' : '' %>><%= __('title_active') %></option>
+                    <option value='inactive' <%= (search_item == "inactive") ? 'selected' : '' %>><%= __('title_inactive') %></option>
+                  </select>
+                </div>
+                <div class="col-md-4">
+                  <input type="text" class="form-control" value="<%= search_value %>" name="search_value" placeholder="<%= __('title_search_text') %>"/>
+                </div>
+              </div>
+              <div class="form-group col-md-4">
+                <div class="col-md-6">
+                  <button type="submit" id="apply_filter" class="btn btn-primary" style="height: 35px; width: 100%;  "><span><%= __('button_apply') %></span></button>
+                </div>
+                <div class="col-md-6">
+                  <button class="btn btn-danger pull-right" type="button" style="height: 35px; width: 100%;" onClick ="export_excel()"><i class="fa fa-download"></i><%= __('button_export_excel') %></button>     
+                </div>
+              </div>
+            </div>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <div class="row">
+    <div class="col-md-12">
+      <!-- START SIMPLE DATATABLE -->
+      <div class="panel panel-default">
+        <div class="table-responsive" style="padding-bottom: 175px;">
+          <table class="table text-center" id="customers2">
+            <thead>
+              <tr>
+                <th><%= __('title_num') %></th>
+                <th><%= __('title_truck') %></th>
+                <th><%= __('title_type_of_truck') %></th>
+                <th><%= __('title_years') %></th>
+                <th><%= __('title_plate_no') %></th>
+                <th><%= __('title_partner') %></th>
+                <th><%= __('title_partner_phone') %></th>
+                <th><%= __('title_city') %></th>
+                <th><%= __('title_status') %></th>
+                <th>
+                  <%= __('button_action') %>
+              </th>
+
+              </tr>
+            </thead>
+            <tbody>
+              <% detail.forEach(function(data, index){ %>
+              <tr>
+                <td><%= index + 1 %></td>
+                <td><%= data.service_type_details[0].typename %></td>
+                <td> <% if(data.model_detail.length != 0){ %>
+                    <%= data.model_detail[0].model_name %>
+                    <% } %>
+                </td>
+                <td><%= data.vehicle_detail.passing_year %></td>
+                <td><%= data.vehicle_detail.plate_no %></td>
+                <td><%= data.first_name %>  <%= data.last_name %></td>
+                <td><%= data.country_phone_code %><%= data.phone %></td>
+                <td>
+                  <% if(data?.city_id){ %>
+                    <% cities.forEach(function(city, index){ %>
+                      <% if(city._id.toString() == data?.city_id.toString()){ %>
+                        <%= city.cityname %>
+                      <% } %>
+                    <% }) %>
+                  <% } %>
+                </td>
+                <td><% if( data.vehicle_detail.is_approved_by_admin == true) { %>
+                  <span class="badge badge-success"><%= __('title_active') %></span>
+                <% } else { %>
+                  <span class="badge badge-danger"><%= __('title_inactive') %></span> <%}%>                                                    
+                </td>
+              <td>
+                  <div class="btn-group">
+                      <a href="#" data-toggle="dropdown" class="btn btn-primary dropdown-toggle">
+                          <%= __('button_action') %> <span class="caret"></span></a>
+                      <ul class="dropdown-menu" style="right: 0 !important; left: unset;" role="menu">
+                            <li><form method="post" action="/admintogglevehiclestatus">
+                              <input type="hidden" name="vehicle_type_id" value="<%= data.vehicle_detail.vehicle_type_id %>" /> 
+                              <input type="hidden" name="state" value="<%= data.vehicle_detail.is_approved_by_admin %>" />       
+                              <input type="hidden" name="vehicle_id" value="<%= data.vehicle_detail._id %>" /> 
+                              <button type="submit" class="btn btn-default" style="width:100%;" ><%  if( data.vehicle_detail.is_approved_by_admin != true) { %><%= __('title_active') %><% } else { %><%= __('title_inactive') %><% } %> </button>
+                            </form></li>
+                            <li class="partner_vehicle_edit">
+                              <form method="post" action="/admin_edit_vehicle_detail">
+                                <input type="hidden" name="partner_id" value="<%= data.vehicle_detail.vehicle_type_id %>" />
+                                <input type="hidden" name="vehicle_id" value="<%= data.vehicle_detail._id %>" />
+                                <button type="submit" class="btn btn-default" style="width:100%;"><%= __('title_edit_detail') %></button>
+                              </form>
+                            </li>
+                            <li >
+                              <button type="button" onclick="show_vehicle_docs('<%= data.vehicle_detail._id %>')" class="btn btn-default" style="width:100%;" ><%= __('button_show_docs') %> </button>
+                            </li>        
+                      </ul>
+                  </div>
+              </td>
+                <!-- <td>
+                  <div class="btn-group">
+                    <a href="#" data-toggle="dropdown" class="btn btn-primary dropdown-toggle">
+                      <%= __('button_action') %> <span class="caret"></span></a>
+                    <ul class="dropdown-menu" style="right: 0 !important; left: unset;" role="menu">
+                      <li>
+                        <form method="post" action="/provider_referral_history">
+                          <input type="hidden" name="provider_id" value="<%= data._id %>" />
+                          <input type="hidden" name="start_date" value="<%= filter_start_date %>" />
+                          <input type="hidden" name="end_date" value="<%= filter_end_date %>" />
+                          <button type="submit" class="btn btn-default" style="width:100%;"><%= __('title_detail') %></button>
+                        </form>
+                      </li>
+                    </ul>
+                  </div> -->
+              </tr>
+              <% }); %>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+  <% include colorbar.html %>
+
+</div>
+<div class="modal fade " id="show_vehicle_docs_modal" tabindex="-1" role="dialog" aria-labelledby="smallModalHead" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered modal-lg" >
+      <div class="modal-content modal-lg">
+          <div class="modal-header">
+              <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only"><%= __('button_close') %></span></button>
+              <h4 class="modal-title" style="color: rgb(37 14 98); text-align: center;"><%= __('title_vehicle_docs') %></h4>
+          </div>
+            <div class="modal-body">
+                <div class="docs_images">
+                  
+                </div>
+              </div>
+      </div>
+  </div>
+</div>
+
+<script type="text/javascript">
+  $(document).ready(function() {
+    $('#start_date').datepicker({
+      format: 'yyyy-mm-dd',
+      <% if(filter_end_date){ %>
+      endDate: new Date("<%= filter_end_date %>")
+      <% }else{ %>
+      endDate: new Date(Date.now())
+      <% } %>
+
+    }).on("input change", function(e) {
+      var end_date = $('#start_date').datepicker('getDate');
+      end_date.setDate(end_date.getDate() + 1);
+      $('#end_date').datepicker('setStartDate', end_date);
+    });
+
+    $('#end_date').datepicker({
+      format: 'yyyy-mm-dd',
+      endDate: new Date(Date.now()),
+      <% if(filter_start_date){ %>
+      startDate: new Date("<%= filter_start_date %>")
+      <% } %>
+
+    }).on("input change", function(e) {
+      var start_date = $('#end_date').datepicker('getDate');
+      start_date.setDate(start_date.getDate() - 1);
+      $('#start_date').datepicker('setEndDate', start_date);
+    });
+  });
+
+ 
+  function show_vehicle_docs(vehicle_id){
+        let image_base_url = "<%= setting_detail.image_base_url %>"
+        $.ajax({
+          url: 'admin_get_vehicle_docs',
+          data: {
+            vehicle_id:vehicle_id
+          },
+          dataType: "json",
+          type: 'post',
+          success: function(res){
+            $('.docs_images').empty()
+              res.docs.forEach((image, index) => {
+              const fileExtension = image.document_picture.split('.').pop().toLowerCase();
+              if(fileExtension == "pdf"){
+                let url = image_base_url + image.document_picture
+                let viewUrl = "https://docs.google.com/viewer?url=" + encodeURIComponent(url) + "&embedded=true";
+
+                $('.docs_images').append(
+                  '<div class="row"><div class="col-md-12"><div class="card mb-3" style="text-align: center;">' +
+                    '<div id="pdf-status" class="pdf-uploaded">' +
+                      '<iframe style="width: 100%; height: 446px;" src="'+viewUrl+'" ></iframe>'+
+                    '</div>'+
+                  '<div class="download-wrapper">' +
+                  '<form method="get" target="_blank" action="' +
+                  image_base_url +
+                  image.document_picture +
+                  '">' +
+                  '<a href="' +
+                  image_base_url +
+                  image.document_picture +
+                  '" download>' +
+                  '<i class="fa fa-download icon_class"></i>' +
+                  '</a>' +
+                  '</form>' +
+                  '</div>' +
+                  '</div>' +
+                  '<div class="card-body"><h5 class="card-title">Doc '+(index + 1)+'</h5></div></div></div></div>'
+                  );
+                  return;
+                }
+                $('.docs_images').append(
+                  '<div class="row"><div class="col-md-12"><div class="card mb-3">' +
+                    '<div class="image-container1">' +
+                    '<img src=' +
+                    image_base_url +
+                    image.document_picture +
+                    ' class="card-img-top img-fluid image-container">' +
+                    '<div class="download-wrapper">' +
+                    '<form method="get" target="_blank" action="' +
+                    image_base_url +
+                    image.document_picture +
+                    '">' +
+                    '<a href="' +
+                    image_base_url +
+                    image.document_picture +
+                    '" download>' +
+                    '<i class="fa fa-download icon_class"></i>' +
+                    '</a>' +
+                    '</form>' +
+                    '</div>' +
+                    '</div>' +
+                  '<div class="card-body"><h5 class="card-title">Doc '+(index + 1)+'</h5></div></div></div></div>'
+              )
+            })            
+            $("#show_vehicle_docs_modal").modal('show');
+          }
+        });
+    }
+
+    function export_excel(){
+    $.ajax({
+              type: 'POST',
+              url: '/generate_trucks_excel',
+              data: $('.form-horizontal').serialize(),
+              dataType: "json",
+              success: function (res) {
+                  window.open(res)
+              }
+    });
+  }
+
+</script>
+
+<% include footer_list.html %>

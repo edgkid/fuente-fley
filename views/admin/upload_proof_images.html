@@ -1,0 +1,39 @@
+<% include ../header.html %>
+
+<style>
+    .mt {
+        margin-top: 1rem;
+    }
+
+    .mt6 {
+        margin-top: 6rem;
+    }
+</style>
+
+<div class="page-content-wrap">
+    <div class="form-horizontal">
+        <div class="row">
+            <div class="col-md-4 col-md-offset-4">
+                <form
+                    method="post"
+                    action="/upload-proof?id=<%=trip_id%>"
+                    enctype="multipart/form-data"
+                >
+                    <div class="form-group" style="width: 100%;">
+                        <label for="proofs">Subir imagenes</label>
+                        <input type="file" id="proofs" name="proofs[]" multiple/>
+                        <p class="help-block">
+                            Seleccione todas las imagenes a subir
+                        </p>
+                    </div>
+
+                    <button style="width: 80%;" type="submit" class="btn btn-primary">
+                        Guardar
+                    </button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<% include ../footer_list.html %>

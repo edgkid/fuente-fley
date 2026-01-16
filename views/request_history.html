@@ -1,0 +1,2910 @@
+<% include header.html %>
+<%
+function breakEveryN(str, limit = 10) {
+  const words = str.split(' ');
+  const lines = [];
+  let currentLine = '';
+
+  for (let word of words) {
+    if ((currentLine + ' ' + word).trim().length <= limit) {
+      currentLine += (currentLine ? ' ' : '') + word;
+    } else {
+      if (currentLine) lines.push(currentLine); // Push previous line
+      currentLine = word; // Start new line with current word
+    }
+  }
+
+  if (currentLine) lines.push(currentLine); // Push final line
+  return lines.join('<br>');
+}
+%>
+
+<style>
+body{
+  font-family: "Libre Franklin Small", sans-serif;
+}
+.card-body {
+  position: relative;
+  text-align: center;
+}
+.card-body .btn-primary {
+  font-weight: 500;
+  font-size: 14px;
+  text-transform: uppercase;
+  padding: 8px 20px;
+  transition: all 0.2s;
+}
+
+
+.modal-body {
+  max-height: 70vh; 
+  overflow-y: auto;
+}
+
+.modal-content{
+  border-radius: 12px;
+  border-width: 1px;
+}
+
+.card-img-top {
+  max-width: 100%;
+  max-height: 100%;
+  object-fit: contain; 
+  display: flex;
+  margin: auto;
+}
+
+.image-container {
+  position: relative;
+}
+
+.download-wrapper {
+  position: absolute;
+  top: 10px;
+  right: 30px;
+  z-index: 1;
+  background-color: rgb(211 200 224);
+  padding: 10px;
+  border-radius: 50%;
+
+}
+
+.trash {
+  right: 14px;
+  background-color: #f1cdcd;
+}
+.download{
+  right: 92px;
+}
+.fa-trash{
+  color: rgb(197 0 0) !important;
+  cursor: pointer;
+}
+
+.btn-download {
+  background-color: rgb(0, 191, 179);
+  color: #fff;
+  border-radius: 50px;
+  padding: 12px 28px;
+  font-size: 16px;
+  text-transform: uppercase;
+  font-weight: 500;
+  transition: all 0.2s ease;
+  box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
+  border: none;
+  outline: none;
+}
+
+.card-title {
+  font-size: 1.5rem;
+  font-weight: 700;
+  margin-bottom: 1rem;
+  color: rgb(37, 14, 98);
+}
+
+.icon_class {
+    font-size: 37px;
+    color:  rgb(37 14 98);
+}
+
+.modal-title {
+  font-size: 21px;
+  font-weight: 700;
+  color: rgb(37, 14, 98);
+  text-align: center;
+  margin: 1rem 0;
+}
+
+.p_style{
+  font-size: 15px;
+  text-align: center;
+}
+
+.h_style{
+  color: rgb(63 186 228);
+  text-align: center;
+}
+
+.table-responsive {
+  max-width: 100vw;
+  overflow-x: auto; /* for horizontal scroll */
+  /* height: 400px; */
+  overflow-y: scroll; /* for vertical scroll */
+  position: relative; /* relative to the normal flow */
+  border: solid 5px red; /* for reference */
+}
+
+/* Custom scrollbar styles */
+.table-responsive::-webkit-scrollbar {
+  height: 10px; /* Adjust as needed */
+  width: 10px; /* Adjust as needed */
+
+  background-color: #f5f5f5; /* Change the background color */
+}
+
+.table-responsive::-webkit-scrollbar-thumb {
+  background-color: #c7c7c7; /* Change the thumb color */
+  border-radius: 6px; /* Round the corners of the thumb */
+}
+
+.table-responsive::-webkit-scrollbar-thumb:hover {
+  background-color: #999; /* Change the thumb color on hover */
+}
+
+.table-responsive::-webkit-scrollbar-track {
+  background-color: #f5f5f5; /* Change the track color */
+}
+
+th {
+  position: -webkit-sticky;
+  position: sticky;
+  top: 0;
+  z-index: 1;
+  /* extra styles below - not necessary */
+  white-space: nowrap;
+}
+.static-text {
+  font-weight: bold;
+  font-size: 16px;
+  color: rgb(37, 14, 98);
+}
+
+.dynamic-text {
+  color: #000000;
+  font-size: 16px;
+}
+
+.modal-header {
+  background-color: #f8f9fa;
+  border-bottom: none;
+  border-radius: 12px;
+}
+
+#userDetailsModal .modal-header .close {
+  margin-bottom: 10px;
+  margin-top: 13px;
+  margin-right: 17px;
+}
+
+.static-text {
+  font-weight: bold;
+  font-size: 16px;
+  color: rgb(37, 14, 98);
+}
+
+.dynamic-text {
+  color: #000000;
+  font-size: 16px;
+}
+
+.modal-footer .btn, .modal-footer .btn:hover {
+  background: rgb(37, 14, 98);
+  color: #f8f9fa;
+  border-radius: 16px;
+}
+
+.pdf-uploaded {
+  display: inline-block;
+  background-color: rgb(242 242 242);
+  border-radius: 5px;
+  padding: 23px 46px;
+  color: rgb(51 51 51);
+  font-size: 23px;
+  font-weight: bold;
+  line-height: 1.5;
+}
+
+.pdf-uploaded-icon {
+  display: inline-block;
+  width: 20px;
+  height: 20px;
+  margin-right: 5px;
+  text-align: center;
+  color: #4CAF50;
+}
+
+.pdf-uploaded-text {
+  display: inline-block;
+  vertical-align: middle;
+  text-align: center;
+}
+
+.modal-footer {
+  background-color: #f8f9fa;
+  border-top: none;
+  text-align: center;
+  border-radius: 12px;
+}
+
+
+  /* chat css */
+
+.chatModalClass .modal {
+  max-width: 400px;
+  margin: 0 auto;
+  background-color: #f1f1f1;
+  padding: 10px;
+  border-radius: 5px;
+}
+
+.chatModalClass .chat-header {
+  background-color: #ddd;
+  padding: 10px;
+  text-align: center;
+  font-weight: bold;
+  border-radius: 5px;
+}
+
+.chatModalClass .modal-body {
+  height: 300px;
+  overflow-y: auto;
+}
+
+.other-user-chat {
+  display: flex;
+  flex-direction: column;
+}
+
+.other-user-chat .chat-message {
+  display: flex;
+  justify-content: flex-start;
+  align-items: center; /* Align items vertically */
+}
+
+.other-user-chat .chat-avatar {
+  width: 64px;
+  overflow: hidden;
+  margin-right: 10px;
+  margin-top: 8px;
+  text-align: center;
+}
+
+.other-user-chat .chat-avatar img {
+  width: 78%;
+  object-fit: cover;
+  margin-bottom: 4px;
+}
+
+.other-user-chat .chat-content {
+  background-color: #cfe7f5;
+  padding: 10px;
+  border-radius: 5px;
+}
+
+.other-user-chat .message-name {
+  font-weight: bold;
+  margin-bottom: 3px;
+}
+
+.other-user-chat .message-details {
+  justify-content: space-between;
+  align-items: center;
+}
+
+.chat-message{
+  margin-bottom: 15px;
+}
+
+.main-user-chat {
+  display: flex;
+  flex-direction: column;
+}
+
+.main-user-chat .chat-message {
+  display: flex;
+  justify-content: flex-end;
+  margin-bottom: 10px;
+}
+
+.main-user-chat .chat-content {
+  background-color: #e1ffc7;
+  padding: 10px;
+  border-radius: 5px;
+}
+
+.message-time {
+  font-size: 11px;
+  color: #aaa;
+}
+
+.main-user-chat .message-time {
+  display: block;
+  text-align: right;
+  margin: 0px 0px 0px 7px;
+}
+
+.other-user-chat .message-time {
+  display: inline-block;
+}
+
+.message-text {
+  margin: 7px 7px 11px 7px;
+  display: block;
+}
+
+.other-user-chat .message-text {
+  margin: 7px 7px 11px 1px;
+}
+
+.chatModalClass .modal-footer {
+  display: flex !important;
+  align-items: center;
+  margin-top: 10px;
+}
+
+.message-input {
+  width: 80%;
+  padding: 8px;
+  border-radius: 5px;
+  border: 1px solid #ccc;
+}
+
+.send-button {
+  width: 12%;
+  margin-left: 10px;
+  background-color: #4CAF50;
+  color: white;
+  border: none;
+  padding: 8px 12px;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+.send-button:hover {
+  background-color: #45a049;
+}
+
+.chat_icon_col {
+  display: flex;
+  flex-direction: column;
+  align-items: center; 
+  justify-content: center; 
+}
+
+.chat_icon_col img {
+  width: 47px;
+  height: 40px;
+  margin: 0; 
+  transition: transform 0.3s;
+}
+
+.chat_icon_col img:hover {
+  transform: scale(1.1);
+  cursor: pointer;
+}
+
+.chat_icon_col i {
+  margin-top: 8px; 
+}
+
+.chat-image{
+  max-width: 300px;
+  max-height: 300px;
+}
+
+.chat-content .chat-image{
+  display: block;
+  margin-bottom: 7px;
+}
+
+
+@keyframes blink {
+    0% { opacity: 1; }
+    50% { opacity: 0; }
+    100% { opacity: 1; }
+  }
+
+.blink {
+  animation: blink 1s infinite;
+}
+/* chat ends */
+.chat_footer .fa-image, .chat_footer .fa-trash{
+  font-size: 33px;
+}
+
+.fa-image {
+  color: #4fc881;
+  margin: 2px 6px 0px 10px;
+  width: 5%;
+}
+
+.fa-image:hover {
+    color: #64d8a1; /* Slightly darker shade */
+}
+
+.chat_footer .fa-trash{
+  color: #6d7c74;
+  margin-right: 7px;
+  width: 5%;
+  display: none;
+}
+.chat_footer .fa-trash:hover {
+    color: #9aa49f; /* Slightly darker shade */
+}
+
+.chat-content .icon_class {
+  font-size: 27px;
+  display: block;
+  margin: 5px 0px -5px 0px;
+}
+
+.other-user-chat .icon_class {
+  text-align: right;
+}
+
+.main-user-chat .icon_class {
+  text-align: left;
+}
+
+
+/* chat ends */
+.tooltip_copy {
+  display: none;
+  background-color: rgb(62 191 179 / 69%);
+  color: rgb(255 255 255);
+  padding: 8px;
+  border-radius: 5px;
+  font-size: 12px;
+  margin-top: 10px;
+  margin-right: 6px;
+  width: 100px;
+  text-align: center;
+}
+
+.show-tooltip {
+  display: block;
+}
+
+table > tbody > tr.selectedRow:hover {
+  background: #e6f9f7;
+}
+
+table > tbody > tr.selectedRow > td {
+  background: transparent
+}
+
+.plate-img-container{
+  position: relative;
+  display: inline-block;
+}
+
+.plate-img-container .download-wrapper{
+  top: 12px; 
+  right: 6px;
+}
+
+#show_plate_modal .modal-body {
+  padding: unset;
+}
+
+#show_plate_modal .modal-body {
+  padding: unset;
+}
+.img-thumbnail{
+  border:none;
+  padding: 11px 4px;
+}
+
+.delete_note_btn  {
+  color: #ff0000c2;
+  cursor: pointer;
+  font-size: 15px;
+  position: absolute;
+  top: 0;
+  right: 10px;
+}
+
+.checkbox {
+  color: #00BFB3;
+  font-size: 30px;
+}
+
+
+th{
+  z-index: 1;
+}
+
+.vertical-timeline {
+  position: relative;
+  margin-left: 10px;
+  padding-left: 20px;
+  border-left: 2px solid #2c2c72;
+  width: 150px;
+  height: auto;
+}
+
+.status-label {
+  padding-bottom: 6px;
+  font-size: 13px;
+  line-height: 1;
+  max-width: 140px;
+  word-wrap: break-word;
+  white-space: normal;
+  transform: translateY(0);
+  color: gray;
+}
+
+.label-completed {
+  color: #2c2c72;
+}
+
+.label-active {
+  color: #00BBB4;
+  font-weight: bold;
+}
+
+.label-upcoming {
+  color: #656C78;
+}
+
+.label-cancelled {
+  color: red;
+  font-weight: bold;
+  top: 10px !important;
+}
+
+.dot.cancelled-dot-top,
+.dot.cancelled-dot-bottom {
+  background-color: red;
+}
+
+.dot {
+  position: absolute;
+  left: -6px;
+  width: 10px;
+  height: 10px;
+  background-color: #2c2c72;
+  border-radius: 50%;
+}
+
+.dot-highlight {
+  left: -26px;
+  background-color: #00BBB4;
+}
+.dot.top {
+  top: 0;
+}
+
+.dot.bottom {
+  bottom: 0;
+}
+
+.label-highlight {
+  color: #00BBB4;
+}
+.label {
+  display: inline;
+  padding: 0.4em .6em .4em;
+  font-size: 88%;
+}
+
+
+
+.trip-action {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  cursor: pointer;
+  padding-top: 4px;
+  border-radius: 6px;
+  margin-bottom: 6px;
+  transition: background 0.2s;
+}
+
+.trip-action i {
+  font-size: 20px;
+}
+
+.trip-action span {
+  font-size: 12px;
+  color: #656C78;
+}
+
+.label {
+  display: inline;
+  padding: 0.4em .6em .4em;
+  font-size: 88%;
+}
+@media (max-width: 530px) {
+  .send-button {
+    width: 16%;
+    margin-left: 20px;
+  }
+}
+@media (min-width: 768px) {
+  .table-responsive {
+    height: 300px;
+  }
+}
+
+@media (min-width: 1360px) {
+  .table-responsive {
+    height: 400px;
+  }
+}
+@media (min-width: 1840px) {
+  .table-responsive {
+    height: 690px;
+  }
+}
+
+
+  </style>
+                <!-- PAGE CONTENT WRAPPER -->
+                <div class="page-content-wrap">
+    <% if(typeof message != 'undefined'){ %>
+       <div class="alert alert-success" role="alert">
+          <button type="button" class="close" data-dismiss="alert"><span aria-hidden="true">&times;</span><span class="sr-only"><%= __('button_close') %></span></button>
+          <p align="center"> <strong><%= __(message) %></strong></p>
+      </div>
+      <% } %>   
+      <div class="alert alert-success" role="alert" id="request_error" style="display:none">
+        <button type="button" id="close" class="close"><span aria-hidden="true">&times;</span><span class="sr-only"><%= __('button_close') %></span></button>
+        <p align="center" id="request_message"> <strong></strong></p>
+      </div>
+
+                <!-- START TIMELINE FILTER --> 
+      <div class="col-md-12">
+          <div class="panel panel-default">
+            <div class="panel-body">
+              <form class="form-horizontal" role="form" method="post" action="/<%= request %>">
+                <div class="form-group">
+                  <input type="hidden" name="page" id="page" value="0" />   
+                   <input type="hidden" name="request" value="<%= request %>" />
+
+                  
+                <div class="col-md-4">
+                <div style="text-align: center;">
+                  <label><%= __('title_sort') %></label>   
+                </div>
+                <div class="col-md-6" id="sort_option">
+                  <div class="input-group">
+                    <span class="input-group-addon"><span class="glyphicon glyphicon-sort"></span></span>
+                    <select class="form-control select" data-none-selected-text="<%= __('title_nothing_selected') %>" placeholder="Select to Sort" name="sort_item">
+                      <option value='unique_id' <%= (sort_field == "unique_id") ? 'selected' : '' %>><%= __('title_id') %></option>
+                      <option value='user_detail.unique_id' <%= (sort_field == "user_detail.unique_id") ? 'selected' : '' %>><%= __('title_user_id') %></option>
+                      <option value='user_detail.first_name' <%= (sort_field == "user_detail.first_name") ? 'selected' : '' %>><%= __('title_user_name') %></option>
+                      <option value='provider_detail.unique_id' <%= (sort_field == "provider_detail.unique_id") ? 'selected' : '' %>><%= __('title_cedula') %></option>
+                      <option value='provider_detail.first_name' <%= (sort_field == "provider_detail.first_name") ? 'selected' : '' %>><%= __('title_provider_name') %></option>
+                      <option value='type_detail.typename' <%= (sort_field == "type_detail.typename") ? 'selected' : '' %>><%= __('title_service_type') %></option>
+                      <option value='paid_client' <%= (sort_field == "paid_client") ? 'selected' : '' %>><%= __('title_paid_client') %></option>
+                      <option value='paid_partner' <%= (sort_field == "paid_partner") ? 'selected' : '' %>><%= __('title_paid_partner') %></option>
+                    </select>
+                  </div>
+                </div>
+                <div class="col-md-6">
+                  <div class="input-group">
+                    <span class="input-group-addon"><span class="glyphicon glyphicon-sort"></span></span>
+                    <select class="form-control select" data-none-selected-text="<%= __('title_nothing_selected') %>" placeholder="Select to Sort" name="sort_item">
+                      <% if(sort_order == "1") { %>
+                      <option value="1" selected><%= __('sort_asc') %></option>
+                      <option value="-1"><%= __('sort_desc') %></option>
+                      <% } else{ %>
+                      <option value="1" ><%= __('sort_asc') %></option>
+                      <option value="-1" selected><%= __('sort_desc') %></option>
+                      <% } %>
+                    </select>
+                  </div>
+                </div>
+              </div>
+              <div class="col-md-4">
+                <div style="text-align: center;">
+                  <label><%= __('title_search') %></label>   
+                </div>
+                <div class="col-md-6" id="search_option">
+                  <div class="input-group">
+                    <span class="input-group-addon"><span class="glyphicon glyphicon-sort"></span></span>
+                    <select class="form-control select" data-none-selected-text="<%= __('title_nothing_selected') %>" id="sel" placeholder="Select to Sort" name="search_item">
+                      <% if(search_item == "user_detail.first_name") { %>
+                      <option value='unique_id'><%= __('title_id') %></option>
+                        <option value='user_detail.unique_id'><%= __('title_user_id') %></option>
+                        <option value='user_detail.first_name' selected="selected"><%= __('title_user_name') %></option>
+                        <option value='provider_detail.unique_id'><%= __('title_cedula') %></option>
+                        <option value='provider_detail.first_name'><%= __('title_provider_name') %></option>
+                        <option value='type_detail.typename'><%= __('title_service_type') %></option>
+                        <option value='promo_detail.promocode'><%= __('title_promo') %></option>
+                        <% } else if(search_item == "user_detail.unique_id") { %>
+                        <option value='unique_id'><%= __('title_id') %></option>
+                        <option value='user_detail.unique_id' selected="selected"><%= __('title_user_id') %></option>
+                        <option value='user_detail.first_name'><%= __('title_user_name') %></option>
+                        <option value='provider_detail.unique_id'><%= __('title_cedula') %></option>
+                        <option value='provider_detail.first_name'><%= __('title_provider_name') %></option>
+                        <option value='type_detail.typename'><%= __('title_service_type') %></option>
+                        <option value='promo_detail.promocode'><%= __('title_promo') %></option>
+                        <% } else if(search_item == "provider_detail.unique_id") { %>
+                        <option value='unique_id'><%= __('title_id') %></option>
+                        <option value='user_detail.unique_id'><%= __('title_user_id') %></option>
+                        <option value='user_detail.first_name'><%= __('title_user_name') %></option>
+                        <option value='provider_detail.unique_id' selected="selected"><%= __('title_cedula') %></option>
+                        <option value='provider_detail.first_name'><%= __('title_provider_name') %></option>
+                        <option value='type_detail.typename'><%= __('title_service_type') %></option>
+                        <option value='promo_detail.promocode'><%= __('title_promo') %></option>
+                        <% } else if(search_item == "unique_id") { %>
+                        <option value='unique_id' selected="selected"><%= __('title_id') %></option>
+                        <option value='user_detail.unique_id'><%= __('title_user_id') %></option>
+                        <option value='user_detail.first_name'><%= __('title_user_name') %></option>
+                        <option value='provider_detail.unique_id'><%= __('title_cedula') %></option>
+                        <option value='provider_detail.first_name'><%= __('title_provider_name') %></option>
+                        <option value='type_detail.typename'><%= __('title_service_type') %></option>
+                        <option value='promo_detail.promocode'><%= __('title_promo') %></option>
+                        <% } else if(search_item == "type_detail.typename") { %>
+                        <option value='unique_id' ><%= __('title_id') %>
+                        <option value='user_detail.unique_id'><%= __('title_user_id') %></option>
+                        <option value='user_detail.first_name'><%= __('title_user_name') %></option>
+                        <option value='provider_detail.unique_id' ><%= __('title_cedula') %></option>
+                        <option value='provider_detail.first_name'><%= __('title_provider_name') %></option>
+                        <option value='type_detail.typename' selected><%= __('title_service_type') %></option>
+                        <option value='promo_detail.promocode'><%= __('title_promo') %></option>
+                        <% } else if(search_item == "promo_detail.promocode") { %>
+                        <option value='unique_id' ><%= __('title_id') %>
+                        <option value='user_detail.unique_id'><%= __('title_user_id') %></option>
+                        <option value='user_detail.first_name'><%= __('title_user_name') %></option>
+                        <option value='provider_detail.unique_id' ><%= __('title_cedula') %></option>
+                        <option value='provider_detail.first_name'><%= __('title_provider_name') %></option>
+                        <option value='type_detail.typename'><%= __('title_service_type') %></option>
+                        <option value='promo_detail.promocode' selected><%= __('title_promo') %></option>
+                      <% } else { %>
+                       <option value='unique_id'><%= __('title_id') %></option>
+                        <option value='user_detail.unique_id'><%= __('title_user_id') %></option>
+                        <option value='user_detail.first_name'><%= __('title_user_name') %></option>
+                        <option value='provider_detail.unique_id'><%= __('title_cedula') %></option>
+                        <option value='provider_detail.first_name' selected><%= __('title_provider_name') %></option>
+                        <option value='type_detail.typename'><%= __('title_service_type') %></option>
+                        <option value='promo_detail.promocode'><%= __('title_promo') %></option>
+                      <% } %>
+                    </select>
+                  </div> 
+                </div>
+                <div class="col-md-6">
+                  <div class="panel panel-default">
+                    <div class="panel-body panel-body-search">
+                      <div class="input-group">
+                        <span class="input-group-addon"><span class="fa fa-search"></span></span>
+                        <input type="text" class="form-control" value="<%= search_value %>" onkeypress="return alphaNumSpace(event);"name="search_value" placeholder="<%= __('title_search') %>"/>
+                      </div>                                                                
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div class="col-md-4">
+                <div style="text-align: center;">
+                  <label><%= __('title_date_filter') %></label>   
+                </div>
+                <div class="col-md-12">
+
+                  <div class="btn-group">
+                    <div class="input-group">
+                      <input type="text" class="form-control datepicker" value="<%= filter_start_date %>" placeholder="<%= __('title_start_date') %>" name="start_date" id="start_date" readonly/>
+                      <span class="input-group-addon add-on">-</span>
+                      <input type="text" class="form-control datepicker"  value="<%= filter_end_date %>" placeholder="<%= __('title_end_date') %>" name="end_date" id="end_date" readonly/>
+                    </div>
+                    <div id="error-message" style="color: red; display: none; text-align: center"><%= __('error_message_please_select_dates') %></div>
+                  </div>
+                </div>
+              </div>
+
+            </div>
+            
+           <div class="col-md-6">
+              <div class="col-md-12">
+                <ul class="pagination">
+                    <% include paginate_lookup.html %>
+                </ul> 
+              </div> 
+            </div> 
+            <div class="col-md-3">
+                <div class="col-md-6">
+                <div class="col-md-12" style="padding: 0px;">
+               <select class="form-control select" data-none-selected-text="<%= __('title_nothing_selected') %>" id="status" placeholder="Select Status" name="status">
+                <option value='3' <%= (status == "3") ? 'selected' : '' %>><%= __('title_all') %></option>
+                <option value='2' <%= (status == "2") ? 'selected' : '' %>><%= __('title_cancelled_request') %></option>
+                <option value='1' <%= (status == "1") ? 'selected' : '' %>><%= __('title_trip_status_completed') %></option>
+                <option value='0' <%= (status == "0") ? 'selected' : '' %>><%= __('title_total_running_trip') %></option>
+                <option value='4' <%= (status == "4") ? 'selected' : '' %>><%= __('title_not_paid_client') %></option>
+                <option value='5' <%= (status == "5") ? 'selected' : '' %>><%= __('title_not_paid_partner') %></option>
+                <option value='6' <%= (status == "6") ? 'selected' : '' %>><%= __('title_paid_client') %></option>
+                <option value='7' <%= (status == "7") ? 'selected' : '' %>><%= __('title_paid_partner') %></option>
+             </select>
+               </div>
+             </div>
+             <div class="col-md-6">
+                <div class="col-md-12" style="padding: 0px;">
+               <select class="form-control select" data-none-selected-text="<%= __('title_nothing_selected') %>" id="payment" placeholder="Select Payment Mode" name="payment">
+                    <% if(payment == 1) { %>
+                      <option value='2'><%= __('title_both') %></option>
+                      <option value='1' selected><%= __('title_cash') %></option>
+                      <option value='0'><%= __('title_card') %></option>
+                    <% } else if(payment == 0){ %>
+                      <option value='2'><%= __('title_both') %></option>
+                      <option value='1'><%= __('title_cash') %></option>
+                      <option value='0' selected><%= __('title_card') %></option>
+                    <% } else { %>
+                      <option value='2' selected><%= __('title_both') %></option>
+                      <option value='1'><%= __('title_cash') %></option>
+                      <option value='0'><%= __('title_card') %></option>
+                    <% } %>
+                 </select>
+               </div>
+             </div>
+           </div>
+            <div  class="form-group col-md-3" >
+              <div class="col-md-6">
+                <button type="submit" id="apply_filter" class="btn btn-primary" style="height: 35px; width: 100%;  "><span><%= __('button_apply') %></span></button>
+              </div>
+              <div class="col-md-6">
+                    
+                   <!--  <button class="btn btn-danger pull-right" type="button" style="height: 35px; width: 100%;" onClick ="$('#customers2').tableExport({type:'excel', escape:'false', ignoreColumn: [8]});"><i class="fa fa-bars"></i> <%= __('button_export_excel') %></button> -->
+                   <button class="btn btn-danger pull-right export_trip" type="button" style="height: 35px; width: 100%;" onClick ="export_excel()"><i class="fa fa-download"></i><%= __('button_export_excel') %></button>
+              </div>
+            </div>     
+          </form>
+
+
+        </div>
+      </div>
+    </div>
+  </div> 
+                
+                
+                
+                
+                
+      <!-- END TIMELINE FILTER -->                
+                
+                    <div class="row">
+                        <div class="col-md-12">
+
+                            <!-- START SIMPLE DATATABLE -->
+                            <div class="panel panel-default">                                
+                                <div class="table-responsive" style="padding-bottom: 175px;">
+                                        <table class="table text-center" id="customers2">
+                                            <thead>
+                                                <tr>
+                                                  <th><%- breakEveryN(__('title_id')) %></th>
+                                                  <th><%- breakEveryN(__('title_created_date')) %></th>
+                                                  <th><%- breakEveryN(__('title_loading_date')) %></th>
+                                                  <th style="width: 10%;"><%- breakEveryN(__('title_user')) %></th>
+                                                  <th><%- breakEveryN(__('title_assigned_unit')) %></th>
+                                                  <th style="width: 15%;"><%- breakEveryN(__('title_route')) %></th>
+                                                  <th><%- breakEveryN(__('title_shipping_details')) %></th>
+                                                  <th><%- breakEveryN(__('title_status')) %></th>
+                                                  <th><%- breakEveryN(__('title_payment_details')) %></th>
+                                                  <th style="text-align: center;"><%- breakEveryN(__('title_chat')) %></th>
+                                                  <th style="width: 10%;"><%= __('button_action') %></th>
+                                                </tr>
+                                            </thead>
+                                            
+                                            <tbody>
+                                              <% detail.forEach(function(data){ %>
+                                                <tr class="selectedRow">
+                                                <td><%= data.unique_id %></td>
+                                                <td><%= moment(data.created_at).tz(timezone_for_display_date).format("DD MMM 'YY") %></br><%= moment(data.created_at).tz(timezone_for_display_date).format("hh:mm a") %></td>
+                                                <td><%= moment(data.server_start_time_for_schedule || data.created_at).tz(timezone_for_display_date).format("DD MMM 'YY") %>
+                                                </br><%= moment(data.server_start_time_for_schedule || data.created_at).tz(timezone_for_display_date).format("hh:mm a") %></td>
+                                                <td><%= data.user_detail.first_name %> <%= data.user_detail.last_name %></td>
+                                                <td>
+                                                  <a href="javascript:void(0);"
+                                                    onclick="show_truck_front_lateral_images('<%= data._id %>')" 
+                                                    style="color: #00BBB4;">
+                                                    <%= data?.type_detail?.typename %>
+                                                  </a>
+                                                  <br><%= data?.model_details?.model_name %>
+                                                  <br><%= data?.service_details?.service_name %>
+                                                  <br>
+                                                  <span style="color: #25215F"><%= __('title_provider') %>:</span>
+                                                  <% if (data.provider_detail.length > 0) { %>
+                                                    <a href="javascript:void(0);" 
+                                                    onclick="show_provider_cedula('<%= data._id %>', '<%= data.provider_detail[0].country_phone_code %> <%= data.provider_detail[0].phone %>', '<%= data.provider_detail[0].email %>')" 
+                                                    style="color: #00BBB4;">
+                                                      <%= data.provider_detail[0].first_name %> <%= data.provider_detail[0].last_name %>
+                                                    </a>
+                                                  <% } %>
+
+                                                  <br>
+                                                  <span style="color: #25215F"><%= __('title_plate_no') %>:</span>
+                                                  <% if (data?.assigned_vehicle_details?.vehicle_plate_no) { %>
+                                                    <a href="javascript:void(0);" onclick="show_plate_details('<%= data._id %>')" 
+                                                      style="color: #00BBB4;">
+                                                      <%= data.assigned_vehicle_details.vehicle_plate_no %>
+                                                    </a>
+                                                  <% } %>
+                                                  <br> <span style="color: #25215F"><%= __('title_helpers') %>:</span>  <%= data?.pickup_details[0]?.user_details?.no_of_helpers %></td>                                                
+                                                  <td><span style="color: #25215F"><%= __('title_origin') %>:</span> <%= data.source_address %> 
+                                                  <br> <span style="color: #25215F"><%= __('title_destination') %>:</span> <%=  data.initial_destination_address ?  data.initial_destination_address : data.destination_address%> %>
+                                                  <br> <span style="color: #25215F"><%= __('title_cities') %>:</span> <%= data?.destination_addresses?.length %>
+                                                  <br>   
+                                                    <a href="#" id="show_trip_details_btn<%=data._id%>" style="display:block; color:#00BBB4;">
+                                                      <%= __('button_shipping_details') %>
+                                                    </a>
+                                                  </form>
+                                                </td>
+                                                <td>
+                                                <span style="color: #25215F"><%= __('title_cities') %>:</span><%= data?.destination_addresses?.length %> 
+                                                <br> <span style="color: #25215F"><%= __('unit_km') %>:</span> <%=  data?.estimated_distance %>
+                                                <br> <span style="color: #25215F"><%= __('title_night_shifts') %>:</span> <%= data?.night_shift %>
+                                                <br> <span style="color: #25215F"><%= __('title_ferry_ticket') %>:</span><% if(data.boat_ticket > 0) { %> <%= __('title_yes') %>
+                                                      <% } else { %>  <%= __('title_no')%> <%}%>
+                                                <br><span style="color: #25215F"><%= __('title_created_by') %>:</span><% if(data.created_by == constant_json.CREATED_BY_USER_APP) { %> 
+                                                      <%= __('title_user') %>
+                                                    <% } else { %>  <%= __('title_corporate')%> <%}%>
+                                                <br><form id="mapForm_<%= data._id %>" method="post" action="/trip_map">
+                                                  <input type="hidden" name="id" value="<%= data._id %>" />
+                                                  <input type="hidden" name="u_name" value="<%= data.user_detail.first_name %> <%= data.user_detail.last_name %>" />
+                                                  <% if (data.provider_detail.length > 0) { %>
+                                                    <input type="hidden" id="pr_name<%= data._id %>" name="pr_name" value="<%= data.provider_detail[0].first_name %> <%= data.provider_detail[0].last_name %>" />
+                                                  <% } %>
+                                                  <a href="#" onclick="document.getElementById('mapForm_<%= data._id %>').submit(); return false;" style="display:block; color:#00BBB4;">
+                                                    <%= __('button_view_map') %>
+                                                  </a>
+                                                </form>
+                                                </td>
+                                                <% const providerSteps = [
+                                                  { key: 'waiting', label: __('title_trip_status_waiting') },
+                                                  { key: 'accepted_request', label: __('title_accepted_request') },
+                                                  { key: 'waiting_to_start', label: __('title_trip_status_waiting_to_start_journey') },
+                                                  { key: 2, label: __('title_trip_status_coming') },
+                                                  { key: 4, label: __('title_trip_status_arrived') },
+                                                  { key: 6, label: __('title_trip_status_trip_started') },
+                                                  { key: 7, label: __('title_trip_status_arrived_at_destination') },
+                                                  { key: 9, label: __('title_trip_status_completed') }
+                                                ];
+
+                                                if (data?.model_type === MODEL_TRUCK_TYPE.CABEZAL) {
+                                                  providerSteps.splice(3, 0,
+                                                    { key: 'waiting_unloading', label: __('title_trip_status_waiting_for_unloading') },
+                                                    { key: 'waiting_driver', label: __('title_trip_status_waiting_for_driver_assignment') },
+                                                    { key: 'pending_pickup', label: __('title_trip_status_pending_pickup') },
+                                                    { key: 'returning_pickup', label: __('title_trip_status_returning_pickup') }
+                                                  );
+                                                }
+
+                                                let activeKey = null;
+                                                if (data?.drop_trip_status == 1 && !data.assigned_provider_id && !data.unload_notification_sent) {
+                                                  activeKey = 'waiting_unloading';
+                                                } else if (data?.drop_trip_status == 1 && !data.assigned_provider_id && data.unload_notification_sent) {
+                                                  activeKey = 'waiting_driver';
+                                                } else if (data?.drop_trip_status == 1 && data.assigned_provider_id) {
+                                                  activeKey = 'pending_pickup';
+                                                } else if (data?.drop_trip_status <= 2 && data.assigned_provider_id && data.is_provider_status != 9) {
+                                                  activeKey = 'returning_pickup';
+                                                } else if (data.is_provider_status == 1 || data.is_provider_status == 0) {
+                                                  if (data.is_provider_accepted == 1) {
+                                                    activeKey = 'waiting_to_start';
+                                                  } else {
+                                                    activeKey = data.assigned_provider_id ? 'accepted_request' : 'waiting';
+                                                  }
+                                                } else {
+                                                  activeKey = data.is_provider_status;
+                                                }
+
+                                                const activeIndex = providerSteps.findIndex(step => step.key === activeKey);
+                                                %>
+
+                                                <td>
+                                                  <% if (data?.is_trip_cancelled == 1) { %>
+                                                    <div class="vertical-timeline" style="min-height: 40px; border-left: 2px solid red;">
+                                                      <div class="dot cancelled-dot-top" style="top: 0;"></div>
+                                                      <div class="status-label label-cancelled" style="top: 0;"><%= __('title_cancelled') %></div>
+                                                      <div class="dot cancelled-dot-bottom" style="bottom: 0;"></div>
+                                                    </div>
+                                                    <% } else { %>
+                                                      <div class="vertical-timeline" >
+                                                    <div class="dot top"></div>
+                                                    <% providerSteps.forEach((step, index) => {
+                                                      let className = index < activeIndex ? 'label-highlight' : (index === activeIndex ? 'label-active' : 'label-upcoming');
+                                                      let statusDotClass = index === activeIndex && activeIndex > 0 && activeIndex < providerSteps.length - 1 ? 'dot dot-highlight' : "";
+
+                                                    %>
+                                                      <div class="status-label <%= className %>" style="top: calc(<%= index %> * 30px)"><div class="<%= statusDotClass %>"> </div> <%= step.label %></div>
+                                                    <% }); %>                    
+                                                    <div class="dot bottom"></div>
+                                                  </div>
+                                                  <% } %>
+                                                  <% if (data.is_provider_status == 9) { %>
+                                                    <br> <span style="white-space: nowrap;">
+                                                      <span style="color: #25215F;"><%= __('title_completed_date') %>:</span> </br> <%= moment(data.provider_trip_end_time).tz(timezone_for_display_date).format("DD MMM 'YY") %>
+                                                      <%= moment(data.provider_trip_end_time).tz(timezone_for_display_date).format("hh:mm a") %>
+                                                    </span>
+                                                  <% } %>
+
+                                                </td>
+
+                                                <td>
+                                                  <span style="white-space: nowrap;">
+                                                    <span style="color: #25215F;"><%= __('title_total') %>:</span> $<%= (data.fixed_price - data.promo_payment).toFixed(2) %>
+                                                  </span>
+                                                  <br> <span style="white-space: nowrap;">
+                                                    <span style="color: #25215F;"><%= __('title_flety') %>:</span> $<%= (data.fixed_price - data.promo_payment - data.provider_service_fees.toFixed(2)).toFixed(2) %>
+                                                  </span>
+                                                  <br><span style="white-space: nowrap;">
+                                                    <span style="color: #25215F;"><%= __('title_partner') %>:</span> $<%= data.provider_service_fees.toFixed(2) %>
+                                                  </span>
+                                                  <div style="display: flex; align-items: center;">
+                                                    <span><%= __('title_paid_client') %>:</span>
+                                                    <i class="<%= data.paid_client == 1 ? 'fa fa-check-square-o checkbox' : 'fa fa-square-o checkbox' %>" style="margin-left: 8px;"></i>
+                                                  </div>
+                                                  <div style="display: flex; align-items: center;">
+                                                    <span><%= __('title_paid_partner') %>:</span>
+                                                    <i class="<%= data.paid_partner == 1 ? 'fa fa-check-square-o checkbox' : 'fa fa-square-o checkbox' %>" style="margin-left: 8px;"></i>
+                                                  </div>
+                                                </td>
+                                                <td class="chat_icon_col">                  
+                                                  <button class="btn btn-link p-0 m-0" style="background: none; border: none;"
+                                                          onclick="event.stopPropagation(); openChatModal('<%= data._id %>')">
+                                                    <img id="chat_icon<%= data._id %>" src="chat_12x12.svg" alt="Chat">
+                                                  </button>
+                                                </td>
+                                                <td>
+                                                <% if(data.is_trip_completed == 0 && data.is_trip_cancelled == 0){ %>
+                                                  <div class="trip-action" style="display: flex; align-items: center; gap: 6px; cursor: pointer;">
+                                                    <img src="/FLETY_LINKDESEGUIMIENTO.svg" alt="Tracking Link" style="width: 20px; height: 20px; height: 24px; transform: scale(0.9);" />
+                                                    <span onclick="copy_content('<%= data._id %>')" style="text-align: left;"><%= __('title_share_tracking_link') %></span>
+                                                  </div>
+                                                <% } %>
+                                                <div class="trip-action" style="display: flex; align-items: center; gap: 6px; cursor: pointer;" onclick="document.getElementById('mapForm_<%= data._id %>').submit();">
+                                                  <img src="/FLETY_MAPA.svg" alt="map icon" style="width: 20px; height: 20px; transform: scale(0.9);" />
+                                                  <span ><%= __('titel_view_on_map') %></span>
+                                                </div>
+                                                <div class="trip-action" onclick="document.getElementById('show_trip_details_btn<%=data._id%>').click()">
+                                                  <img src="/FLETY_DETALLESDEVIAJE.svg" alt="Shipping Details" style="width: 24px; height: 24px; transform: scale(0.9);" />
+                                                  <span><%= __('button_shipping_details') %></span>
+                                                </div>
+                                                <form id="mapForm_<%= data._id %>" method="post" action="/trip_map" style="display: none;">
+                                                  <input type="hidden" name="id" value="<%= data._id %>" />
+                                                  <input type="hidden" name="u_name" value="<%= data.user_detail.first_name %> <%= data.user_detail.last_name %>" />
+                                                  <% if (data.provider_detail.length > 0) { %>
+                                                    <input type="hidden" name="pr_name" value="<%= data.provider_detail[0].first_name %> <%= data.provider_detail[0].last_name %>" />
+                                                  <% } %>
+                                                </form>
+                                                <% if (data?.is_damasco) { %>
+                                                  <div class="trip-action edit_trip_damasco">
+                                                    <a href="/tripeditbyadmin?id=<%=data.unique_id%>&history=0">
+                                                      <img src="/FLETY_EDITARVIAJE.svg" alt="Edit trip" style="width: 20px; height: 20px; transform: scale(0.9);" />
+                                                      <span><%= __('button_edit') %></span>
+                                                    </a>
+                                                  </div>
+                                                <% } else { %>
+                                                  <div class="trip-action edit_trip">
+                                                    <a href="/tripeditbyadmin?id=<%=data.unique_id%>&history=0">
+                                                      <img src="/FLETY_EDITARVIAJE.svg" alt="Edit trip" style="width: 20px; height: 20px; transform: scale(0.9);" />
+                                                      <span><%= __('button_edit') %></span>
+                                                    </a>
+                                                  </div>
+                                                <% } %>
+
+                                                  <div class="trip-action" style="display: flex; align-items: center; gap: 6px; cursor: pointer;" onclick="cancel_by_admin('<%=data._id%>')">
+                                                    <img src="/FLETY_CANCELARVIAJE.svg" alt="Cancel Trip" style="width: 20px; height: 20px; transform: scale(0.9);" />
+                                                    <span ><%= __('title_cancel_trip') %></span>
+                                                  </div>
+                                                </td>
+                                                </tr>
+                                                <div class="modal animated fadeIn" data-backdrop="static" data-keyboard="false" id="trip_details_modal<%=data._id%>" tabindex="-1" role="dialog" aria-labelledby="trip_details_modal<%=data._id%>" aria-hidden="true">
+                                                  <div class="modal-dialog modal-lg">
+                                                    <div class="modal-content">
+                                                      <div class="modal-header">
+                                                        <button type="button" id="trip_details_modal_close" class="close modal_close<%=data._id%>" data-dismiss="modal" ><span aria-hidden="true">&times;</span><span class="sr-only"><%= config_json.button_close %></span></button>
+                                                        <h3 class="h_style"><b><%= __("title_trip_fare_details") %></b></h3>                                                      
+                                                      </div>
+                                                      <div class="modal-body">
+                                                        <p class="p_style" style="font-weight: 600; text-align: center; color: rgb(0 191 179);"><%= __('title_pickup_address') %></p>
+                                                        <p class="p_style" ><b><%= __("title_origin") %></b>: <span id="trip_origin<%=data._id%>"></span></p>
+                                                        <div id="stop_details_data<%=data._id%>" style="display: none;">
+                                                        </div>              
+                                                        <p class="p_style" style="font-weight: 600; text-align: center; color: rgb(0 191 179);"><%= __('title_destination_address') %></p>
+                                  
+                                                        <p class="p_style"><b><%= __("title_destination") %></b>: <span id="trip_destination<%=data._id%>"></span></p>
+                                                        
+                                                        <p class="p_style" style="font-weight: 600; text-align: center; color: rgb(0 191 179);"><b><%= __('travel_info_modal') %></b></p>
+                                                        <p class="p_style"><b><%= __("title_loading_date") %></b>: <span id="trip_start_date<%=data._id%>"></span></p>
+                                                        <p class="p_style"><b><%= __("title_loading_time") %></b>: <span id="trip_start_time<%=data._id%>"></span></p>
+                                                        <p class="p_style"><b><%= __('title_weight_of_load') %></b>: <span id="trip_weight_load<%=data._id%>"></span></p>
+                                                        <p class="p_style"><b><%= __('title_volume_of_load') %></b>: <span id="trip_volume_load<%=data._id%>"></span></p>
+                                                        <p class="p_style"><b><%= __("title_type_of_services") %></b>: <span id="trip_selected_service<%=data._id%>"></span></p>
+                                                        <p class="p_style"><b><%= __("title_truck_model") %></b>: <span id="trip_selected_type<%=data._id%>"></span></p>
+                                                        <p class="p_style"><b><%= __("title_count_night_shift") %></b>: <span id="count_night_shift<%=data._id%>"></span></p>
+                                                        <p class="p_style"><b><%= __("title_ferry_ticket") %></b>: <span id="ferry_ticket<%=data._id%>"></span></p>
+                                                        <p class="p_style"><b><%= __("title_truck_type") %></b>: <span id="trip_vehicle_model<%=data._id%>"></span></p>
+                                                        <p class="p_style"><b><%= __("flety_pay") %></b>: <span id="trip_total<%=data._id%>"></span></p>
+                                                        <p class="p_style"><b><%= __('title_weight_of_load') %></b>: <span id="pickup_weight_of_load<%=data._id%>"></span></p>
+                                                        <p class="p_style"><b><%= __("title_number_of_helpers_for_load") %></b>: <span id="helpers_load<%=data._id%>"></span></p>
+                                                        <p class="p_style"><b><%= __("title_number_of_helpers_for_download") %></b>: <span id="helpers_download<%=data._id%>"></span></p>
+                                  
+                                                        <h3 class="h_style"><b><%= __("title_pickup_details") %></b></h3>                                                      
+                                                        <p class="p_style"><b><%= __('title_company_name') %></b>: <span id="pickup_company_name<%=data._id%>"></span></p>
+                                                        <p class="p_style"><b><%= __('title_name') %></b>: <span id="pickup_name<%=data._id%>"></span></p>
+                                                        <p class="p_style"><b><%= __('title_phone') %></b>: <span id="pickup_phone<%=data._id%>"></span></p>
+                                  
+                                                        <p class="p_style"><b><%= __('title_description') %></b>: <span id="pickup_description<%=data._id%>"></span></p>
+                                                        <h3 class="h_style"><b><%= __('title_delivery_details') %></b></h3>                                                    
+                                                        <p class="p_style"><b><%= __('title_company_name') %></b>: <span id="delivery_company_name<%=data._id%>"></span></p>
+                                                        <p class="p_style"><b><%= __('title_name_of_delivery_receiver') %></b>: <span id="delivery_name<%=data._id%>"></span></p>
+                                                        <p class="p_style"><b><%= __('title_phone') %></b>: <span id="delivery_phone<%=data._id%>"></span></p>
+                                                        <p class="p_style"><b><%= __('title_description') %></b>: <span id="delivery_description<%=data._id%>"></span></p>
+                                                        <div id="trip_load_images<%=data._id%>" style="display: none;">
+                                                        </div>
+                                                      </div>
+                                                    </div>
+                                                  </div>
+                                                </div>
+                                                <div class="modal fade " id="show_helper_modal<%=data._id%>" tabindex="-1" role="dialog" aria-labelledby="show_helper_modal_label" aria-hidden="true">
+                                                  <div class="modal-dialog modal-dialog-centered" >
+                                                      <div class="modal-content">
+                                                          <div class="modal-header">
+                                                              <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only"><%= __('button_close') %></span></button>
+                                                              <h4 class="modal-title" id="show_helper_modal_label" style="color: rgb(37 14 98); text-align: center;"><%= __('title_helper_details') %></h4>
+                                                          </div>
+                                                            <div class="modal-body" style="text-align: center;">
+                                                              <% data.helper_details.forEach(function(data, index){ %>
+                                                                <div class="row"><div class="col-md-12"><div class="card mb-3">
+                                                                <div class="card-body"><h5 class="card-title"><%= __('title_helper') %> <%= index + 1 %></h5></div></div></div></div>
+                                                                <p><span class="static-text"><%= __('title_name') %>: </span><span class="dynamic-text"> <%= data.name %> </span></p>
+                                                                <p style="margin-bottom: 2rem;"><span class="static-text"><%= __('title_phone') %>: </span><span class="dynamic-text"><%= data.country_phone_code  %> <%= data.phone  %> </span></p>
+                                                            <% }); %>
+                                                            </div>
+                                                      </div>
+                                                  </div>
+                                                </div>
+                                                <div class="modal fade" id="userDetailsModal<%= data.user_detail._id %>" tabindex="-1" aria-labelledby="userDetailsModalLabel" aria-hidden="true">
+                                                  <div class="modal-dialog modal-dialog-centered modal-oval">
+                                                    <div class="modal-content">
+                                                      <div class="modal-header">
+                                                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                                          <span aria-hidden="true">&times;</span>
+                                                        </button>
+                                                        <h5 class="modal-title" id="userDetailsModalLabel"><%= __('title_user_details') %></h5>
+                                                      </div>
+                                                      <div class="modal-body">
+                                                        <p><span class="static-text"><%= __('title_branch') %>:</span><span class="dynamic-text"> <%= data.user_detail.company_details ? data.user_detail.company_details.branch : "" %></span></p>
+                                                        <p><span class="static-text"><%= __('title_city') %>:</span><span class="dynamic-text"> <%= data.user_detail.city %></span></p>
+                                                        <p><span class="static-text"><%= __('title_notes') %>:</span><span class="dynamic-text"> <%= data.user_detail.company_details ? data.user_detail.company_details.notes : "" %></span></p>
+                                                      </div>
+                                                      <div class="modal-footer">
+                                                        <button type="button" class="btn btn-secondary" data-dismiss="modal"><%= __('button_close') %></button>
+                                                      </div>
+                                                    </div>
+                                                  </div>
+                                                </div>      
+                                        
+                                                <div class="modal fade" class="chatModalClass" id="chatModal<%=data._id%>" tabindex="-1" role="dialog" aria-labelledby="smallModalHead" aria-hidden="true">
+                                                  <div class="modal-dialog modal-dialog-centered modal-lg">
+                                                    <div class="modal-content modal-lg">
+                                                      <div class="modal-header">
+                                                        <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only"><%= __('button_close') %></span></button>
+                                                        <h4 class="modal-title"><%= __('title_chat') %></h4>                                        
+                                                      </div>
+                                                      <div id="messages_list_2<%=data._id%>" class="modal-body">
+                                                        <div id="messages_list<%=data._id%>">
+                                                      </div>
+                                                      <div id="selectedImagesContainer<%=data._id%>" style="display: none;">
+                                                      </div>
+                                  
+                                                    </div>
+                                                    <div class="modal-footer chat_footer" style="display: flex;">
+                                                      <span class="fa fa-trash delete-icon" id="deleteImages<%=data._id%>"></span>
+                                                      <input type="text" id="messageInput<%=data._id%>" class="message-input" placeholder="Type your message...">
+                                                      <span class="fa fa-image" id="select_images<%=data._id%>"></span>
+                                                      <input type="file" id="imageInput<%=data._id%>" style="display: none;" accept="image/*, application/pdf" multiple>
+                                                      <button type="submit" class="send-button" id="sendMessageBtn<%=data._id%>">Send</button>
+                                                    </div>        
+                                                  </div>
+                                                  </div>
+                                                </div>
+                                    
+                                                <% }); %>
+                                            </tbody>
+                                        </table>
+                                    </div>
+                            </div>
+                            <!-- END SIMPLE DATATABLE -->
+
+                        </div>
+                    </div>                                
+                    <% include colorbar.html %>
+
+                </div>
+                <!-- PAGE CONTENT WRAPPER -->                                
+            </div>    
+            <!-- END PAGE CONTENT -->
+        </div>
+        <!-- END PAGE CONTAINER -->  
+
+        <div class="modal animated fadeIn" id="refund_payment" tabindex="-1" role="dialog" aria-labelledby="smallModalHead" aria-hidden="true">
+          <div class="modal-dialog" style="width: 500px;">
+            <div class="modal-content">
+              <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only"><%= __('button_close') %></span></button>
+                <h4 class="modal-title"><%= __('title_refund_trip') %></h4>
+              </div>
+              <form class="form-horizontal" id="refund_payment_form">
+                <div class="modal-body">
+                  <input type="hidden" id="trip_id">
+                  <div class="form-group">
+                    <label class="col-md-4 mt-2" style="text-align:left"><%= __('select_payment_type') %></label>
+                    <div class="col-md-8">
+                      <select class="form-control select" name="payment_type" id="payment_type">
+                      </select>
+                    </div>
+                  </div>
+                </div>
+                <div class="modal-footer" style="text-align: center;">
+                  <input type="submit" class="btn btn-primary" name="button" value="<%= __('button_next') %>">
+                </div>
+              </form>
+            </div>
+          </div>
+        </div>
+
+        <div class="modal animated fadeIn" id="add_wallet_modal" tabindex="-1" role="dialog" aria-labelledby="smallModalHead" aria-hidden="true">
+          <div class="modal-dialog" style="width: 300px;">
+              <div class="modal-content">
+                  <div class="modal-header">
+                      <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only"><%= __('button_close') %></span></button>
+                      <h4 class="modal-title"><%= __('title_wallet_amount') %></h4>
+                  </div>
+                  <form class="form-horizontal" id="add_wallet_form">
+                      <div class="modal-body">
+                          <div class="form-group">
+                              <div class="col-md-12">
+                                  <input type="text" onkeypress="return isNumberKeyDecimal(event,this.value);" name="wallet" id="wallet_amount" class="form-control" placeholder="<%= __('title_wallet_amount') %>">
+                              </div>
+                          </div>
+                      </div>
+                      <div class="modal-footer">
+                          <input type="submit" class="btn btn-primary" name="button" value="<%= __('refund') %>">
+                      </div>
+                  </form>
+              </div>
+          </div>
+        </div>
+        <div class="modal fade " id="show_pod_images_modal" tabindex="-1" role="dialog" aria-labelledby="smallModalHead" aria-hidden="true">
+          <div class="modal-dialog modal-dialog-centered modal-lg" >
+              <div class="modal-content modal-lg">
+                  <div class="modal-header">
+                      <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only"><%= __('button_close') %></span></button>
+                      <h4 class="modal-title" style="color: rgb(37 14 98); text-align: center;"><%= __('title_show_pod') %></h4>
+                  </div>
+                    <div class="modal-body">
+                        <div class="pod_images">
+                          
+                        </div>
+                      </div>
+              </div>
+          </div>
+        </div>
+        <div class="modal fade" id="unassignReasonModal" tabindex="-1" role="dialog" aria-labelledby="unassignReasonModalLabel" aria-hidden="true">
+          <div class="modal-dialog" role="document">
+            <div class="modal-content">
+              <form id="unassignReasonForm" enctype="multipart/form-data" method="post">
+        
+              <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                  <span aria-hidden="true">&times;</span>
+                </button>
+                <h4 class="modal-title" id="unassignReasonModalLabel"><%= __('title_unassign_trip') %></h4>
+              </div>
+              <div class="modal-body">
+              <div class="form-group">
+                <label class="col-md-2 col-xs-5 control-label"><%= __('title_unassign_reason') %>:</label>
+                  <div class="col-md-10 col-xs-7">
+                      <textarea class="form-control" name="unassign_reason" id="unassign_reason" cols="50" rows="4" required></textarea>
+                  </div>
+                </div>                                   
+                <input type="hidden" name="trip_id" id="unassign_trip_id" />
+              </div>
+              <div class="modal-footer">
+                <button type="submit" class="btn btn-primary" id="submitReason"><%= __('button_submit') %></button>
+              </div>
+              </form>
+            </div>
+          </div>
+        </div>
+        <div class="modal fade" id="show_trip_doc_modal" tabindex="-1" role="dialog" aria-labelledby="smallModalHead" aria-hidden="true">
+          <div class="modal-dialog modal-dialog-centered modal-lg" >
+              <div class="modal-content modal-lg">
+                  <div class="modal-header">
+                      <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only"><%= __('button_close') %></span></button>
+                      <h4 class="modal-title" style="color: rgb(37 14 98); text-align: center;"><%= __('title_trip_documents') %></h4>
+                  </div>
+                    <div class="modal-body">
+                        <div class="trip_docs">
+                          
+                        </div>
+                      </div>
+              </div>
+          </div>
+        </div>
+        <div class="modal fade " id="show_plate_modal" tabindex="-1" role="dialog" aria-labelledby="show_plate_modal_label" aria-hidden="true">
+          <div class="modal-dialog modal-dialog-centered" style="width: 364px;" >
+            <div class="modal-content">
+              <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only"><%= __('button_close') %></span></button>
+                <h4 class="modal-title" id="show_plate_modal_label" style="color: rgb(37 14 98); text-align: center;"><%= __('title_plate_details') %></h4>
+              </div>
+              <div class="modal-body" style="text-align: center;">
+                <h5 class="card-title provider_vehicle_plate_data" style="padding-top: 20px; margin-bottom: 0px;"><span style="font-weight: 600;"><%= __('title_gandalo_image_futo') %></span></h5>
+                <h5 class="card-title provider_vehicle_plate_data" style="padding-top: 5px; margin-bottom: 5px;"><span style="font-weight: 600;" id="provider_vehicle_plate"></span></h5>
+                <div  id="provider_plate_image_div"></div>
+                                <hr class="provider_vehicle_plate_data_2">
+                <h5 class="card-title provider_vehicle_plate_data_2" style="padding-top: 5px; margin-bottom: 0px;"><span style="font-weight: 600;"><%= __('title_batea_or_furgon') %></span></h5>
+                <h5 class="card-title provider_vehicle_plate_data_2" style="padding-top: 5px; margin-bottom: 5px;"><%= __('title_plate_no') %>: <span style="font-weight: 600;" id="provider_vehicle_plate_2"></span></h5>
+                <div id="provider_plate_image_div_2"></div>
+              </div>
+            </div>
+          </div>
+        </div>
+        
+        <div class="modal fade " id="show_cedula_modal" tabindex="-1" role="dialog" aria-labelledby="show_cedula_modal_label" aria-hidden="true">
+          <div class="modal-dialog modal-dialog-centered" style="width: 364px;" >
+            <div class="modal-content">
+              <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only"><%= __('button_close') %></span></button>
+                <h4 class="modal-title" id="show_cedula_modal_label" style="color: rgb(37 14 98); text-align: center;"><%= __('title_provider_details') %></h4>
+              </div>
+              <div class="modal-body" style="text-align: center;">
+                <p><span class="static-text"><%= __('title_cedula') %>: </span><span class="dynamic-text" id="provider_cedula"> </span></p>
+                <p><span class="static-text"><%= __('title_phone') %>: </span><span class="dynamic-text" id="provider_phone" > </span></p>
+                <p><span class="static-text"><%= __('title_email') %>: </span><span class="dynamic-text" id="provider_email" > </span></p>
+                <img src="" class="img-thumbnail" id="provider_cedula_image" style="max-width: 333px;" />
+                <div class="download-wrapper" id="provider_cedula_image_div" style="top: 90px; right: 22px;padding: 6px;">
+                  <a href="" id="provider_cedula_image_a">
+                  <i class="fa fa-download icon_class" style="font-size: 25px;" ></i>
+                  </a>
+                </div>
+                <p><span class="static-text"><%= __('title_name') %>: </span><span class="dynamic-text" id="provider_partner_name"> </span></p>
+                <p><span class="static-text"><%= __('title_company_name') %>: </span><span class="dynamic-text" id="provider_partner_company_name" > </span></p>
+                <p><span class="static-text"><%= __('title_phone') %>: </span><span class="dynamic-text" id="provider_partner_phone" > </span></p>
+                <p><span class="static-text"><%= __('title_email') %>: </span><span class="dynamic-text" id="provider_partner_email" > </span></p>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="modal fade " id="show_truck_front_lateral_modal" tabindex="-1" role="dialog" aria-labelledby="show_truck_front_lateral_label" aria-hidden="true">
+          <div class="modal-dialog modal-dialog-centered" style="width: 364px;" >
+            <div class="modal-content">
+              <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only"><%= __('button_close') %></span></button>
+                <h4 class="modal-title" id="show_truck_front_lateral_label" style="color: rgb(37 14 98); text-align: center;"><%= __('title_truck_picture') %></h4>
+              </div>
+              <div class="modal-body" style="text-align: center;">
+                <div class="plate-img-container" id="truck_front_image_div">
+                  <img src="" class="img-thumbnail" id="truck_front_image" style="max-width: 328px;" />
+                  <div class="download-wrapper">
+                    <a href="" id="truck_front_image_a">
+                      <i class="fa fa-download icon_class" style="font-size: 25px;"></i>
+                    </a>
+                  </div>
+                </div>
+                <hr class="truck_lateral_data_2">
+                <div class="plate-img-container" id="truck_lateral_image_div_2">
+                  <img src="" class="img-thumbnail" id="truck_lateral_image_2" style="max-width: 328px;" />
+                  <div class="download-wrapper">
+                    <a href="" id="truck_lateral_image_a_2">
+                      <i class="fa fa-download icon_class" style="font-size: 25px;"></i>
+                    </a>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="modal fade " id="show_notes_modal" tabindex="-1" role="dialog" aria-labelledby="show_notes_modal_label" aria-hidden="true">
+          <div class="modal-dialog modal-dialog-centered" style="width: 364px;">
+            <div class="modal-content">
+              <div class="modal-header">
+                  <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only"><%= __('button_close') %></span></button>
+                  <h4 class="modal-title" id="show_notes_modal_label" style="color: rgb(37 14 98); text-align: center;"><%= __('title_add_notes') %></h4>
+              </div>
+              <div class="modal-body" style="text-align: center;">
+                <div class="row">
+                  <form id="add_note_form">
+                    <input type="hidden" id="note_trip_id" name="tripId">
+                    <div class="col-md-12">
+                      <textarea class="form-control" name="note" id="note" cols="50" rows="4" required></textarea>
+                    </div>
+                    <div class="col-md-12" style="margin-top: 14px;">
+                      <button type="submit" class="btn btn-primary"><%= __('button_add') %></button>
+                    </div>
+                  </form>
+                </div>
+                <div class="row" id="notes_list">
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <script src="socket.io/socket.io.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.18.1/moment.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/moment-timezone/0.5.17/moment-timezone-with-data.js"></script>
+        <script src="https://www.gstatic.com/firebasejs/4.12.1/firebase.js"></script>
+
+        <script>
+          
+
+        </script>
+
+<script type="text/javascript">
+    var database = null;
+    let sender_type = '<%= constant_json.ADMIN_UNIQUE_NUMBER %>'
+  $(document).ready(function() {
+    
+    var body = {
+            "user_id": "<%=admin._id%>",
+            "token": "<%=admin.token%>",
+            "type":  '<%= constant_json.ADMIN_UNIQUE_NUMBER %>'
+          }
+    $.ajax({
+      type: 'POST',
+      url: "generate_firebase_access_token",
+      data: body,
+      dataType: "json",
+      success: function (resultData) {
+        var config = {
+          apiKey: "<%=setting_detail.firebase_apiKey%>",
+          authDomain: "<%=setting_detail.firebase_authDomain%>",
+          databaseURL: "<%=setting_detail.firebase_databaseURL%>",
+          projectId: "<%=setting_detail.firebase_projectId%>",
+          storageBucket: "<%=setting_detail.firebase_storageBucket%>",
+          messagingSenderId: "<%=setting_detail.firebase_messagingSenderId%>"
+        };
+
+        firebase.initializeApp(config);
+
+        firebase.auth().signInWithCustomToken(resultData.firebase_token).then((userCredential) => {
+          database = firebase.database();
+          get_chats()
+        })
+      }
+    })
+
+
+
+
+    setTimeout(()=>{
+      var max_width = $("#search_option").width()
+      $("#search_option button").css("max-width",max_width-10)
+      $("#search_option button .filter-option").addClass("hide_long_text")
+      var max_width = $("#sort_option").width()
+      $("#sort_option button").css("max-width",max_width-10)
+      $("#sort_option button .filter-option").addClass("hide_long_text")
+    },100)
+      var trip_id_array = new Array();
+      var interval;
+      
+    $('#start_date').datepicker({
+      format: 'yyyy-mm-dd',
+      <% if(filter_end_date){ %>
+        endDate: new Date("<%= filter_end_date %>")
+      <% } else { %>
+        endDate: new Date(Date.now())
+      <% } %>
+    }).on("changeDate", function () { 
+      const startDate = $('#start_date').datepicker('getDate');
+      const endDate = $('#end_date').datepicker('getDate');
+      $('#end_date').datepicker('setStartDate', startDate);
+      if (startDate && endDate) {
+        const monthDiff = (endDate.getFullYear() - startDate.getFullYear()) * 12 + (endDate.getMonth() - startDate.getMonth());
+        if (monthDiff > 3 || (monthDiff === 3 && endDate.getDate() > startDate.getDate())) {
+          alert("<%= __('error_message_export_date_range_exceeded')%>");
+          $('#start_date').val('');
+          $('#end_date').datepicker('setStartDate', null);
+        }
+      }
+
+      $('.datepicker-dropdown').hide();
+    });
+
+    $('#end_date').datepicker({
+      format: 'yyyy-mm-dd',
+      endDate: new Date(Date.now()),
+      <% if(filter_start_date){ %>
+        startDate: new Date("<%= filter_start_date %>")
+      <% } %>
+    }).on("changeDate", function () {
+      const endDate = $('#end_date').datepicker('getDate');
+      const startDate = $('#start_date').datepicker('getDate');
+      $('#start_date').datepicker('setEndDate', endDate);
+      if (startDate && endDate) {
+        const monthDiff = (endDate.getFullYear() - startDate.getFullYear()) * 12 + (endDate.getMonth() - startDate.getMonth());
+        if (monthDiff > 3 || (monthDiff === 3 && endDate.getDate() > startDate.getDate())) {
+          alert("<%= __('error_message_export_date_range_exceeded')%>");
+          $('#end_date').val('');
+          $('#start_date').datepicker('setEndDate', null);
+        }
+      }
+
+      $('.datepicker-dropdown').hide();
+    });
+
+        <% detail.forEach(function(data){ %>
+          $('#select_images<%=data._id%>').on('click', function () {
+            $('#imageInput<%=data._id%>').click();
+          });
+
+          $("#imageInput<%=data._id%>").change(function(e) {
+            let files = this.files;
+            const validImageTypes = ["image/jpeg", "image/png"]; 
+            const selectedImagesContainer = $("#selectedImagesContainer<%=data._id%>");
+            const messageInput = $("#messageInput<%=data._id%>");
+            const deleteImagesButton = $("#deleteImages<%=data._id%>");
+            
+            selectedImagesContainer.empty();
+
+            if (files.length > 5) {
+              $(this).val('');
+              alert('You can only select up to ' + 5 + ' images.');
+              return;
+            }
+
+            for (let i = 0; i < files.length; i++) {
+              const fileType = files[i]["type"];
+              const maxSizeInBytes = 5 * 1024 * 1024;
+              if (files[i].size > maxSizeInBytes) { 
+                alert("File size too large. Please select a file smaller than 5 MB.");
+                $(this).val(""); 
+                return false;
+              }
+              if ($.inArray(fileType, validImageTypes) < 0) {
+                alert("Tipo de archivo no válido. Seleccione un archivo de imagen válido.");
+                $(this).val(""); 
+                return false;
+              }
+            }
+            if(files.length){
+              deleteImagesButton.show();
+              selectedImagesContainer.show();
+              messageInput.hide();
+              messageInput.val("");
+            }else{
+              deleteImagesButton.hide();
+              selectedImagesContainer.hide();
+              messageInput.show();
+              messageInput.val("");
+            }
+            for (let i = 0; i < files.length; i++) {
+              let imageUrl = URL.createObjectURL(files[i]);
+              let fileType = files[i].type
+              let pdfType = "application/pdf";
+              let image = ""
+              if(fileType == pdfType){
+                image = '<div id="pdf-status" class="pdf-uploaded" style="vertical-align: middle;">' +
+                        '<i class="fa fa fa-file-pdf-o icon_class" style="font-size: 190px;display: block;"></i>'+
+                        '<span class="pdf-uploaded-text">PDF File!</span>'+
+                      '</div>'
+              }else{
+                image = $("<img>").attr("src", imageUrl).addClass("chat-image");
+              }
+              selectedImagesContainer.append(image);
+            }
+            function doSomething() {
+              const messagesList = $("#messages_list_2<%=data._id%>");
+              $('#messages_list_2<%=data._id%>').scrollTop(messagesList[0].scrollHeight);
+            }
+            setTimeout(doSomething, 1000);
+          });
+          $("#deleteImages<%=data._id%>").on("click", function () {
+              let imageInput = $("#imageInput<%=data._id%>")[0];
+              let selectedImagesContainer = $("#selectedImagesContainer<%=data._id%>");
+              imageInput.value = "";
+              selectedImagesContainer.empty();
+              selectedImagesContainer.hide();
+              const messageInput = $("#messageInput<%=data._id%>");
+              messageInput.show()
+              $(this).hide()
+          });
+
+          $('#show_trip_details_btn<%=data._id%>').click(function(){
+          let trip_details = <%-JSON.stringify(data)%>
+          trip_id_array.push('<%= data._id %>')
+          $('#trip_origin<%=data._id%>').text('<%= data.source_address%>') 
+          $('#trip_destination<%=data._id%>').text('<%= data.initial_destination_address%>') 
+
+          $('#trip_destination_stops<%=data._id%>').text((!'<%= data.destination_stops%>' || '<%= data.destination_stops%>' == "")  ? 0 : '<%= data.destination_stops%>') 
+          
+          if(
+            '<%= data.pickup_details %>' && 
+            '<%= data?.pickup_details[0]?.user_details?.no_of_helpers != "" %>' &&
+            '<%= data?.pickup_details[0]?.user_details?.no_of_helpers != "0" %>'
+          ) {
+            $('#helpers_load<%=data._id%>').show();
+            $('#helpers_load<%=data._id%>').text("<%= data?.pickup_details[0]?.user_details?.number_of_helpers_load %>"); 
+            $('#helpers_download<%=data._id%>').show();
+            $('#helpers_download<%=data._id%>').text("<%= data?.pickup_details[0]?.user_details?.number_of_helpers_download %>"); 
+          } else {
+            $('#helpers_load<%=data._id%>').hide();
+            $('#helpers_download<%=data._id%>').hide();
+          }
+
+          if('<%= data.server_start_time_for_schedule%>'){
+            $('#trip_start_date<%=data._id%>').text(moment('<%= data.server_start_time_for_schedule%>').tz('<%=timezone_for_display_date %>').format("DD MMM 'YY")) 
+            $('#trip_start_time<%=data._id%>').text(moment('<%= data.server_start_time_for_schedule%>').tz('<%=timezone_for_display_date %>').format("hh:mm a")) 
+          }else{
+            $('#trip_start_date<%=data._id%>').text(moment('<%= data.created_at%>').tz('<%=timezone_for_display_date %>').format("DD MMM 'YY")) 
+            $('#trip_start_time<%=data._id%>').text(moment('<%= data.created_at%>').tz('<%=timezone_for_display_date %>').format("hh:mm a")) 
+          }
+          if(trip_details.destination_addresses.length > 0){
+            $('#stop_details_data<%=data._id%>').show()
+            $('#stop_details_data<%=data._id%>').empty()
+            trip_details.destination_addresses.forEach((element, i) => {
+                let stop_address = ""
+                let stop = element.stops_inside ? element.stops_inside.length : element.inside_stops
+                stop_address = '<p class="h_style" style="text-align: center; color: rgb(0 191 179); font-size: 17px; font-weight: 600;"><b><%= __("title_details_modal") %> '+(Number(i)+1)+'</b></p>'+
+          '<p class="p_style" >'+element.address+'</p>';
+                $('#stop_details_data<%=data._id%>').append(stop_address);
+                if(element.stops_inside){
+                  element.stops_inside.forEach((stop, i) => {
+                    stop_address = '<p class="p_style"><b><%= __('title_stop') %> '+(Number(i)+1)+' </b>: '+stop.address+'</p>';
+                    $('#stop_details_data<%=data._id%>').append(stop_address);
+                  })
+                }
+              })
+          }else{
+            $('#stop_details_data<%=data._id%>').empty()
+            $('#stop_details_data<%=data._id%>').hide()
+          }
+
+          let service_details = trip_details.service_details
+          if(service_details){
+            $('#trip_selected_service<%=data._id%>').text(service_details.service_name) 
+          }
+          if(trip_details.pickup_details[0].weight_of_load){
+            $('#trip_weight_load<%=data._id%>').text(trip_details.pickup_details[0].weight_of_load + " Kg") 
+          }
+          $('#trip_volume_load<%=data._id%>').text(trip_details?.pickup_details[0]?.volume_of_load ? trip_details?.pickup_details[0]?.volume_of_load + " M3" : "") 
+          $('#pickup_company_name<%=data._id%>').text("")
+          $('#pickup_name<%=data._id%>').text("")
+          $('#pickup_phone<%=data._id%>').text("")
+          $('#pickup_weight_of_load<%=data._id%>').text("")
+          $('#pickup_description<%=data._id%>').text("")
+          if(trip_details.pickup_details.length){
+            const pickup = trip_details.pickup_details[0]
+            const user = pickup.user_details
+            $('#pickup_company_name<%=data._id%>').text(user.company_name)
+            $('#pickup_name<%=data._id%>').text(user.name)
+            $('#pickup_phone<%=data._id%>').text( user.phone)
+            $('#pickup_weight_of_load<%=data._id%>').text(pickup.weight_of_load)
+            $('#pickup_description<%=data._id%>').text(pickup.note)
+          }
+
+          $('#delivery_company_name<%=data._id%>').text("")
+          $('#delivery_name<%=data._id%>').text("")
+          $('#delivery_phone<%=data._id%>').text("")
+          $('#delivery_description<%=data._id%>').text("")
+          if(trip_details.delivery_details.length){
+            const delivery = trip_details.delivery_details[0]
+            const user = delivery.user_details
+            $('#delivery_company_name<%=data._id%>').text(user.company_name)
+            $('#delivery_name<%=data._id%>').text(user.name)
+            $('#delivery_phone<%=data._id%>').text( user.phone)
+            $('#delivery_description<%=data._id%>').text(delivery.note)
+          }
+
+          
+          let model_details = trip_details.model_details
+          if(model_details){
+            $('#trip_vehicle_model<%=data._id%>').text(model_details.model_name) 
+          }
+          $('#trip_selected_type<%=data._id%>').text('<%= data.type_detail.typename%>') 
+          $('#trip_total<%=data._id%>').text('$'+'<%= data.fixed_price%>') 
+          
+          $('#count_night_shift<%=data._id%>').text('<%= data.night_shift%>') 
+          let message = '<%= __('title_yes') %>';
+          if(Number('<%= data.boat_ticket %>') == 0) {
+            message = '<%= __('title_no') %>';
+          }
+          $('#ferry_ticket<%=data._id%>').text(message) 
+
+          $('#trip_details_modal<%=data._id%>').modal('show');
+          
+          $('#trip_load_images<%=data._id%>').hide()
+          $('#trip_load_images<%=data._id%>').empty()
+          if(trip_details.image_url.length){
+            const image_base_url = "<%= setting_detail.image_base_url %>"
+            trip_details.image_url.forEach((image, index) => {
+              if(image !== ""){
+                const fileExtension = image.split('.').pop().toLowerCase();
+                if(fileExtension == "pdf"){
+                  $('#trip_load_images<%=data._id%>').append(
+                    '<div class="row"><div class="col-md-12"><div class="card mb-3" style="text-align: center;">' +
+                    '<div id="pdf-status" class="pdf-uploaded">' +
+                      '<i class="fa fa fa-file-pdf-o icon_class" style="font-size: 190px;display: block;"></i>'+
+                      '<span class="pdf-uploaded-text">PDF File!</span>'+
+                    '</div>'+
+                    '<div class="download-wrapper">' +
+                    '<form method="get" target="_blank" action="' +
+                    image_base_url +
+                    image +
+                    '">' +
+                    '<a href="' +
+                    image_base_url +
+                    image +
+                    '" download>' +
+                    '<i class="fa fa-download icon_class"></i>' +
+                    '</a>' +
+                    '</form>' +
+                    '</div>' +
+                    '</div>' +
+                    '<div class="card-body"><h5 class="card-title">Doc '+(index + 1)+'</h5></div></div></div></div>'
+                  );
+                }else{
+                  $('#trip_load_images<%=data._id%>').append(
+                    '<div class="row"><div class="col-md-12"><div class="card mb-3">' +
+                    '<div class="image-container1">' +
+                    '<img src=' +
+                    image_base_url +
+                    image +
+                    ' class="card-img-top img-fluid image-container">' +
+                    '<div class="download-wrapper">' +
+                    '<form method="get" target="_blank" action="' +
+                    image_base_url +
+                    image +
+                    '">' +
+                    '<a href="' +
+                    image_base_url +
+                    image +
+                    '" download>' +
+                    '<i class="fa fa-download icon_class"></i>' +
+                    '</a>' +
+                    '</form>' +
+                    '</div>' +
+                    '</div>' +
+                    '<div class="card-body"><h5 class="card-title">Doc '+(index + 1)+'</h5></div></div></div></div>'
+                  );
+                }
+              }
+            })
+    
+            $('#trip_load_images<%=data._id%>').show()
+          }
+        })
+
+      $("#show_pod_images<%= data._id %>").click(function(){
+        let image_base_url = "<%= setting_detail.image_base_url %>"
+        let data = <%- JSON.stringify(data)%>
+        if(data.pod_image_url && data.pod_image_url.length > 0){
+          data.pod_image_url.forEach((image, index) => {
+            if(image !== ""){
+
+              $('.pod_images').append(
+                '<div class="row" id="pod_img' + sanitizeString(image)+'"><div class="col-md-12"><div class="card mb-3">' +
+                  '<div class="image-container1">' +
+                  '<img src=' +
+                  image_base_url +
+                  image +
+                  ' class="card-img-top img-fluid image-container">' +
+                  '<div class="download-wrapper download">' +
+                  '<form method="get" target="_blank" action="' +
+                  image_base_url +
+                  image +
+                  '">' +
+                  '<a href="' +
+                  image_base_url +
+                  image +
+                  '" download>' +
+                  '<i class="fa fa-download icon_class"></i>' +
+                  '</a>' +
+                  '</form>' +
+                  '</div>' +
+                  '<div class="download-wrapper trash">' +
+                    '<i class="fa fa-trash icon_class" onClick="deletePod(\'' + data._id + '\', \'' + image + '\')"></i>' +
+                  '</div>' +
+                  '</div>' +
+                  '<div class="card-body"><h5 class="card-title">Image '+(index + 1)+'</h5></div></div></div></div>'
+              );
+
+
+            }
+          })
+          $("#show_pod_images_modal").modal('show');
+        }
+      })  
+      
+      $("#show_trip_docs<%= data._id %>").click(function(){
+        let image_base_url = "<%= setting_detail.image_base_url %>"
+        let data = <%- JSON.stringify(data)%>
+        $('.trip_docs').empty()
+        if(data.corporate_doc && data.corporate_doc.length > 0){
+          data.corporate_doc.forEach((image, index) => {
+            if(image !== ""){
+              const fileExtension = image.split('.').pop().toLowerCase();
+              if(fileExtension == "pdf"){
+                $('.trip_docs').append(
+                  '<div class="row"><div class="col-md-12"><div class="card mb-3" style="text-align: center;">' +
+                    '<div id="pdf-status" class="pdf-uploaded">' +
+                      '<i class="fa fa fa-file-pdf-o icon_class" style="font-size: 190px;display: block;"></i>'+
+                      '<span class="pdf-uploaded-text">PDF File!</span>'+
+                    '</div>'+
+                  '<div class="download-wrapper">' +
+                  '<form method="get" target="_blank" action="' +
+                  image_base_url +
+                  image +
+                  '">' +
+                  '<a href="' +
+                  image_base_url +
+                  image +
+                  '" download>' +
+                  '<i class="fa fa-download icon_class"></i>' +
+                  '</a>' +
+                  '</form>' +
+                  '</div>' +
+                  '</div>' +
+                  '<div class="card-body"><h5 class="card-title">Doc '+(index + 1)+'</h5></div></div></div></div>'
+                );
+              }else{
+                $('.trip_docs').append(
+                  '<div class="row"><div class="col-md-12"><div class="card mb-3">' +
+                  '<div class="image-container1">' +
+                  '<img src=' +
+                  image_base_url +
+                  image +
+                  ' class="card-img-top img-fluid image-container">' +
+                  '<div class="download-wrapper">' +
+                  '<form method="get" target="_blank" action="' +
+                  image_base_url +
+                  image +
+                  '">' +
+                  '<a href="' +
+                  image_base_url +
+                  image +
+                  '" download>' +
+                  '<i class="fa fa-download icon_class"></i>' +
+                  '</a>' +
+                  '</form>' +
+                  '</div>' +
+                  '</div>' +
+                  '<div class="card-body"><h5 class="card-title">Doc '+(index + 1)+'</h5></div></div></div></div>'
+                )
+              }
+            }
+          })
+          $("#show_trip_doc_modal").modal('show');
+        }
+      })
+
+      $("#sendMessageBtn<%=data._id%>").on("click", function() {
+        let time = new Date().toISOString()
+        const messageInput = $("#messageInput<%=data._id%>");
+        const message = messageInput.val();
+        const imageInput = $('#imageInput<%=data._id%>')[0]; 
+        const images = imageInput.files;
+        
+        if(images.length){
+          upload_chat_images("<%=data._id%>")
+        }else{
+          if ($.trim(message) !== "") {
+            $('#messages_list<%=data._id%>').append(
+              '<div class="main-user-chat">' +
+                '<div class="chat-message">' +
+                  '<div class="chat-content">' +
+                    '<span class="message-text">' + message + '</span>' +
+                    '<span class="message-time">' + moment(time).format("DD-MM-YYYY,HH:mm") + '</span>' +
+                  '</div>' +
+                '</div>' +
+              '</div>'
+            );
+            messageInput.val("");
+            let trip_id = '<%=data._id%>';
+
+            var ref = database.ref(trip_id);
+            var key = ref.push().key;
+            ref.child(key).set({
+              "id":key,
+              "message": message,
+              "time":new Date().toISOString(),
+              "type": Number('<%= constant_json.ADMIN_UNIQUE_NUMBER %>'),
+              "is_user_read": false,
+              "is_provider_read": false,
+              "is_corporate_read": false,
+              "is_partner_read": false
+            }, function(error) {
+                if (error) {
+                    return false;
+                } else {
+                  $.ajax({
+                    url: 'chat_push_notification',
+                    data: {
+                      trip_id: "<%=data._id%>",
+                      web: Number("<%= constant_json.ADMIN_UNIQUE_NUMBER %> ")
+                    },
+                    dataType: "json",
+                    type: 'post',
+                    success: function(res){}
+                  });
+                  return true;
+                }
+            });
+          }
+        }
+      });
+
+
+      $("#messageInput<%=data._id%>").keypress(function(event) {
+        if (event.key === "Enter") {
+          event.preventDefault(); 
+          $("#sendMessageBtn<%=data._id%>").click(); 
+        }
+      });
+
+      trip_id_array.push('<%= data._id %>')
+
+    <% }); %>
+
+        var $form = $('#refund_payment_form');
+        $form.submit(function(event) {
+          event.preventDefault();
+          var payment_type = $("#payment_type").val();
+          var trip_id = $("#trip_id").val();
+
+          if(payment_type == "wallet"){
+            $("#refund_payment").modal('hide');
+            $("#add_wallet_modal").modal('show');
+          }else{
+            var trip_id = $("#trip_id").val();
+            $.ajax({
+              url: 'refund_amount_in_card',
+              data: {
+                trip_id: trip_id
+              },
+              dataType: "json",
+              type: 'post',
+              success: function(res){
+                if(res.success){
+                  location.reload()
+                }
+              }
+            });
+          }          
+        })
+
+        var $form = $('#add_wallet_form');
+        $form.submit(function(event) {
+          event.preventDefault();
+          var trip_id = $("#trip_id").val();
+          var wallet_amount = $("#wallet_amount").val();
+          $.ajax({
+            url: 'refund_amount_in_wallet',
+            data: {
+              trip_id: trip_id,
+              amount: wallet_amount
+            },
+            dataType: "json",
+            type: 'post',
+            success: function(res){
+              if(res.success){
+                location.reload()
+              }
+            }
+          });
+        })       
+
+
+
+       if(trip_id_array.length >0)
+       {
+          clearInterval(interval);
+          interval = setInterval(function () {
+            $.ajax({
+                type: 'POST',
+                url: '/requsest_status_ajax',
+                data: {'trip_id_array':trip_id_array},
+                dataType: "json",
+                success: function (res) {
+                  res.forEach(function(trip_data){
+
+                    $('#provider'+trip_data.trip_detail._id).html(trip_data.provider);
+                    $('#pr_name'+trip_data.trip_detail._id).html(trip_data.provider);
+
+                    if(trip_data.trip_detail.is_trip_cancelled == 1)
+                    {
+                      if(trip_data.trip_detail.is_trip_cancelled_by_provider == 1)
+                      {
+                        $('#'+trip_data.trip_detail._id).html('<span class="label label-danger"><%= __('title_total_cancelled_by_provider') %></span>');
+                      }
+                      else if(trip_data.trip_detail.is_trip_cancelled_by_user == 1)
+                      {
+                          $('#'+trip_data.trip_detail._id).html('<span class="label label-danger"><%= __('title_total_cancelled_by_user') %></span>');
+                      }
+                      else
+                      {
+                          $('#'+trip_data.trip_detail._id).html('<span class="label label-danger"><%= __('title_total_cancelled') %></span>');
+                      }
+                    }
+                    else
+                    {
+                      if(trip_data.trip_detail.is_provider_status == 2)
+                      {
+                          $('#'+trip_data.trip_detail._id).html('<span class="label label-warning"><%= __('title_trip_status_coming') %></span>');
+                      }
+                      else if(trip_data.trip_detail.is_provider_status == 4)
+                      {
+                          $('#'+trip_data.trip_detail._id).html('<span class="label label-info"><%= __('title_trip_status_arrived') %></span>');
+                      }
+                      else if(trip_data.trip_detail.is_provider_status == 6)
+                      {
+                          $('#'+trip_data.trip_detail._id).html('<span class="label label-info"><%= __('title_trip_status_trip_started') %></span>');
+                      }
+                      else if(trip_data.trip_detail.is_provider_status == 7)
+                      {
+                          $('#'+trip_data.trip_detail._id).html('<span class="label label-info"><%= __('title_trip_status_arrived_at_destination') %></span>');
+                      }
+                      else if(trip_data.trip_detail.is_provider_status == 9)
+                      {
+                          $('#'+trip_data.trip_detail._id).html('<span class="label label-success"><%= __('title_trip_status_completed') %></span>');
+                          $('#amount'+trip_data.trip_detail._id).html(trip_data.trip_detail.total);
+                          if(trip_data.trip_detail.payment_status == 0)
+                          {
+                              $('#payment_status'+trip_data.trip_detail._id).html('<span class="label label-warning"><%= __('title_pending') %></span>');
+                          }
+                          else
+                          {
+                            if(trip_data.trip_detail.payment_status == 1)
+                            {
+                                $('#payment_status'+trip_data.trip_detail._id).html('<span class="label label-success"><%= __('title_paid') %></span>');
+                            }
+                            else
+                            {
+                                $('#payment_status'+trip_data.trip_detail._id).html('<span class="label label-danger"><%= __('title_not_paid') %></span>');
+                            }
+                          }
+                          
+                      }
+                      else if(trip_data.trip_detail.is_provider_status == 1 || trip_data.trip_detail.is_provider_status == 0)
+                      {
+                          if(trip_data.trip_detail.is_provider_accepted == 1)
+                          {
+                            $('#'+trip_data.trip_detail._id).html('<span class="label label-info"><%= __('title_accepted_request') %></span>');
+                          } 
+                          else
+                          {
+                            if(trip_data.trip_detail.assigned_provider_id){
+                              $('#'+trip_data.trip_detail._id).html('<span class="label label-info"><%= __('title_trip_status_waiting_to_start_journey') %></span>');
+                            }else{
+                              $('#'+trip_data.trip_detail._id).html('<span class="label label-info"><%= __('title_trip_status_waiting') %></span>');
+                            }
+                          }
+                      }
+                    }
+                  })
+                }
+            });
+          },10000);
+       }
+   
+ });
+
+  function openChatModal(id){
+    $("#chatModal"+id).modal('show');
+    $('#chat_icon'+id).removeClass('blink');
+    let trip_id = id;
+    if(database){
+      var getvalue = database.ref(trip_id);
+      getvalue.once('value')
+        .then(function(dataSnapshot) {
+          document.getElementById("cover-spin").style.display = "none";
+          if (dataSnapshot.val() == null) {
+            date_array = [];
+            $("#chatModal"+id).modal('show');
+          } else {
+            date_array = [];
+            var keys = Object.keys(dataSnapshot.val());
+            keys.forEach((k) => {
+              let messageRef = getvalue.child(k);
+              let messageData = dataSnapshot.child(k).val();
+              if (messageData.type != sender_type && messageData.is_admin_read == false) {
+                messageRef.update({
+                  "is_admin_read": true
+                });
+              }
+            });
+          }
+        })
+        .catch(function(error) {
+          console.error("Error reading data:", error);
+        });
+    }
+  };
+
+
+ function show_plate_details(id) {
+    $.ajax({
+      type: 'POST', // define the type of HTTP verb we want to use (POST for our form)
+      url: '/admin_get_provider_documents', /// the url where we want to POST
+      data: {
+        trip_id: id,
+        type: '<%= DOCUMENT_FOR.VEHICLE_PLATE %>'
+      },
+      datatype: "json",
+      success: function(response) {
+        if (response.success) {
+          const docs = response.doc || [];
+          const docs2 = response.doc2 || [];
+
+          $('#provider_plate_image_div').empty();
+        if (docs.length > 0) {
+          docs.forEach(doc => {
+            if (doc.document_picture) {
+              const fileUrl = '<%= setting_detail.image_base_url %>' + doc.document_picture;
+              const block = createFileBlock(fileUrl);
+              $('#provider_plate_image_div').append(block);
+            }
+          });
+          $('#provider_vehicle_plate').text(response.trip.assigned_vehicle_details?.vehicle_plate_no || "");
+          $('#provider_plate_image_div').show();
+          $('.provider_vehicle_plate_data').show();
+        } else {
+          $('#provider_vehicle_plate').text("");
+          $('#provider_plate_image_div').hide();
+          $('.provider_vehicle_plate_data').hide();
+        }
+
+        $('#provider_plate_image_div_2').empty();
+        if (docs2.length > 0) {
+          docs2.forEach(doc => {
+            if (doc.document_picture) {
+              const fileUrl = '<%= setting_detail.image_base_url %>' + doc.document_picture;
+              const block = createFileBlock(fileUrl);
+              $('#provider_plate_image_div_2').append(block);
+            }
+          });
+          $('#provider_vehicle_plate_2').text(response.trip.assigned_vehicle_details_2?.vehicle_plate_no || "");
+          $('#provider_plate_image_div_2').show();
+          $('.provider_vehicle_plate_data_2').show();
+        } else {
+          $('#provider_vehicle_plate_2').text("");
+          $('#provider_plate_image_div_2').hide();
+          $('.provider_vehicle_plate_data_2').hide();
+        }
+
+
+          $("#show_plate_modal").modal('show');
+        }
+      }
+    });
+  }
+
+  function createFileBlock(fileUrl) {
+  const isPDF = fileUrl.toLowerCase().endsWith('.pdf');
+  const encodedURL = encodeURIComponent(fileUrl);
+
+  if (isPDF) {
+    return `
+      <div class="plate-img-container">
+        <div class="doc-content">
+          <iframe src="https://docs.google.com/viewer?url=${encodedURL}&embedded=true" width="100%" height="500px" style="border: none;"></iframe>
+        </div>
+        <div class="download-wrapper">
+          <a href="${fileUrl}" download>
+            <i class="fa fa-download icon_class"></i>
+          </a>
+        </div>
+      </div>
+    `;
+  } else {
+
+    return `
+      <div class="plate-img-container" style="margin-bottom: 10px;">
+        <img src="${fileUrl}" class="img-thumbnail" style="max-width: 328px;" />
+        <div class="download-wrapper">
+          <a href="${fileUrl}" download>
+            <i class="fa fa-download icon_class" style="font-size: 25px;"></i>
+          </a>
+        </div>
+      </div>
+    `;
+  }
+}
+
+
+ function show_provider_cedula(id, phone, email) {
+    $.ajax({
+      type: 'POST', // define the type of HTTP verb we want to use (POST for our form)
+      url: '/admin_get_provider_documents', /// the url where we want to POST
+      data: {
+        trip_id: id,
+        type: '<%= DOCUMENT_FOR.PROVIDER_CEDULA %>'
+      }, // our data object
+      datatype: "json",
+      success: function(response) {
+        let cedula = ""
+        let image = ''
+        if (response.success) {
+          let docs = response.doc
+          cedula = docs[0]?.unique_code
+          image = docs[0]?.document_picture != "" ? '<%= setting_detail.image_base_url %>' + docs[0].document_picture : '' 
+        }
+        $("#provider_cedula").text(cedula);
+        $("#provider_phone").text(phone);
+        $("#provider_email").text(email);
+        if(image == ''){
+          $('#provider_cedula_image').attr('src', "");
+          $('#provider_cedula_image_a').attr('href', "");
+          $('#download_cedula_form').attr('action', "");
+          $('#provider_cedula_image').hide();
+          $('#provider_cedula_image_div').hide();
+
+        }else{
+          $('#provider_cedula_image').attr('src', image);
+          $('#provider_cedula_image_a').attr('href', image);
+          $('#download_cedula_form').attr('action', image);
+          $('#provider_cedula_image').show();
+          $('#provider_cedula_image_div').show();
+        }
+        if(response.partner){
+          const partner = response.partner
+          $("#provider_partner_name").text(partner.first_name + partner.last_name)
+          $("#provider_partner_company_name").text(partner.partner_company_name)
+          $("#provider_partner_phone").text(partner.phone)
+          $("#provider_partner_email").text(partner.email)
+        }
+        $("#show_cedula_modal").modal('show');
+      }
+    });
+  }
+  function deletePod(id, image){
+    if (!window.confirm("<%= __('confirm_delete_pod')%>")) {
+        return false;
+      }
+      $.ajax({
+      type: 'POST',
+      url: '/admin_delete_pod',
+      data: {
+        trip_id: id,
+        image: image
+      },
+      datatype: "json",
+      success: function(res) {
+        if(res.success){
+          const elementId = '#pod_img' + sanitizeString(image);
+          $(elementId).remove();
+        }
+      }
+    })
+  }
+
+  function sanitizeString(str) {
+    return str.replace(/[\/:.]/g, '_'); // Replace slashes, colons, and periods with underscores
+  }
+
+ function show_truck_front_lateral_images(id) {
+    $.ajax({
+      type: 'POST', // define the type of HTTP verb we want to use (POST for our form)
+      url: '/admin_get_provider_documents', /// the url where we want to POST
+      data: {
+        trip_id: id,
+        type: '<%= DOCUMENT_FOR.VEHICLE_FRONT_IMAGE %>'
+      },
+      datatype: "json",
+      success: function(response) {
+        let image = ''
+        let image2 = ''
+        if (response.success) {
+          const docs = response?.doc || [];
+          const docs2 = response?.doc2 || [];
+
+          image = docs[0]?.document_picture != "" ? '<%= setting_detail.image_base_url %>' + docs[0]?.document_picture : '' 
+          image2 = docs2[0] ? docs2[0]?.document_picture != "" ? '<%= setting_detail.image_base_url %>' + docs2[0]?.document_picture : '' : ''
+        }
+        if(image == ''){
+          $('#truck_front_image').attr('src', "");
+          $('#truck_front_image_a').attr('href', "");
+          $('#truck_front_image').hide();
+          $('#truck_front_image_a').hide();
+          $('#truck_front_image_div').hide();
+          $('.truck_lateral_data_2').hide();
+        }else{
+          $('#truck_front_image').attr('src', image);
+          $('#truck_front_image_a').attr('href', image);
+          $('#truck_front_image').show();
+          $('#truck_front_image_a').show();
+          $('#truck_front_image_div').show();
+          $('.truck_lateral_data_2').show();
+        }
+
+        if(image2 == ''){
+          $('#truck_lateral_image_2').attr('src', "");
+          $('#truck_lateral_image_a_2').attr('href', "");
+          $('#truck_lateral_image_2').hide();
+          $('#truck_lateral_image_a_2').hide();
+          $('#truck_lateral_image_div_2').hide();
+          $('.truck_lateral_data_2').hide();
+        }else{
+          $('#truck_lateral_image_2').attr('src', image2);
+          $('#truck_lateral_image_a_2').attr('href', image2);
+          $('#truck_lateral_image_2').show();
+          $('#truck_lateral_image_a_2').show();
+          $('#truck_lateral_image_div_2').show();
+        }
+
+        $("#show_truck_front_lateral_modal").modal('show');
+      }
+    });
+  }
+
+
+  function refund_payment_button_click(trip_id, payment_mode){
+    $("#trip_id").val(trip_id);
+    $('#payment_type').find('option').remove();
+    $('#payment_type').append('<option value="wallet"><%= __("title_wallet") %></option>');
+    if(payment_mode != 1){
+      $('#payment_type').append('<option value="card"><%= __("title_card") %></option>');
+    }
+    $('#payment_type').selectpicker('refresh');
+    $("#refund_payment").modal('show');
+  }
+  
+  function completetrip(tripid, provider_id, is_tip){
+    $.ajax({
+      type: 'POST',
+      url: '/completetrip',
+      data: {trip_id: tripid, provider_id: provider_id, toll_amount: 0, bearing: 0},
+      dataType: "json",
+      success: function (res) {
+        
+        emit_data(tripid)
+        if(res.success && is_tip == 'false'){
+          $.ajax({
+            type: 'POST',
+            url: '/pay_payment',
+            data: {trip_id: tripid, tip_amount: 0, payment_id: '', provider_id: provider_id},
+            dataType: "json",
+            success: function (res) {
+              emit_data(tripid)
+              location.reload()
+            }
+          });
+        } else {
+          location.reload()
+        }
+      }
+    });
+  }
+
+  function cancel_by_admin(tripid){
+    $.ajax({
+      type: 'POST',
+      url: '/tripcancelbyadmin',
+      data: {trip_id: tripid},
+      dataType: "json",
+      success: function (res) {
+        emit_data(tripid)
+        location.reload()
+      }
+    });
+  }
+
+  function change_trip_paid_status(trip_id, paid_field, paid_status){
+    if (!window.confirm("<%= __('confirm_change_paid_status')%>")) {
+      return false;
+    }
+    $.ajax({
+      type: 'POST',
+      url: '/change_trip_paid_status_corporate_partner',
+      data: {
+        trip_id: trip_id,
+        paid_type: paid_field,
+        is_paid: paid_status,},
+      dataType: "json",
+      success: function (res) {
+        location.reload()
+      }
+    });
+  }
+
+  function change_preliquidation(trip_id, preliquidation_status){
+    if (!window.confirm("<%= __('confirm_change_paid_status')%>")) {
+      return false;
+    }
+    $.ajax({
+      type: 'POST',
+      url: '/admin_change_preqliuidation',
+      data: {
+        trip_id: trip_id,
+        preliquidation_status: preliquidation_status
+      },
+      dataType: "json",
+      success: function (res) {
+        location.reload()
+      }
+    });
+  }
+  function unassign_trip(id) {
+    if (!window.confirm("<%= __('confirm_unassign_trip_message')%>")) {
+      return false;
+    }
+    $("#unassignReasonForm").trigger("reset");
+    $('#unassign_trip_id').val(id); 
+    $('#unassignReasonModal').modal('show');
+  }
+
+  $("#unassignReasonForm").validate({
+    rules: {
+      unassign_reason: "required",
+    }
+  });
+
+  var $form = $('#unassignReasonForm');
+  $form.submit(function(event) {
+    event.preventDefault();
+    let reason = $('#unassign_reason').val()
+
+    if(reason != ""){
+      let id = $('#unassign_trip_id').val()
+      $('#unassignReasonForm input[type="submit"]').attr('disabled','disabled');         
+      $.ajax({
+        type: 'POST',
+        url: '/unassign_trip_to_partner',
+        data: $('#unassignReasonForm').serialize(),
+        dataType: "json",
+        success: function(res) {
+          if (res.success) {  
+            $('#unassignReasonModal').modal('hide');
+            $('#request_error').show();   
+            $('#request_message').text(res.message);
+            setTimeout(function() {
+              location.reload()
+            }, 3000);
+          }
+        }
+      });
+    }
+  });
+
+  function complete_card_trip_by_admin(tripid){
+    if (!window.confirm("<%= __('confirm_complete_trip_message')%>")) {
+      return false;
+    }
+    $.ajax({
+      type: 'POST',
+      url: '/complete_card_payment_trip',
+      data: {trip_id: tripid},
+      dataType: "json",
+      success: function (res) {
+        emit_data(tripid)
+        location.reload()
+      }
+    });
+  }
+
+  function reset_trip_status(trip_id){
+    if (!window.confirm("<%= __('confirm_reset_trip_status')%>")) {
+      return false;
+    }
+    $.ajax({
+      type: 'POST',
+      url: '/admin_reset_trip_status',
+      data: {
+        trip_id: trip_id,
+      },
+      dataType: "json",
+      success: function (res) {
+        location.reload()
+      }
+    });
+  }
+
+
+  var Url = window.location.protocol + '//'+ window.location.hostname;
+  var socket = io.connect(Url);
+
+
+  socket.on('connect',function() {
+  });
+
+  function emit_data(tripid){
+    socket.emit('trip_detail_notify', {trip_id: tripid})
+  }
+
+  socket.on('disconnect',function() {
+  });
+
+  $("#show_pod_images_modal").on("hidden.bs.modal", function(){
+    $(".pod_images").html("");
+  });
+
+  function export_excel(){
+    if ($('#start_date').val().trim() == '' && $('#end_date').val().trim() == '') {
+      $('#error-message').text("<%= __('error_message_please_select_dates') %>");
+      $('#error-message').show();          
+      setTimeout(() => {
+        $('#error-message').hide();
+      }, 4000);
+        return;
+    } 
+    document.getElementById("cover-spin").style.display = "block";
+    $.ajax({
+      type: 'POST',
+      url: '/genetare_request_excel',
+      data: $('.form-horizontal').serialize(),
+      dataType: "json",
+      success: function (res) {
+        document.getElementById("cover-spin").style.display = "none";
+        if(res.success == false){
+          if(res.message){
+            $('#error-message').text(res.message);
+          }else{
+            $('#error-message').text("<%= __('error_message_no_records_found') %>");
+          }
+          $('#error-message').show();          
+          setTimeout(() => {
+            $('#error-message').hide();
+          }, 4000);
+          return;
+        }
+        window.open(res)
+      }
+    });
+  }
+
+  function get_chats() {
+    <% detail.forEach(function(data){ %>
+      var date_array = [];
+      var trip_id = '<%=data._id%>';
+      var getvalue = database.ref(trip_id);
+      getvalue.on('value', (data) => {
+        document.getElementById("cover-spin").style.display = "none";
+        if (data.val() == null) {
+          date_array = [];
+        } else {
+          date_array = [];
+          var keys = Object.keys(data.val());
+          keys.forEach((k) => {
+            var date = new Date(data.child(k).val().message_time);
+            var date1 = (date.getMonth() + 1) + '/' + date.getDate() + '/' + date.getFullYear();
+            var date2 = new Date(date1);
+            date2 = date2.setHours(0, 0, 0, 0);
+            date2 = new Date(date2);
+            let index = date_array.findIndex((date) => date.date == date1);
+            if (index == -1) {
+              date_array.push({
+                date: date1,
+                message_date: date2,
+                messages: [data.child(k).val()]
+              });
+            } else {
+              date_array[index].messages.push(data.child(k).val())
+            }
+          });
+          
+          $('#messages_list<%=data._id%>').empty();
+          date_array.forEach(function (data) {
+            data.messages.forEach(function (messages) {
+              let name = "";
+              let userColor = "#C60073;";
+              switch (messages.type) {
+                case Number("<%= constant_json.ADMIN_UNIQUE_NUMBER %> ") :
+                  name = "<%= __('title_flety') %>";
+                  userColor = "#00BFB3;"
+                  break;
+                case Number("<%= constant_json.PARTNER_UNIQUE_NUMBER %> ") :
+                  name = "<%= __('title_partne_user') %>";
+                  userColor = "#ffd141;"
+                  break;
+                case Number("<%= constant_json.CORPORATE_UNIQUE_NUMBER %> ") :
+                  name = "<%= __('title_user_corporate') %>";
+                  userColor = "#250E62;"
+                  break;
+                case Number("<%= constant_json.USER_UNIQUE_NUMBER %> ") :
+                  name ="<%= __('title_user_corporate') %>";
+                  userColor = "#C60073;"
+                  break;
+                case Number("<%= constant_json.PROVIDER_UNIQUE_NUMBER %> ") :
+                  name = "<%= __('title_provider') %>";
+                  userColor = "#6DBE4E;"
+                  break;
+              }
+              let image_base_url = "<%= setting_detail.image_base_url %>"
+              let message = '<span class="message-text">' + messages.message + '</span><span class="message-time">' + moment(messages.time).format("DD-MM-YYYY,HH:mm") + '</span>'
+              if(messages.is_image && messages.is_image == 1){
+                message = '<img class="chat-image" src=' +
+                image_base_url +
+                messages.message +
+                '> <span class="message-time">' + moment(messages.time).format("DD-MM-YYYY,HH:mm") + '</span><a href='+image_base_url +
+                messages.message +'> <i class="fa fa-download icon_class"></i></a>'
+              }
+
+              if (messages.type == '<%= constant_json.ADMIN_UNIQUE_NUMBER %>') {
+                $('#messages_list<%=data._id%>').append(
+                  '<div class="main-user-chat">' +
+                    '<div class="chat-message">' +
+                      '<div class="chat-content">' 
+                        + message +
+                      '</div>' +
+                    '</div>' +
+                  '</div>'
+                );
+              } else {
+                if ($('#chatModal<%=data._id%>').hasClass('in')) {
+                  let getvalue = database.ref('<%=data._id%>');
+                  getvalue.once('value')
+                    .then(function(dataSnapshot) {
+                      document.getElementById("cover-spin").style.display = "none";
+                      if (dataSnapshot.val() == null) {
+                        date_array = [];
+                        $("#chatModal<%=data._id%>").modal('show');
+                      } else {
+                        date_array = [];
+                        var keys = Object.keys(dataSnapshot.val());
+                        keys.forEach((k) => {
+                          let messageRef = getvalue.child(k);
+                          let messageData = dataSnapshot.child(k).val();
+                          if (messageData.type != sender_type && messageData.is_admin_read == false) {
+                            messageRef.update({
+                              "is_admin_read": true
+                            });
+                          }
+                        });
+                      }
+                    })
+                    .catch(function(error) {
+                      console.error("Error reading data:", error);
+                    });
+                } else if(messages.type != sender_type && messages.is_admin_read == false){
+                  $('#chat_icon<%=data._id%>').addClass('blink');
+                }
+
+                $('#messages_list<%=data._id%>').append(
+                  '<div class="other-user-chat">' +
+                    '<div class="chat-message">' +
+                  '  <div class="chat-avatar">' +
+                  '    <img src="default.png" alt="User Avatar">' +
+                  '    <span class="message-name" style="color: '+userColor +'">'+ name +'</span>' +
+                  '  </div>' +
+                  '  <div class="chat-content">' +
+                  '    <div class="message-details">' 
+                          + message +
+                  '    </div>' +
+                  '  </div>' +
+                  ' </div>' +
+                  '</div>'
+                );
+              }
+            })
+          })
+          function doSomething() {
+            var messagesList = $("#messages_list_2<%=data._id%>");
+            $('#messages_list_2<%=data._id%>').scrollTop(messagesList[0].scrollHeight);
+          }
+          setTimeout(doSomething, 1000);
+        }
+      });
+      <% }); %>
+
+    }
+
+  function copy_content(trip_id) {
+    const Url = window.location.protocol + '//'+ window.location.hostname + '/userTrackTrip?id=' + trip_id;
+    // const Url = 'http://localhost:5000/' + 'userTrackTrip?id=' + trip_id;
+
+    navigator.clipboard.writeText(Url)
+        .then(function() {
+          var tooltip = $("#tooltip_copy"+trip_id);
+          tooltip.addClass("show-tooltip");
+          setTimeout(function() {
+            tooltip.removeClass("show-tooltip");
+          }, 2000); 
+        })
+        .catch(function(error) {
+          console.error("Error copying the URL: " + error);
+        });
+  }
+  function upload_chat_images(trip_id){
+      const imageInput = $('#imageInput' + trip_id)[0]; 
+      const images = imageInput.files;
+      const formData = new FormData();
+      
+      for (var i = 0; i < images.length; i++) {
+        formData.append('images[]', images[i]);
+      }        
+      formData.append('trip_id', trip_id);
+      formData.append('user_type', Number('<%= constant_json.ADMIN_UNIQUE_NUMBER %>'));
+       
+      $.ajax({
+          type : 'POST', 
+          url : '/upload_chat_images', 
+          data : formData, 
+          contentType: false,
+          processData: false,
+          success:function(res){
+            if(res.success){
+              const time = new Date().toISOString()
+              const images_s3_url = res.image_url
+              const ref = database.ref(trip_id);
+              const image_base_url = "<%= setting_detail.image_base_url %>"
+
+              for (let i = 0; i < images.length; i++) {
+                const key = ref.push().key;
+                ref.child(key).set({
+                  "id":key,
+                  "message": images_s3_url[i],
+                  "time":new Date().toISOString(),
+                  "type": Number('<%= constant_json.ADMIN_UNIQUE_NUMBER %>'),
+                  "is_user_read": false,
+                  "is_provider_read": false,
+                  "is_corporate_read": false,
+                  "is_partner_read": false,
+                  "is_image": 1
+                }, function(error) {
+                  if (error) {
+                    return false;
+                  } else {
+                    $.ajax({
+                      url: 'chat_push_notification',
+                      data: {
+                        trip_id,
+                        web: Number("<%= constant_json.ADMIN_UNIQUE_NUMBER %> ")
+                      },
+                      dataType: "json",
+                      type: 'post',
+                      success: function(res){}
+                    });
+                    return true;
+                  }
+                });
+              }
+              let selectedImagesContainer = $("#selectedImagesContainer" + trip_id);
+              imageInput.value = "";
+              $("#deleteImages" + trip_id).hide()
+              selectedImagesContainer.empty();
+              selectedImagesContainer.hide();
+              const messageInput = $("#messageInput" + trip_id);
+              messageInput.show()
+            }
+          }
+      });
+    }
+
+    let trips_data = <%- JSON.stringify(detail) %>;
+  let filteredTrips = trips_data.map(doc => {
+    return {
+      _id: doc._id,
+      corporate_notes: doc.corporate_notes
+    };
+  });
+
+  var $form = $('#add_note_form');
+  $form.submit(function(event) {
+    event.preventDefault();
+    const note = $('#note').val()
+    const id = $('#note_trip_id').val()
+    $.ajax({
+      type: 'POST',
+      url: '/admin_add_note',
+      data: $('#add_note_form').serialize(),
+      dataType: "json",
+      success: function(res) {
+        if (res.success) {  
+          let count = $('#notes_list').children('.row').length;
+          if(count == 0){
+            $("#notes_list").append('<hr>');
+          }
+
+          $('#notes_list').append(
+            '<div class="row note"><div class="col-md-12"><div class="card mb-3">' +
+          '<div class="card-body">' +
+            '<input type="hidden" name="delete_note_trip_id" id="delete_note_trip_id" value='+id+' />' +
+            '<input type="hidden" name="note_index" id="note_index" value='+count+' />' +
+            '<h5 class="card-title"><%= __('title_note') %>' +' '+ Number(count + 1) +'</h5>'  +
+              '<span class="delete_note_btn" onclick="deleteNote(this)"><i class="fa fa-close"></i></span>' +
+            '</div></div></div>'  +
+          '<p style="margin-bottom: 2rem;"><span class="dynamic-text">'+ note+' </span></p>'
+          )
+          addNoteInList(id, note)
+          $("#add_note_form").trigger("reset"); 
+        }
+      }
+    });
+  });
+
+  function open_corporate_notes_modal(trip_id, notes_list) {
+    const trip = filteredTrips.find(function(data) {
+      return data._id === trip_id;
+    });
+
+    notes_list = trip?.corporate_notes || [];
+
+    $("#note_trip_id").val(trip_id);
+    $("#show_notes_modal").modal("show");
+    $("#notes_list").empty();
+    if(notes_list?.length){
+      $("#notes_list").append('<hr>');
+    }
+    notes_list.forEach((note, index) =>{
+      $('#notes_list').append(
+        '<div class="row note"><div class="col-md-12"><div class="card mb-3">' +
+          '<div class="card-body">' +
+            '<input type="hidden" name="delete_note_trip_id" id="delete_note_trip_id" value='+trip_id+' />' +
+            '<input type="hidden" name="note_index" id="note_index" value='+index+' />' +
+            '<h5 class="card-title"><%= __('title_note') %>' +' '+ Number(index + 1) +'</h5>' +
+            '<span class="delete_note_btn" onclick="deleteNote(this)"><i class="fa fa-close"></i></span>' +
+          '</div></div></div>'  +
+          '<p style="margin-bottom: 2rem;"><span class="dynamic-text">'+ note+' </span></p>'
+      )
+    })
+  }
+  function deleteNote(element) {
+    const noteElement = element.closest('.note');
+    const tripId = noteElement.querySelector('#delete_note_trip_id').value;
+    const noteIndex = noteElement.querySelector('#note_index').value;
+    $.ajax({
+      type: 'POST',
+      url: '/admin_delete_note',
+      data: {tripId: tripId, noteIndex: noteIndex },
+      dataType: "json",
+      success: function(res) {
+        document.getElementById("cover-spin").style.display = "block";
+        if(res.success){
+          removeNoteInList(tripId, noteIndex)
+          noteElement.remove();
+          document.getElementById("cover-spin").style.display = "none";
+        }else{
+          setTimeout(() => {
+            document.getElementById("cover-spin").style.display = "none";
+          }, 2000);
+        }
+      }
+    });
+  }
+
+  function addNoteInList(tripId, note) {
+    let i = filteredTrips.findIndex(e => e._id.toString() === tripId.toString());
+    let docToModify = filteredTrips[i]
+    if (docToModify) {
+      docToModify.corporate_notes = docToModify.corporate_notes ?? [];
+      docToModify.corporate_notes.push(note);
+    }    
+    filteredTrips[i] = docToModify
+  }
+  function removeNoteInList(tripId, noteIndex) {
+    $("#notes_list").empty();
+    
+    let i = filteredTrips.findIndex(e => e._id.toString() === tripId.toString());
+    let docToModify = filteredTrips[i]
+    if (docToModify) {
+      docToModify.corporate_notes.splice(noteIndex, 1);
+    }    
+    filteredTrips[i] = docToModify
+    
+    if(docToModify?.corporate_notes?.length){
+      $("#notes_list").append('<hr>');
+    }
+    docToModify.corporate_notes.forEach((note, index) =>{
+      $('#notes_list').append(
+        '<div class="row note"><div class="col-md-12"><div class="card mb-3">' +
+          '<div class="card-body">' +
+            '<input type="hidden" name="delete_note_trip_id" id="delete_note_trip_id" value='+tripId+' />' +
+            '<input type="hidden" name="note_index" id="note_index" value='+index+' />' +
+            '<h5 class="card-title"><%= __('title_note') %>' +' '+ Number(index + 1) +'</h5>' +
+            '<span class="delete_note_btn" onclick="deleteNote(this)"><i class="fa fa-close"></i></span>' +
+          '</div></div></div>'  +
+          '<p style="margin-bottom: 2rem;"><span class="dynamic-text">'+ note+' </span></p>'
+      )
+    })
+
+  }
+
+
+
+</script>  
+<% include footer_list.html %>

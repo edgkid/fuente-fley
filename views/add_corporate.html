@@ -1,0 +1,307 @@
+<% include header.html %>
+<!-- PAGE TITLE -->
+<div class="page-title">
+	<% if(typeof data != 'undefined'){ %>
+		<h2><span class="fa fa-cogs"></span> <%= __('title_edit_corporate') %></h2>
+	<% } else { %>
+		<h2><span class="fa fa-cogs"></span> <%= __('title_add_corporate') %></h2>
+	<% } %>
+</div>
+<!-- END PAGE TITLE -->
+<div class="alert alert-success text-center" role="alert" id="promo_error" style="display:none">
+    <button type="button" id="close" class="close" data-dismiss="alert"><span aria-hidden="true">&times;</span><span class="sr-only"><%= __('button_close') %></span></button>
+    <p align="center"> <strong  id="message"></strong></p>
+  </div>
+
+
+<!-- PAGE CONTENT WRAPPER -->
+<div class="page-content-wrap">
+	<div class="row">
+	<div class="col-md-6 col-xs-12">
+		
+		<!-- for edit corporate form -->
+		<% if(typeof data != 'undefined'){ %>
+
+		<form class="form-horizontal" >
+				<div class="panel panel-default">
+					<div class="panel-body form-group-separated">
+						<div class="form-group">
+							<div class="form-group">
+							<input type="hidden"  class="form-control" name="id" value="<%= id %>" />
+							<label class="col-md-3 col-xs-5 control-label"><%= __('title_name') %></label>
+							<div class="col-md-9 col-xs-7">
+								<input type="text"  class="form-control" id="name" value="<%= data.name %>"  name="name"/>
+							</div>
+						</div>
+						<div class="form-group">
+							<label class="col-md-3 col-xs-5 control-label"><%= __('title_email') %></label>
+							<div class="col-md-9 col-xs-7">
+                                 <input type="text"  class="form-control" id="email" value="<%= data.email %>"  name="email" />								
+							</div>
+						</div>
+
+						<div class="form-group">
+							<label class="col-md-3 col-xs-5 control-label"><%= __('button_password') %></label>
+							<div class="col-md-9 col-xs-7">
+								<input type="password"  class="form-control" id="password"  name="password" />
+							</div>
+						</div>
+
+						<div class="form-group">
+					       <label class="col-md-3 col-xs-5 control-label"><%= __('title_country') %></label>
+					       <div class="col-md-9 col-xs-7">
+					         <input type="text"   class="form-control" id="countryname" value="<%= countryname %>"  name="countryname" readonly/>
+					       </div>
+					    </div>
+
+                        <div class="form-group">
+							<label class="col-md-3 col-xs-5 control-label"><%= __('title_phone') %></label>
+							<div class="col-md-9 col-xs-7">
+							  <input type="text" onkeypress="return isNumberKey(event);" id="phone"  class="form-control" value="<%= data.phone %>"  name="phone" minlength="<%= setting_detail.minimum_phone_number_length%>" maxlength="<%= setting_detail.maximum_phone_number_length%>" />
+							</div>
+						 </div>
+ 
+							
+						<div class="form-group">
+							<label class="col-md-3 control-label"><%= __('title_use_corporate_pricing') %></label>
+							<div class="col-md-9 ">
+							  <label class="switch">
+								<% if( data.is_own_service_type == false ) { %>
+								<input type="checkbox" class="switch" value="1" name="is_own_service_type" unchecked />
+								<% } else{ %>
+								<input type="checkbox" class="switch" value="1" name="is_own_service_type" checked />
+								<% } %>
+								<span></span>
+							  </label>
+							</div>
+						</div>
+
+						<div class="form-group">
+							<label class="col-md-3 control-label"><%= __('title_use_fixed_partner_profit') %></label>
+							<div class="col-md-9 ">
+							  <label class="switch">
+								<% if( data.is_use_fixed_partner_profit == false ) { %>
+								<input type="checkbox" class="switch" value="1" name="is_use_fixed_partner_profit" unchecked />
+								<% } else{ %>
+								<input type="checkbox" class="switch" value="1" name="is_use_fixed_partner_profit" checked />
+								<% } %>
+								<span></span>
+							  </label>
+							</div>
+						</div>
+
+
+						<div class="form-group">
+							<label class="col-md-3 control-label"><%= __('title_preliquidation') %></label>
+							<div class="col-md-9 ">
+							  <label class="switch">
+								<% if( data.preliquidation == false ) { %>
+								<input type="checkbox" class="switch" value="1" name="preliquidation" unchecked />
+								<% } else{ %>
+								<input type="checkbox" class="switch" value="1" name="preliquidation" checked />
+								<% } %>
+								<span></span>
+							  </label>
+							</div>
+						</div>
+						<% if(role != undefined && isMasterCorp) { %>
+
+						<div class="form-group">
+							<label class="col-md-3 control-label"><%= __('title_activate_api') %></label>
+							<div class="col-md-9 ">
+							  <label class="switch">
+								<% if( data?.active_api != undefined && data?.active_api) { %>
+									<input type="checkbox" class="switch" value="<%= data.active_api ? 1 : 0 %>" id="active_api" name="active_api" <%= data.active_api ? "checked" : "" %> />
+								<% } else{ %>
+									<input type="checkbox" class="switch" value="1" id="active_api" name="active_api" />
+								<% } %>
+								<span></span>
+							  </label>
+							</div>
+						</div>
+
+						<% } %>
+
+						<div class="form-group">
+							<label class="col-md-3 control-label"><%= __('title_allow_edit_trip') %></label>
+							<div class="col-md-9 ">
+								<label class="switch">
+								<% if( data?.allow_edit_trip != undefined && data?.allow_edit_trip) { %>
+									<input type="checkbox" class="switch" value="<%= data.allow_edit_trip ? 1 : 0 %>" id="allow_edit_trip" name="allow_edit_trip" <%= data.allow_edit_trip ? "checked" : "" %> />
+								<% } else{ %>
+									<input type="checkbox" class="switch" value="1" id="allow_edit_trip" name="allow_edit_trip" />
+								<% } %>
+								<span></span>
+								</label>
+							</div>
+						</div>
+	
+					    <div class="form-group">
+							<div class="col-md-12 col-xs-12">
+								<button class="btn btn-primary btn-rounded pull-right" id="submit" type="submit" name="submit" value="submit"><%= __('button_submit') %></button>
+							</div>
+						</div>
+					</div>
+		</form>
+
+	<!-- for add corporate form -->
+	<% } else { %>
+		<form class="form-horizontal" >
+				<div class="panel panel-default">
+					<div class="panel-body form-group-separated">
+						<div class="form-group">
+							<div class="form-group">
+							<input type="hidden"  class="form-control" name="id"/>
+							<label class="col-md-3 col-xs-5 control-label"><%= __('title_first_name') %></label>
+							<div class="col-md-9 col-xs-7">
+								<input type="text"  class="form-control" id="first_name"  name="first_name"/>
+							</div>
+						</div>
+						<div class="form-group">
+							<label class="col-md-3 col-xs-5 control-label"><%= __('title_last_name') %></label>
+							<div class="col-md-9 col-xs-7">
+								<input type="text"  class="form-control" id="last_name"  name="last_name"/>
+							</div>
+						</div>
+						<div class="form-group">
+							<label class="col-md-3 col-xs-5 control-label"><%= __('title_email') %></label>
+							<div class="col-md-9 col-xs-7">
+								<input type="text"  class="form-control" id="email"  name="email" />
+							</div>
+						</div>
+
+						<div class="form-group">
+							<label class="col-md-3 col-xs-5 control-label"><%= __('button_password') %></label>
+							<div class="col-md-9 col-xs-7">
+								<input type="password"  class="form-control" id="password" required  name="password" />
+							</div>
+						</div>
+
+						<div class="form-group">
+							<label class="col-md-3 col-xs-5 control-label"><%= __('title_countyry_name') %></label>
+							<div class="col-md-9 col-xs-7">
+							<select class="form-control select" 
+							data-none-selected-text="<%= __('title_nothing_selected') %>" 
+							name="countryname" id="countryname"
+							 data-live-search="true">
+								   <% countries.forEach(function(country) {  %>
+									 <option 
+									   <%= `${data.country}` === `${country.countryname}` ? "selected" : "" %> 
+										   value="<%= country._id %>">
+											 <%= country.countryname %>
+									 </option>
+								   <%  }) %>
+							   </select>  
+         					</div>
+         				</div>
+
+						<div class="form-group">
+					       <label class="col-md-3 col-xs-5 control-label"><%= __('title_phone') %></label>
+					       <div class="col-md-9 col-xs-7">
+					         <input type="text" onkeypress="return isNumberKey(event);" id="phone" minlength="<%= setting_detail.minimum_phone_number_length%>" maxlength="<%= setting_detail.maximum_phone_number_length%>" class="form-control"  name="phone"/>
+					       </div>
+					    </div>
+						<div class="form-group">
+							<label class="col-md-3 control-label"><%= __('title_use_corporate_pricing') %></label>
+							<div class="col-md-9 ">
+							  <label class="switch">
+								<input type="checkbox" class="switch" value="1" id="is_own_service_type" name="is_own_service_type" checked />
+								<span></span>
+							  </label>
+							</div>
+						</div>
+						<div class="form-group">
+							<label class="col-md-3 control-label"><%= __('title_use_fixed_partner_profit') %></label>
+							<div class="col-md-9 ">
+							  <label class="switch">
+								<input type="checkbox" class="switch" value="1" id="is_use_fixed_partner_profit" name="is_use_fixed_partner_profit" checked />
+								<span></span>
+							  </label>
+							</div>
+						</div>
+
+						<% if(role != undefined && isMasterCorp) { %>
+
+						<div class="form-group">
+							<label class="col-md-3 control-label"><%= __('title_activate_api') %></label>
+							<div class="col-md-9 ">
+							  <label class="switch">
+								<input type="checkbox" class="switch" value="1" id="active_api" name="active_api" checked />
+								<span></span>
+							  </label>
+							</div>
+						</div>
+
+						<% } %>
+				
+					    <div class="form-group">
+							<div class="col-md-12 col-xs-12">
+								<button class="btn btn-primary btn-rounded pull-right" id="submit" type="submit" name="submit" value="submit"><%= __('button_submit') %></button>
+							</div>
+						</div>
+					</div>
+		</form>
+
+	<% } %>
+
+			</div>
+	</div>
+
+		</div>
+</div>
+<% include colorbar.html %>
+
+		<!-- END PAGE CONTENT WRAPPER -->
+
+<script type="text/javascript" >
+function isNumberKey(evt){
+    var charCode = (evt.which) ? evt.which : event.keyCode
+    if (charCode > 31 && (charCode < 48 || charCode > 57))
+    {
+    	if( charCode == 46)
+    	{
+    		return true;
+    	}
+    	else
+    	{
+        	return false;
+    	}
+    }
+    return true;
+}
+
+$(document).ready(function() { 
+	$(".form-horizontal").validate(
+		{ 	
+			ignore : [], 
+			rules: { name: "required", 
+			email: "required", 
+			password: { minlength:6, maxlength:100 }, 
+			countryname: "required",
+			phone : { required : true, minlength : <%= setting_detail.minimum_phone_number_length %>, maxlength : <%= setting_detail.maximum_phone_number_length %> } 
+		}, submitHandler: function(form) { 
+			$.ajax({ 
+				type: 'POST', 
+				url: '/update_corporate_detail', 
+				data: $('.form-horizontal').serialize(), 
+				dataType: "json", success: (res) => { 
+					if (!res.success) { 
+						$('#promo_error').show(); 
+						setTimeout(function () { 
+							$('#promo_error').hide(); 
+						}, 3000); 
+						document.getElementById('promo_error').innerHTML = res.message; 
+					}else{
+						$('#promo_error').show(); 
+						setTimeout(function () { 
+							$('#promo_error').hide(); 
+						}, 3000); 
+						document.getElementById('promo_error').innerHTML = res.message; 
+					}
+				} 
+			}); 
+		} 
+	});
+});
+</script>
+<% include footer_form.html %>

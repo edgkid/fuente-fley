@@ -1,0 +1,499 @@
+<% include corporate_header.html %>
+<link href="css/fSelect.css"
+    rel="stylesheet" type="text/css" />
+<script src="js/fSelect.js"
+    type="text/javascript"></script>
+
+<%
+function breakEveryN(str, limit = 10) {
+  const words = str.split(' ');
+  const lines = [];
+  let currentLine = '';
+
+  for (let word of words) {
+    if ((currentLine + ' ' + word).trim().length <= limit) {
+      currentLine += (currentLine ? ' ' : '') + word;
+    } else {
+      if (currentLine) lines.push(currentLine);
+      currentLine = word; 
+    }
+  }
+
+  if (currentLine) lines.push(currentLine);
+  return lines.join('<br>');
+}
+%>
+
+<style>
+body{
+  font-family: "Libre Franklin Small", sans-serif;
+}
+
+
+.modal-body {
+  max-height: 70vh; 
+  overflow-y: auto;
+}
+
+.modal-header {
+  background-color: #f8f9fa;
+  border-bottom: none;
+  border-radius: 12px;
+}
+
+.modal-content{
+  border-radius: 12px;
+  border-width: 1px;
+}
+.modal-title {
+  font-size: 19px;
+  font-weight: 700;
+  color: rgb(37, 14, 98);
+  text-align: center;
+  margin: 1rem 0;
+}
+
+.modal-footer {
+  border-top: none;
+  text-align: center;  
+  border-radius: 12px;
+}
+
+
+.modal-footer .btn-primary {
+  border-radius: 19px;
+}
+
+
+.table-responsive {
+  max-width: 100vw;
+  overflow-x: auto;
+  overflow-y: scroll;
+  position: relative;
+  border: solid 5px red;
+}
+
+.table-responsive::-webkit-scrollbar {
+  height: 10px; /* Adjust as needed */
+  width: 10px; /* Adjust as needed */
+
+  background-color: #f5f5f5; /* Change the background color */
+}
+
+.table-responsive::-webkit-scrollbar-thumb {
+  background-color: #c7c7c7; /* Change the thumb color */
+  border-radius: 6px; /* Round the corners of the thumb */
+}
+
+.table-responsive::-webkit-scrollbar-thumb:hover {
+  background-color: #999; /* Change the thumb color on hover */
+}
+
+.table-responsive::-webkit-scrollbar-track {
+  background-color: #f5f5f5;
+}
+
+th {
+  position: -webkit-sticky;
+  position: sticky;
+  top: 0;
+  white-space: nowrap;
+}
+
+
+@media (min-width: 768px) {
+  .table-responsive {
+    height: 300px;
+  }
+}
+
+@media (min-width: 1360px) {
+  .table-responsive {
+    height: 400px;
+  }
+}
+@media (min-width: 1840px) {
+  .table-responsive {
+    height: 690px;
+  }
+}
+
+table > tbody > tr.selectedRow:hover {
+  background: #e6f9f7;
+}
+
+table > tbody > tr.selectedRow > td {
+  background: transparent
+}
+
+
+th{
+  z-index: 1;
+}
+
+
+.status-label {
+  padding-bottom: 6px;
+  font-size: 13px;
+  line-height: 1;
+  max-width: 140px;
+  word-wrap: break-word;
+  white-space: normal;
+  transform: translateY(0);
+  color: gray;
+}
+
+.label {
+  display: inline;
+  padding: 0.4em .6em .4em;
+  font-size: 88%;
+}
+
+.trip-action {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  cursor: pointer;
+  padding-top: 4px;
+  border-radius: 6px;
+  margin-bottom: 6px;
+  transition: background 0.2s;
+}
+
+.trip-action i {
+  font-size: 20px;
+}
+
+.trip-action span {
+  font-size: 12px;
+  color: #656C78;
+}
+
+.ferry_price_field{
+  text-align: left;
+  margin-top: 23px;
+  font-size: 14px;
+  font-weight: 600
+}
+</style>
+<!-- PAGE CONTENT WRAPPER -->
+<div class="page-content-wrap">
+  <% if(typeof message != 'undefined'){ %>
+  <div class="alert alert-success" role="alert">
+    <button type="button" class="close" data-dismiss="alert"><span aria-hidden="true">&times;</span><span class="sr-only"><%= __('button_close') %></span></button>
+    <p align="center"> <strong><%= __(message) %></strong></p>
+  </div>
+  <% } %>
+  <div class="alert alert-success" role="alert" id="request_error" style="display:none">
+    <button type="button" id="close" class="close"><span aria-hidden="true">&times;</span><span class="sr-only"><%= __('button_close') %></span></button>
+    <p align="center" id="request_message"> <strong></strong></p>
+  </div>
+  <div class="col-md-12">                           
+    <div class="panel panel-default">                                
+      <div class="panel-body">
+        <div class="col-md-4">
+          
+        </div>
+        <div class="col-md-4" style="text-align: center;">
+          <div class="col-md-12">
+            <a><button class="btn btn-success dropdown-toggle" style="height: 35px; width: 100%"  onclick="open_corporate_notes_modal()"><%= __('title_create_ticket') %></button></a> 
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>  
+
+
+              <!-- START TIMELINE FILTER --> 
+                <div class="col-md-12">
+                    <div class="panel panel-default">
+                      <div class="panel-body">
+                        <form class="form-horizontal" role="form" method="post" action="/corporate_ferry_tickets">
+                          <div class="form-group">
+                            <input type="hidden" name="page" id="page" value="0" />   
+          
+                            
+                          <div class="col-md-4">
+                          <div style="text-align: center;">
+                            <label><%= __('title_sort') %></label>   
+                          </div>
+                          <div class="col-md-6" id="sort_option">
+                            <div class="input-group">
+                              <span class="input-group-addon"><span class="glyphicon glyphicon-sort"></span></span>
+                              <select class="form-control select" data-none-selected-text="<%= __('title_nothing_selected') %>" placeholder="Select to Sort" name="sort_item">
+                                <option value='unique_id' <%= (sort_field == "unique_id") ? 'selected' : '' %>><%= __('title_id') %></option>
+                                <option value='user_detail.unique_id' <%= (sort_field == "user_detail.unique_id") ? 'selected' : '' %>><%= __('title_user_id') %></option>
+                                <option value='user_detail.first_name' <%= (sort_field == "user_detail.first_name") ? 'selected' : '' %>><%= __('title_user_name') %></option>
+                                <option value='provider_detail.unique_id' <%= (sort_field == "provider_detail.unique_id") ? 'selected' : '' %>><%= __('title_cedula') %></option>
+                                <option value='provider_detail.first_name' <%= (sort_field == "provider_detail.first_name") ? 'selected' : '' %>><%= __('title_provider_name') %></option>
+                                <option value='type_detail.typename' <%= (sort_field == "type_detail.typename") ? 'selected' : '' %>><%= __('title_service_type') %></option>
+                                <option value='paid_client' <%= (sort_field == "paid_client") ? 'selected' : '' %>><%= __('title_paid_client') %></option>
+                                <option value='paid_partner' <%= (sort_field == "paid_partner") ? 'selected' : '' %>><%= __('title_paid_partner') %></option>
+                              </select>
+                            </div>
+                          </div>
+                          <div class="col-md-6">
+                            <div class="input-group">
+                              <span class="input-group-addon"><span class="glyphicon glyphicon-sort"></span></span>
+                              <select class="form-control select" data-none-selected-text="<%= __('title_nothing_selected') %>" placeholder="Select to Sort" name="sort_item">
+                                <% if(sort_order == "1") { %>
+                                <option value="1" selected><%= __('sort_asc') %></option>
+                                <option value="-1"><%= __('sort_desc') %></option>
+                                <% } else{ %>
+                                <option value="1" ><%= __('sort_asc') %></option>
+                                <option value="-1" selected><%= __('sort_desc') %></option>
+                                <% } %>
+                              </select>
+                            </div>
+                          </div>
+                        </div>
+                        <div class="col-md-4">
+                          <div style="text-align: center;">
+                            <label><%= __('title_search') %></label>   
+                          </div>
+                          <div class="col-md-6" id="search_option">
+                            <div class="input-group">
+                              <span class="input-group-addon"><span class="glyphicon glyphicon-sort"></span></span>
+                              <select class="form-control select" data-none-selected-text="<%= __('title_nothing_selected') %>" id="sel" placeholder="Select to Sort" name="search_item">
+                                <option value='unique_id' <%= (search_item == "unique_id") ? 'selected' : '' %>><%= __('title_id') %></option>
+                                <option value='user_detail.unique_id' <%= (search_item == "user_detail.unique_id") ? 'selected' : '' %>><%= __('title_user_id') %></option>
+                                <option value='user_detail.first_name' <%= (search_item == "user_detail.first_name") ? 'selected' : '' %>><%= __('title_user_name') %></option>
+                                <option value='provider_detail.unique_id' <%= (search_item == "provider_detail.unique_id") ? 'selected' : '' %>><%= __('title_cedula') %></option>
+                                <option value='provider_detail.first_name' <%= (search_item == "provider_detail.first_name") ? 'selected' : '' %>><%= __('title_provider_name') %></option>
+                                <option value='type_detail.typename' <%= (search_item == "type_detail.typename") ? 'selected' : '' %>><%= __('title_service_type') %></option>
+                                <option value='promo_detail.promocode' <%= (search_item == "promo_detail.promocode") ? 'selected' : '' %>><%= __('title_promo') %></option>
+                              </select>
+                            </div> 
+                          </div>
+                          <div class="col-md-6">
+                            <div class="panel panel-default">
+                              <div class="panel-body panel-body-search">
+                                <div class="input-group">
+                                  <span class="input-group-addon"><span class="fa fa-search"></span></span>
+                                  <input type="text" class="form-control" value="<%= search_value %>" onkeypress="return alphaNumSpace(event);"name="search_value" placeholder="<%= __('title_search') %>"/>
+                                </div>                                                                
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+         
+                        <div class="col-md-3">
+                          <div style="text-align: center;">
+                            <label><%= __('title_date_filter') %></label>   
+                          </div>
+                          <div class="col-md-12">
+          
+                            <div class="btn-group">
+                              <div class="input-group">
+                                <input type="text" class="form-control datepicker" value="<%= filter_start_date %>" placeholder="<%= __('title_start_date') %>" name="start_date" id="start_date" readonly/>
+                                <span class="input-group-addon add-on">-</span>
+                                <input type="text" class="form-control datepicker"  value="<%= filter_end_date %>" placeholder="<%= __('title_end_date') %>" name="end_date" id="end_date" readonly/>
+                              </div>
+                              <div id="error-message" style="color: red; display: none; text-align: center"><%= __('error_message_please_select_dates') %></div>
+                            </div>
+                          </div>
+                        </div>
+          
+                      </div>
+                      
+                     <div class="col-md-5">
+                        <div class="col-md-12">
+                          <ul class="pagination">
+                              <% include paginate_lookup.html %>
+                          </ul> 
+                        </div> 
+                      </div> 
+                      <div class="col-md-4">
+          
+                     </div>
+                      <div  class="form-group col-md-3" >
+                        <div class="col-md-6">
+                          <button type="submit" id="apply_filter" class="btn btn-primary" style="height: 35px; width: 100%;  "><span><%= __('button_apply') %></span></button>
+                        </div>
+                        <div class="col-md-6">
+                              
+                             <!--  <button class="btn btn-danger pull-right" type="button" style="height: 35px; width: 100%;" onClick ="$('#customers2').tableExport({type:'excel', escape:'false', ignoreColumn: [8]});"><i class="fa fa-bars"></i> <%= __('button_export_excel') %></button> -->
+                             <button class="btn btn-danger pull-right export_trip" type="button" style="height: 35px; width: 100%;" onClick ="export_excel()"><i class="fa fa-download"></i><%= __('button_export_excel') %></button>
+                        </div>
+                      </div>     
+                    </form>
+          
+          
+                  </div>
+                </div>
+              </div>
+            </div> 
+          
+<!-- END TIMELINE FILTER -->
+
+<div class="row">
+  <div class="col-md-12">
+
+    <!-- START SIMPLE DATATABLE -->
+    <div class="panel panel-default">
+      <div class="table-responsive" id="customers" style="padding-bottom: 175px;">
+        <table class="table">
+          <thead>
+            <tr>
+              <th><%- breakEveryN(__('title_id')) %></th>
+              <th><%- breakEveryN(__('title_type')) %></th>              
+              <th><%- breakEveryN(__('title_amount')) %></th>
+              <th><%- breakEveryN(__('title_status')) %></th>
+              <th style="width: 10%;"><%= __('button_action') %></th>
+            </tr>
+          </thead>
+
+          <tbody>
+            <% detail.forEach(function(data){ %>
+              <tr class="selectedRow" id="main-row<%= data._id %>">
+                <td><%= data.unique_id %></td>
+                <td> <%= data?.type_detail?.typename %> </td>
+                <td> $<%= data?.amount %> </td>
+                <td>                   
+                    <span class="label" style="background-color: <%= data.status == 1 ? '#F16F63' : '#00BBB4' %>">
+                    <%= data.status == 1 ? __('title_purhcased') : __('title_open') %>
+                  </span>
+                </td>
+                <td>
+                  <% if(data.status == 1){ %>     
+                    <div class="trip-action" 
+                      onclick="window.open('<%= data.file_url  != '' 
+                        ? setting_detail.image_base_url + data.file_url 
+                        : setting_detail.image_base_url + 'default.png' %>', '_blank')">
+                    <i class="fa fa-file-text-o text-primary"></i>
+                    <span style="text-align: left;"><%= __('button_view_download') %></span>
+                    </div>
+                  <% } %>
+                </td>
+              </tr>
+
+            <% }); %>
+          </tbody>
+        </table>
+      </div>
+    </div>
+    <!-- END SIMPLE DATATABLE -->
+
+  </div>
+</div>
+<% include colorbar.html %>
+<% include web_advertise.html %>
+
+</div>
+<!-- PAGE CONTENT WRAPPER -->
+</div>
+<!-- END PAGE CONTENT -->
+</div>
+<!-- END PAGE CONTAINER -->
+<div class="modal fade " id="show_ferry_ticket_modal" tabindex="-1" role="dialog" aria-labelledby="show_ferry_ticket_modal_label" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered" style="width: 364px; heigh">
+    <div class="modal-content">
+        <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only"><%= __('button_close') %></span></button>
+            <h4 class="modal-title" id="show_notes_modal_label" style="color: rgb(37 14 98); text-align: center;"><%= __('title_ferry_ticket') %></h4>
+        </div>
+        <div class="modal-body" style="text-align: center;">
+          <div class="row">
+            <form id="create_ferry_ticket_form" method="post" action="/corporate_create_ferry_ticket" >
+              <select class="form-control select" name="service_type" id="service_type">     
+                <option disabled selected hidden style='display: none'><%= __('title_select_model') %></option>
+                <% citytypes.forEach(function(citytype){ %>
+                    <option value="<%= citytype._id %>" data-price="<%= citytype.ferry_ticket_price %>"><%= citytype.typename %></option>
+                <% }) %>
+              </select>
+              <p class="ferry_price_field">Price: $<span id="ferry_ticket_price"></span> </p>
+              <div class="col-md-12" style="margin-top: 14px;">
+                <button type="submit" class="btn btn-primary"><%= __('button_submit') %></button>
+              </div>
+            </form>
+          </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.18.1/moment.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/moment-timezone/0.5.17/moment-timezone-with-data.js"></script>
+<script src="https://www.gstatic.com/firebasejs/4.12.1/firebase.js"></script>
+
+<script type="text/javascript">
+
+
+  $(document).ready(function() {
+   
+    var trip_id_array = new Array();
+    var interval;
+    $('#start_date').datepicker({
+      format: 'yyyy-mm-dd',
+      <% if(filter_end_date){ %>
+        endDate: new Date("<%= filter_end_date %>")
+        <% }else{ %>
+        endDate: new Date(Date.now())
+      <% } %>
+    }).on("changeDate", function () { 
+      const startDate = $('#start_date').datepicker('getDate');
+      const endDate = $('#end_date').datepicker('getDate');
+      $('#end_date').datepicker('setStartDate', startDate);
+      if (startDate && endDate) {
+        const monthDiff = (endDate.getFullYear() - startDate.getFullYear()) * 12 + (endDate.getMonth() - startDate.getMonth());
+        if (monthDiff > 3 || (monthDiff === 3 && endDate.getDate() > startDate.getDate())) {
+          alert("<%= __('error_message_export_date_range_exceeded')%>");
+          $('#start_date').val('');
+          $('#end_date').datepicker('setStartDate', null);
+        }
+      }
+
+      $('.datepicker-dropdown').hide();
+    });
+
+    $('#end_date').datepicker({
+      format: 'yyyy-mm-dd',
+      endDate: new Date(Date.now()),
+      <% if(filter_start_date){ %>
+        startDate: new Date("<%= filter_start_date %>")
+      <% } %>
+    }).on("changeDate", function () {
+      const endDate = $('#end_date').datepicker('getDate');
+      const startDate = $('#start_date').datepicker('getDate');
+      $('#start_date').datepicker('setEndDate', endDate);
+      if (startDate && endDate) {
+        const monthDiff = (endDate.getFullYear() - startDate.getFullYear()) * 12 + (endDate.getMonth() - startDate.getMonth());
+        if (monthDiff > 3 || (monthDiff === 3 && endDate.getDate() > startDate.getDate())) {
+          alert("<%= __('error_message_export_date_range_exceeded')%>");
+          $('#end_date').val('');
+          $('#start_date').datepicker('setEndDate', null);
+        }
+      }
+
+      $('.datepicker-dropdown').hide();
+    });
+
+    $(document).on("submit", "#create_ferry_ticket_form", function(e) {
+        if(!confirm("Are you sure you want to create the ticket?")) {
+            e.preventDefault();
+        }
+    });
+
+    $("#service_type").change(function () {
+      const selectedOption = $(this).find(":selected"); 
+      const citytypePrice = selectedOption.data("price");
+      $("#ferry_ticket_price").text(citytypePrice);
+    })
+
+    <% detail.forEach(function(data){ %>
+    trip_id_array.push('<%= data._id %>')
+    
+        <% }); %>
+
+    if (trip_id_array.length > 0) {
+    }
+
+
+  });
+
+  function open_corporate_notes_modal() {
+    $("#show_ferry_ticket_modal").modal("show");
+  }
+
+</script>
+<% include footer_list.html %>

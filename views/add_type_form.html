@@ -1,0 +1,655 @@
+<% include header.html %>
+<link href="css/fSelect.css"
+rel="stylesheet" type="text/css" />
+<script src="js/fSelect.js"
+type="text/javascript"></script>    
+<!-- PAGE TITLE -->
+<div class="page-title">
+  <h2><span class="fa fa-cogs"></span>
+    <% if(typeof service_data == 'undefined'){ %>
+    <%= __('title_add_type') %>
+    <% } else { %>
+    <%= __('title_edit_type') %>
+    <% } %>
+  </h2>
+</div>
+<!-- END PAGE TITLE -->
+
+<style>
+  .file-input-wrapper{
+    display: flex;
+  }
+  .file-input-wrapper label.error {
+    margin-top: 0px;
+  }
+</style>
+
+<!-- for edit type form -->
+<div class="row">
+<div class="page-content-wrap">
+  <div class="col-md-6 col-sm-8 col-xs-12">
+    <% if(typeof service_data != 'undefined'){ %>
+    <% service_data.forEach(function(data){ %>
+    <form class="form-horizontal" method="post" action="/update_service_detail" enctype="multipart/form-data">
+      <div class="panel panel-default">
+        <div class="panel-body form-group-separated">
+          <div class="form-group">
+            <label class="col-md-3 col-xs-5 control-label"><%= __('title_type_name1') %></label>
+            <input type="hidden" class="form-control" name="id" value="<%= data.id %>" />
+            <input type="hidden" class="form-control" name="old_img_path" value="<%= data.file %>" />
+            <div class="col-md-9 col-xs-7">
+              <input type="text" class="form-control" name="typename" id="typename" value="<%= data.typename %>" />
+            </div>
+          </div>
+          <div class="form-group">
+            <label class="col-md-3 col-xs-5 control-label"><%= __('title_type_name2') %></label>
+            <div class="col-md-9 col-xs-7">
+              <input type="text" class="form-control" name="typename2" id="typename2" value="<%= data.typename2 %>" />
+            </div>
+          </div>
+          <div class="form-group">
+            <label class="col-md-3 control-label"><%= __('title_is_business') %></label>
+            <div class="col-md-9 ">
+              <select class="form-control select" data-none-selected-text="<%= __('title_nothing_selected') %>" id="is_business" name="is_business">
+                <% if(data.is_business == "1") { %>
+                <option value="1" selected="selected"><%= __('title_on') %></option>
+                <option value="0"><%= __('title_off') %></option>
+                <% } else { %>
+                <option value="1"><%= __('title_on') %></option>
+                <option value="0" selected="selected"><%= __('title_off') %></option>
+                <% } %>
+              </select>
+            </div>
+          </div>
+          <div class="form-group">
+            <label class="col-md-3 col-xs-5 control-label"><%= __('title_sequence') %></label>
+            <div class="col-md-9 col-xs-7">
+              <input type="text" class="form-control" name="sequence" id="sequence" value="<%= data.sequence %>" />
+              <div id="sequence_error"></div>
+            </div>
+          </div>
+          <div class="form-group">
+            <label class="col-md-3 control-label"><%= __('title_has_capacity') %></label>
+            <div class="col-md-9 ">
+              <label class="switch">
+                <% if( data.is_use_capacity == false ) { %>
+                <input type="checkbox" class="switch" value="1" name="is_use_capacity" unchecked />
+                <% } else{ %>
+                <input type="checkbox" class="switch" value="1" name="is_use_capacity" checked />
+                <% } %>
+                <span></span>
+              </label>
+            </div>
+          </div>
+          <div class="form-group">
+            <label class="col-md-3 control-label"><%= __('title_has_type_of_truck') %></label>
+            <div class="col-md-9 ">
+              <label class="switch">
+                <% if( data.is_use_model == false ) { %>
+                <input type="checkbox" class="switch" value="1" name="is_use_model" unchecked />
+                <% } else{ %>
+                <input type="checkbox" class="switch" value="1" name="is_use_model" checked />
+                <% } %>
+                <span></span>
+              </label>
+            </div>
+          </div>
+          <div class="form-group">
+            <label class="col-md-3 control-label"><%= __('title_has_services') %></label>
+            <div class="col-md-9 ">
+              <label class="switch">
+                <% if( data.is_use_services == false ) { %>
+                <input type="checkbox" class="switch" value="1" name="is_use_services" unchecked />
+                <% } else{ %>
+                <input type="checkbox" class="switch" value="1" name="is_use_services" checked />
+                <% } %>
+                <span></span>
+              </label>
+            </div>
+          </div>
+          <div class="form-group">
+            <label class="col-md-3 control-label"><%= __('title_has_specification') %></label>
+            <div class="col-md-9 ">
+              <label class="switch">
+                <% if( data.is_use_specification == false ) { %>
+                <input type="checkbox" class="switch" value="1" name="is_use_specification" unchecked />
+                <% } else{ %>
+                <input type="checkbox" class="switch" value="1" name="is_use_specification" checked />
+                <% } %>
+                <span></span>
+              </label>
+            </div>
+          </div>
+          <div class="form-group">
+            <label class="col-md-3 control-label"><%= __('title_services') %></label>
+            <div class="col-md-9">
+                <select id="type_service_list" multiple="multiple" name="type_service_list[]">
+                  <optgroup id="append" label='<%= __('title_service_list') %>'>
+                    <% type_services.forEach(function(service){ %>
+                      <% if(data.type_service_list.indexOf(service._id) !== -1){ %>
+                            <option value="<%= service._id %>" selected><%= service.service_name %></option>
+                      <% } else { %>
+                        <option value="<%= service._id %>"><%= service.service_name %></option>
+                      <% } %>
+                      <% }) %>
+                  </optgroup>
+              </select>
+            </div>
+          </div>
+          <div class="form-group">
+            <label class="col-md-3 control-label"><%= __('title_capacity') %></label>
+            <div class="col-md-9">
+                <select id="type_capacity_list" multiple="multiple" name="type_capacity_list[]">
+                  <optgroup id="append" label='<%= __('title_capacity_list') %>'>
+                    <% type_capacity.forEach(function(capacity){ %>
+                      <% if(data.type_capacity_list.indexOf(capacity._id) !== -1){ %>
+                        <option value="<%= capacity._id %>" selected><%= capacity.capacity_name %> <% if(capacity.unit == 0 ){%> <%= __('unit_kilos') %>  <%}else if(capacity.unit == 1){%> <%= __('unit_litre') %>  <%}else if(capacity.unit == 2){%>  <%= __('unit_meter_cube') %> <%} %>  </option>
+                      <% } else { %>
+                        <option value="<%= capacity._id %>"><%= capacity.capacity_name %> <% if(capacity.unit == 0 ){%> <%= __('unit_kilos') %>  <%}else if(capacity.unit == 1){%> <%= __('unit_litre') %>  <%}else if(capacity.unit == 2){%>  <%= __('unit_meter_cube') %> <%} %>  </option>
+                      <% } %>
+                      <% }) %>
+                  </optgroup>
+              </select>
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label class="col-md-3 control-label"><%= __('title_type_of_truck') %></label>
+            <div class="col-md-9">
+                <select id="type_model_list" multiple="multiple" name="type_model_list[]">
+                  <optgroup id="append" label='<%= __('title_type_of_truck_list') %>'>
+                    <% type_models.forEach(function(model){ %>
+                      <% if(data.type_model_list.indexOf(model._id) !== -1){ %>
+                            <option value="<%= model._id %>" selected><%= model.model_name %></option>
+                      <% } else { %>
+                        <option value="<%= model._id %>"><%= model.model_name %></option>
+                      <% } %>
+                      <% }) %>
+                  </optgroup>
+              </select>
+            </div>
+          </div>
+          <div class="form-group" style="display: none;">
+            <label class="col-md-3 control-label"><%= __('title_ride_share_limit') %></label>
+            <div class="col-md-9">
+              <div class="form-group">
+                <select class="form-control select" data-none-selected-text="<%= __('title_nothing_selected') %>" id="ride_share_limit" name="ride_share_limit">
+                  <%for (i=2; i<=2; i+=1) { %>
+                    <% if(i == data.ride_share_limit){ %>
+                    <option value="<%= i %>" selected><%= i %></option>
+                    <% } else { %>
+                    <option value="<%= i %>"><%= i %></option>
+                    <% } %>
+                  <% } %>
+                </select>
+              </div>
+            </div>
+          </div>
+          <div class="form-group">
+            <label class="col-md-3 control-label"><%= __('default_selected') %></label>
+            <div class="col-md-9">
+              <div class="row">
+                <div class="col-md-4 col-sm-4 col-xs-12">
+                  <label class="switch">
+                    <% if (data.is_default_selected == false) { %>
+                      <input type="checkbox" class="switch" value="1" name="is_default_selected" />
+                    <% } else { %>
+                      <input type="checkbox" class="switch" value="1" name="is_default_selected" checked />
+                    <% } %>
+                    <span></span>
+                  </label>
+                </div>
+                <div class="col-md-8 col-sm-8 col-xs-12">
+                  <% 
+                    // Safe helper function to render dropdown options
+                    function renderCapacityOptions(selectedList) { 
+                      const safeList = Array.isArray(selectedList) ? selectedList : [];
+                      type_capacity.forEach(function(capacity) { 
+                        const isSelected = safeList.includes(capacity._id);
+                        let unitLabel = '';
+                        if (capacity.unit === 0) unitLabel = __('unit_kilos');
+                        else if (capacity.unit === 1) unitLabel = __('unit_litre');
+                        else if (capacity.unit === 2) unitLabel = __('unit_meter_cube');
+                  %>
+                        <option value="<%= capacity._id %>" <%= isSelected ? 'selected' : '' %>>
+                          <%= capacity.capacity_name %> <%= unitLabel %>
+                        </option>
+                  <% 
+                      });
+                    } 
+                  %>
+                
+                  <div class="form-group row mb-2">
+                    <label class="col-md-4 col-sm-4 col-xs-12 control-label text-left">
+                      <%= __('menu_title_type_capacity') %>
+                    </label>
+                    <div class="col-md-8 col-sm-8 col-xs-12">
+                      <select class="form-control" name="label_capacity_id">
+                        <option value="" disabled selected><%= __('select_capacity') %></option>
+                        <% renderCapacityOptions(data?.label_capacity_id); %>
+                      </select>
+                    </div>
+                  </div>
+                
+                  <div class="form-group row mb-2">
+                    <label class="col-md-4 col-sm-4 col-xs-12 control-label text-left">
+                      <%= __('menu_title_type_measurement') %>
+                    </label>
+                    <div class="col-md-8 col-sm-8 col-xs-12">
+                      <select class="form-control" name="label_measurement_id">
+                        <option value="" disabled selected><%= __('select_measurement') %></option>
+                        <% renderCapacityOptions(data?.label_measurement_id); %>
+                      </select>
+                    </div>
+                  </div>
+                
+                  <div class="form-group row">
+                    <label class="col-md-4 col-sm-4 col-xs-12 control-label text-left">
+                      <%= __('menu_title_type_pallets') %>
+                    </label>
+                    <div class="col-md-8 col-sm-8 col-xs-12">
+                      <select class="form-control" name="label_pallet_id">
+                        <option value="" disabled selected><%= __('select_pallet') %></option>
+                        <% renderCapacityOptions(data?.label_pallet_id); %>
+                      </select>
+                    </div>
+                  </div>
+                </div>
+                                                                       
+              </div>
+            </div>
+          </div>
+          <div class="form-group">
+            <label class="col-md-3 col-xs-5 control-label"><%= __('title_type_image') %></label>
+            <div class="col-md-9 col-xs-7">
+              <input type="file" class="btn btn-primary btn-block btn-rounded fileinput" data-filename-placement="inside" title="<%= __('change_type_image')%>" accept="image/*" name="file2" id="type_image" value="<%= data.type_image_url %>" />
+              <div id="profile_image_dimention_type_image"></div>
+              <br>
+              <img src="<%= data.type_image_url != '' ? setting_detail.image_base_url + data.type_image_url : 'default.png' %>" class="img-thumbnail" id="type_image_sel_img" style="height:70px; width:100px;" />
+            </div>
+          </div>
+          <div class="form-group">
+            <label class="col-md-3 col-xs-5 control-label"><%= __('title_map_pin_image') %></label>
+            <div class="col-md-9 col-xs-7">
+              <input type="file" class="btn btn-primary btn-block btn-rounded fileinput" data-filename-placement="inside" title="<%= __('change_map_pin_image')%>" accept="image/*" name="file3" id="map_pin_image" value="<%= data.map_pin_image_url %>" />
+              <div id="profile_image_dimention"></div>
+              <br>
+              <img src="<%= data.map_pin_image_url != '' ? setting_detail.image_base_url + data.map_pin_image_url : 'default.png' %>" class="img-thumbnail" id="map_pin_image_sel_img" style="height:70px; width:100px;" />
+              <br><br>
+              <font><%= __('image_with_appropriate_aspect_ratio')%> <b>0.45:1</b></font>
+            </div>
+          </div>
+          <div class="form-group">
+            <label class="col-md-3 col-xs-5 control-label"><%= __('title_panel_map_pin_image') %></label>
+            <div class="col-md-9 col-xs-7">
+              <input type="file" class="btn btn-primary btn-block btn-rounded fileinput" data-filename-placement="inside" title="<%= __('change_map_pin_image')%>" accept="image/*" name="file4" id="panel_map_pin_image" value="<%= data.panel_map_pin_image_url %>" />
+              <div id="panel_profile_image_dimention"></div>
+              <br>
+              <img src="<%= data.panel_map_pin_image_url != '' ? setting_detail.image_base_url + data.panel_map_pin_image_url : 'default.png' %>" class="img-thumbnail" id="panel_map_pin_image_sel_img" style="height:70px; width:100px;" />
+              <br><br>
+            </div>
+          </div>
+          <div class="form-group">
+            <div class="col-md-12 col-xs-12">
+              <button class="btn btn-primary btn-rounded pull-right" id="update" type="submit" name="save" value="save"><%= __('button_save') %></button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </form>
+    <% }); %>
+    <!-- for add type form -->
+    <% }else{ %>
+    <form class="form-horizontal" method="post" action="/add_service_detail" enctype="multipart/form-data">
+      <div class="panel panel-default">
+        <div class="panel-body form-group-separated">
+          <div class="form-group">
+            <label class="col-md-3 col-xs-5 control-label"><%= __('title_type_name1') %></label>
+            <div class="col-md-9 col-xs-7">
+              <input type="text" class="form-control" name="typename" id="typename" data-toggle="modal" />
+              <div id="type"></div>
+            </div>
+          </div>
+          <div class="form-group">
+            <label class="col-md-3 col-xs-5 control-label"><%= __('title_type_name2') %></label>
+            <div class="col-md-9 col-xs-7">
+              <input type="text" class="form-control" name="typename2" id="typename2" data-toggle="modal" />
+            </div>
+          </div>
+          <div class="form-group">
+            <label class="col-md-3 control-label"><%= __('title_is_business') %></label>
+            <div class="col-md-9">
+              <div class="form-group">
+                <select class="form-control select" data-none-selected-text="<%= __('title_nothing_selected') %>" id="is_business" name="is_business">
+                  <option value="1"><%= __('title_on') %></option>
+                  <option value="0"><%= __('title_off') %></option>
+                </select>
+              </div>
+            </div>
+          </div>
+          <div class="form-group">
+            <label class="col-md-3 col-xs-5 control-label"><%= __('title_sequence') %></label>
+            <div class="col-md-9 col-xs-7">
+              <input type="text" class="form-control" name="sequence" id="sequence" data-toggle="modal" />
+              <div id="sequence_error"></div>
+            </div>
+          </div>
+          <div class="form-group">
+            <label class="col-md-3 control-label"><%= __('title_has_capacity') %></label>
+            <div class="col-md-9 ">
+              <label class="switch">
+                <input type="checkbox" class="switch" value="1" id="is_use_capacity" name="is_use_capacity" checked />
+                <span></span>
+              </label>
+            </div>
+          </div>
+          <div class="form-group">
+            <label class="col-md-3 control-label"><%= __('title_has_model') %></label>
+            <div class="col-md-9 ">
+              <label class="switch">
+                <input type="checkbox" class="switch" value="1" id="is_use_model" name="is_use_model" checked />
+                <span></span>
+              </label>
+            </div>
+          </div>
+          <div class="form-group">
+            <label class="col-md-3 control-label"><%= __('title_has_services') %></label>
+            <div class="col-md-9 ">
+              <label class="switch">
+                <input type="checkbox" class="switch" value="1" id="is_use_services" name="is_use_services" checked />
+                <span></span>
+              </label>
+            </div>
+          </div>
+          <div class="form-group">
+            <label class="col-md-3 control-label"><%= __('title_has_specification') %></label>
+            <div class="col-md-9 ">
+              <label class="switch">
+                <input type="checkbox" class="switch" value="1" id="is_use_specification" name="is_use_specification" unchecked />
+                <span></span>
+              </label>
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label class="col-md-3 control-label"><%= __('title_services') %></label>
+            <div class="col-md-9">
+                <select id="type_service_list" multiple="multiple" name="type_service_list[]">
+                  <optgroup id="append" label='<%= __('title_service_list') %>'>
+                    <% type_services.forEach(function(data){ %>
+                          <option value="<%= data._id %>"><%= data.service_name %></option>
+                      <% }) %>
+                  </optgroup>
+              </select>
+            </div>
+          </div>
+          <div class="form-group">
+            <label class="col-md-3 control-label"><%= __('title_capacity') %></label>
+            <div class="col-md-9">
+                <select id="type_capacity_list" multiple="multiple" name="type_capacity_list[]">
+                  <optgroup id="append" label='<%= __('title_capacity_list') %>'>
+                      <% type_capacity.forEach(function(data){ %>
+                        <option value="<%= data._id %>"><%= data.capacity_name %></option>
+                    <% }) %>
+                  </optgroup>
+              </select>
+            </div>
+          </div>
+          <div class="form-group">
+            <label class="col-md-3 control-label"><%= __('title_model') %></label>
+            <div class="col-md-9">
+                <select id="type_model_list" multiple="multiple" name="type_model_list[]">
+                  <optgroup id="append" label='<%= __('title_model_list') %>'>
+                    <% type_models.forEach(function(data){ %>
+                          <option value="<%= data._id %>"><%= data.model_name %></option>
+                      <% }) %>
+                  </optgroup>
+              </select>
+            </div>
+          </div>
+
+          <div class="form-group" style="display: none;">
+            <label class="col-md-3 control-label"><%= __('title_ride_share_limit') %></label>
+            <div class="col-md-9">
+              <div class="form-group">
+                <select class="form-control select" data-none-selected-text="<%= __('title_nothing_selected') %>" id="ride_share_limit" name="ride_share_limit">
+                  <%for (i=2; i<=2; i+=1) { %>
+                    <option value="<%= i %>"><%= i %></option>
+                  <% } %>
+                </select>
+              </div>
+            </div>
+          </div>
+          <div class="form-group">
+            <label class="col-md-3 col-xs-5 control-label"><%= __('title_type_image') %></label>
+            <div class="col-md-9 col-xs-7">
+              <input type="file" class="btn btn-primary btn-block btn-rounded fileinput" data-filename-placement="inside" title="<%= __('upload_type_image')%>" accept="image/*" name="file" id="type_image" />
+              <div id="profile_image_dimention_type_image"></div>
+              <img src="default.png" class="img-thumbnail" id="type_image_sel_img" style="height:70px; width:100px;" />
+            </div>
+          </div>
+          <div class="form-group">
+            <label class="col-md-3 col-xs-5 control-label"><%= __('title_map_pin_image') %></label>
+            <div class="col-md-9 col-xs-7">
+              <input type="file" class="btn btn-primary btn-block btn-rounded fileinput" data-filename-placement="inside" title="<%= __('upload_map_pin_image')%>" accept="image/*" name="file1" id="map_pin_image" />
+              <div id="profile_image_dimention"></div>
+              <img src="default.png" class="img-thumbnail" id="map_pin_image_sel_img" style="height:70px; width:100px;" />
+              <br><br>
+              <font><%= __('image_with_appropriate_aspect_ratio')%> <b>0.45:1</b></font>
+            </div>
+          </div>
+          <div class="form-group">
+            <label class="col-md-3 col-xs-5 control-label"><%= __('title_panel_map_pin_image') %></label>
+            <div class="col-md-9 col-xs-7">
+              <input type="file" class="btn btn-primary btn-block btn-rounded fileinput" data-filename-placement="inside" title="<%= __('upload_map_pin_image')%>" accept="image/*" name="file2" id="panel_map_pin_image" />
+              <div id="panel_profile_image_dimention"></div>
+              <img src="default.png" class="img-thumbnail" id="panel_map_pin_image_sel_img" style="height:70px; width:100px;" />
+              <br><br>
+              <font><%= __('image_with_appropriate_aspect_ratio')%> <b>0.45:1</b></font>
+            </div>
+          </div>
+          <div class="form-group">
+            <div class="col-md-12 col-xs-12">
+              <button class="btn btn-primary btn-rounded pull-right" type="submit" name="submit" id="update" value="submit"><%= __('button_submit') %></button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </form>
+    <% } %>
+  </div>
+</div>
+</div>
+<% include colorbar.html %>
+
+<script type="text/javascript">
+  $(document).ready(function() {
+    $('#type_model_list').fSelect({
+        placeholder: '<%= __("title_select_model")%>',
+        numDisplayed: 3,
+        overflowText: '{n} selected',
+        searchText: '<%= __("title_search_text")%>',
+        showSearch: true
+    });
+
+    $('#type_service_list').fSelect({
+        placeholder: '<%= __("title_select_service")%>',
+        numDisplayed: 3,
+        overflowText: '{n} selected',
+        searchText: '<%= __("title_search_text")%>',
+        showSearch: true
+    });
+
+    $('#type_capacity_list').fSelect({
+        placeholder: '<%= __("title_select_capacity")%>',
+        numDisplayed: 3,
+        overflowText: '{n} selected',
+        searchText: '<%= __("title_search_text")%>',
+        showSearch: true
+    });
+
+    $.ajax({
+      type: 'POST',
+      url: '/check_type_priority_available',
+      dataType: "json",
+      success: function(res) {
+        // var res =  JSON.stringify(res);
+        var used_priority = [];
+        var append_array = [];
+        var append_limit = res.length + 1;
+
+        for (i = 0; i <= append_limit; i++) {
+          append_array.push(i);
+          if (res[i]) {
+            used_priority.push(res[i].priority);
+          }
+        }
+
+        unique_array = append_array.filter(function(current) {
+          return used_priority.filter(function(current_b) {
+            return current_b == current
+          }).length == 0
+        });
+
+        unique_array.forEach(function(element) {
+          $('#priority').append('<option value=' + element + '>' + element + '</option>');
+        });
+
+        $('#priority').selectpicker('refresh');
+      }
+    });
+
+    $("#addform").validate({
+      rules: {
+        typename: "required",
+        file: "required",
+        sequence: "required"
+      },
+      messages: {
+        file: 'File must be select.'
+      }
+    });
+
+    $(".form-horizontal").validate({
+      ignore: [],
+      rules: {
+        typename: "required",
+        file: "required",
+        file1: "required",
+        description: "required",
+        sequence: "required"
+      },
+      messages: {
+        file: 'Type Image is required',
+        file1: 'Map pin is required'
+      }
+    });
+    ///// check type name is already exist or not ///////////
+    $("#typename").change(function() {
+      var value = this.value;
+      $("#submit").attr("disabled", true);
+
+      $.ajax({
+        type: 'POST',
+        url: '/check_type_available',
+        data: 'typename=' + value,
+        dataType: "json",
+        success: function(res) {
+          //var res =  JSON.stringify(res);
+          if (res == 1) {
+            $("#submit").attr("disabled", true);
+            $("#type").html('<font color="red">Type Name Already Used</font>');
+          } else {
+            $("#type").html('');
+            $("#submit").attr("disabled", false);
+          }
+        }
+      });
+    });
+
+    $("#sequence").change(function() {
+      var value = this.value;
+      $("#submit").attr("disabled", true);
+
+      $.ajax({
+        type: 'POST',
+        url: '/check_type_sequence_available',
+        data: 'sequence=' + value,
+        dataType: "json",
+        success: function(res) {
+          //var res =  JSON.stringify(res);
+          if (res == 1) {
+            $("#sequence").val("")
+            $("#sequence_error").html('<font color="red">Sequence Already Used</font>');
+          } else {
+            $("#sequence_error").html('');
+          }
+        }
+      });
+    });
+
+    var _URL = window.URL || window.webkitURL;
+    $("#type_image").change(function(e) {
+      validateImage($("#type_image"), $("#profile_image_dimention_type_image"), this.files[0].type)
+      var file, img;
+      if ((file = this.files[0])) {
+        img = new Image();
+
+        var reader = new FileReader();
+
+        reader.onload = function(e) {
+          $('#type_image_sel_img').attr('src', e.target.result);
+        }
+
+        reader.readAsDataURL(type_image.files[0]);
+        img.src = _URL.createObjectURL(file);
+      }
+    })
+
+    $("#map_pin_image").change(function(e) {
+      validateImage($("#map_pin_image"), $("#profile_image_dimention"), this.files[0].type)
+      var file, img;
+      if ((file = this.files[0])) {
+        img = new Image();
+
+        var reader = new FileReader();
+
+        reader.onload = function(e) {
+          $('#map_pin_image_sel_img').attr('src', e.target.result);
+        }
+
+        reader.readAsDataURL(map_pin_image.files[0]);
+
+        img.onload = function(e) {
+        };
+        img.src = _URL.createObjectURL(file);
+      }
+    });
+
+    $("#panel_map_pin_image").change(function(e) {
+      validateImage2($("#panel_map_pin_image"), $("#panel_profile_image_dimention"), this.files[0].type)
+      var file, img;
+      if ((file = this.files[0])) {
+        img = new Image();
+
+        var reader = new FileReader();
+
+        reader.onload = function(e) {
+          $('#panel_map_pin_image_sel_img').attr('src', e.target.result);
+        }
+
+        reader.readAsDataURL(panel_map_pin_image.files[0]);
+
+        img.onload = function(e) {
+        };
+        img.src = _URL.createObjectURL(file);
+      }
+    });
+
+    ////////////////////////////
+    
+
+
+  });
+</script>
+<% include footer_form.html %>

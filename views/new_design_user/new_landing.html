@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+
+<html>
+    <head>
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+        <style>
+            body,
+            html {
+                margin: 0;
+                padding: 0;
+                overflow: hidden;
+            }
+
+            iframe {
+                position: absolute;
+                top: 0;
+                left: 0;
+                width: 100%;
+                height: 100%;
+                border: none;
+            }
+        </style>
+        <title><%= setting_detail.app_name %></title>
+
+        <link
+            rel="icon"
+            href="web_images/favicons/FLETY_ICONOADMIN.png"
+            type="image/x-icon"
+        />
+    </head>
+
+        <link 
+            rel="icon" 
+            href="web_images/favicons/FLETY_ICONOWEB.png" 
+            type="image/x-icon" 
+        />
+    
+  </head>
+    <body>
+        <iframe
+            src="<%= setting_detail.landing_page_url %>"
+            frameborder="0"
+        ></iframe>
+    </body>
+
+    <script
+        async
+        src="https://www.googletagmanager.com/gtag/js?id=G-Y56GQ0WJD8"
+    ></script>
+    
+    <script>
+        window.dataLayer = window.dataLayer || []
+        function gtag() {
+            dataLayer.push(arguments)
+        }
+        gtag('js', new Date())
+
+        gtag('config', 'G-Y56GQ0WJD8')
+    </script>
+</html>
