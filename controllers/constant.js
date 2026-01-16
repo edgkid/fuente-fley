@@ -1,0 +1,146 @@
+exports = TOKEN_SECRET = 'lFaLHZQWM2SN5ZD8';
+exports = PAYMENT_GATEWAY = {
+    stripe: 10,
+    paystack: 11,
+    payu: 12
+};
+
+exports = IS_ADD_CARD = {
+    10: true,
+    11: true,
+    12: false
+}
+
+exports = LANGUAGES = {
+    english : 'en',
+    japanese : 'ja',
+    french: 'fr',
+    arabic: 'ar',
+    portuguese: 'pr',
+    spanish: 'es'
+};
+
+exports = PAYMENT_STATUS = {
+    WAITING: 0,
+    COMPLETED: 1,
+    FAILED: 2
+}
+
+exports = SPLIT_PAYMENT = {
+    WAITING: 0,
+    ACCEPTED: 1,
+    REJECTED: 2
+}
+
+exports = TRIP_STATUS = {
+    WAITING_FOR_PROVIDER: 9,
+    NO_PROVIDER_FOUND: 109,
+    NOT_ANSWERED: 110,
+    PROVIDER_ACCEPTED: 11,
+    PROVIDER_REJECTED: 111,
+    PROVIDER_CANCELLED: 112,
+    TRIP_COMPLETED: 25,
+    INITIATE_TRIP: 50
+};
+
+
+// ORDER_CANCELLATION_CHARGE CONSTANT
+exports = VEHICLE_ACCESIBILITY_TYPE = {
+    CALATERO: "calatero",
+    CARRETILLA: "carretilla",
+    ENCERADO: "encerado",
+    MECATE: "mecate",
+    CADENA: "cadena"
+};
+exports = VEHICLE_ACCESIBILITY_TYPE_STRING = {
+    CALATERO: "Calatero",
+    CARRETILLA: "Carretilla",
+    ENCERADO: "Encerado",
+    MECATE: "Mecate",
+    CADENA: "Cadena"
+};
+
+
+// VEHICLE_ACCESIBILITY CONSTANT ARRAY 
+exports = VEHICLE_ACCESIBILITY = [
+    {ID: VEHICLE_ACCESIBILITY_TYPE.CALATERO, NAME: VEHICLE_ACCESIBILITY_TYPE_STRING.CALATERO},
+    {ID: VEHICLE_ACCESIBILITY_TYPE.CARRETILLA, NAME: VEHICLE_ACCESIBILITY_TYPE_STRING.CARRETILLA},
+    {ID: VEHICLE_ACCESIBILITY_TYPE.ENCERADO, NAME: VEHICLE_ACCESIBILITY_TYPE_STRING.ENCERADO},
+    {ID: VEHICLE_ACCESIBILITY_TYPE.MECATE, NAME: VEHICLE_ACCESIBILITY_TYPE_STRING.MECATE},
+    {ID: VEHICLE_ACCESIBILITY_TYPE.CADENA, NAME: VEHICLE_ACCESIBILITY_TYPE_STRING.CADENA}
+
+
+];
+
+// MODEL_TRUCK types
+exports = MODEL_TRUCK_TYPE = {
+    GANDOLA: 1,
+    CISTERNA: 2,
+    PICKUP: 3,
+    VAN: 4,
+    TORONTO: 5,
+    VOLTEO: 6,
+    CAMION450: 7,
+    CAMION750: 8,
+    CAMION350: 9,
+    CHUTO: 10,
+    TRAILER: 11,
+    MOTO:12,
+    PANEL_DE_CARGA: 13,
+    CABEZAL: 14,
+    CHASIS: 15,
+};
+
+exports = PROVIDER_STATUS = {
+    WAITING: 0,
+    ACCEPTED: 1,
+    COMING: 2,
+    ARRIVED: 4,
+    TRIP_STARTED: 6,
+    ARRIVED_AT_DESTINATION: 7,
+    TRIP_COMPLETED: 9
+};
+
+exports = CONTAINER_DROP_STATUS = {
+    DROPPED: 1,
+    PICKED_UP: 2,
+    STARTED: 3
+};
+
+
+exports = DOCUMENT_TYPE = {
+    USER: 0,
+    PROVIDER: 1,
+    VEHICLE: 2
+};
+
+exports = FILE_TYPE = {
+    ARRAY: 0, 
+    OBJECT: 1 
+};
+
+exports = SERVER_TYPE = {
+    LIVE: 1, 
+    DEV: 2 
+};
+
+exports = DOCUMENT_FOR = {
+    PROVIDER_CEDULA: 0,
+    VEHICLE_PLATE: 1,
+    VEHICLE_FRONT_IMAGE: 2,
+    VEHICLE_LATERAL_IMAGE: 3,   
+    CARGO_INSURANCE: 4,    
+    THIRD_PARTY_INSURANCE: 5    
+}
+
+exports = PROCEDURE_TYPE = {
+    GENERAL_MERCHANDISE: 1,
+    FISCAL_TI_MERCHANDISE: 2,
+    LIQUIDAR_MERCHANDISE: 3
+}
+
+exports = BOOLEAN_TYPE = {
+    YES: 1,
+    NO: 0
+}
+
